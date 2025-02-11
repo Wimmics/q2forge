@@ -1,0 +1,88 @@
+<div>
+    <h1>SPARQL Query Tester</h1>
+
+
+    <form class="form">
+        <mat-form-field class="full-width">
+            <mat-label>Context Endpoint URI</mat-label>
+            <input matInput placeholder="Ex. https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
+                [formControl]="endpoint">
+            @if (endpoint.hasError('pattern')) {
+            <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
+            }
+            @if (endpoint.hasError('required')) {
+            <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>SPARQL Query</mat-label>
+            <textarea rows="20" matInput placeholder="e.g. {{model.query}}" [formControl]="query"></textarea>
+        </mat-form-field>
+
+        <button mat-raised-button class="warning" (click)="reset()">Reset</button>
+        <button mat-raised-button (click)="addKnownPrefixes()">Add known Prefixes</button>
+        <button mat-raised-button (click)="getQandFQNames()" [disabled]="!query.value">Get QNames and FQN</button>
+        <mat-form-field class="info-chip-list">
+            <mat-label>Get these proporties</mat-label>
+            <mat-chip-grid #chipGrid aria-label="Enter property">
+                @for (property of properties(); track property) {
+                <mat-chip-row (removed)="remove(property)" [editable]="true" (edited)="edit(property, $event)"
+                    [aria-description]="'press enter to edit ' + property">
+                    {{property}}
+                    <button matChipRemove [attr.aria-label]="'remove ' + property">
+                        <mat-icon>cancel</mat-icon>
+                    </button>
+                </mat-chip-row>
+                }
+                <input placeholder="New property..." [matChipInputFor]="chipGrid"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="add($event)" />
+            </mat-chip-grid>
+        </mat-form-field>
+
+        <mat-slide-toggle [formControl]="displayAllInfo" [disabled]="dataSource.length == 0">
+            displayAllInfo
+        </mat-slide-toggle>
+        <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0">Get QNames and FQN
+            Info</button>
+    </form>
+
+    @if (loading) {
+    <div class="loading-message">Loading...</div>
+    }
+    @if (error) {
+    <div class="error-message">{{ error }}</div>
+    }
+
+
+    @if (dataSource && dataSource.length > 0) {
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+        <!-- URI Column -->
+        <ng-container matColumnDef="uri">
+            <th mat-header-cell *matHeaderCellDef> URI </th>
+            <td mat-cell *matCellDef="let element"> <a target="_blank" href="{{element.uri}}">{{element.uri}}</a> </td>
+        </ng-container>
+
+        <!-- Info Column -->
+        <ng-container matColumnDef="info">
+            <th mat-header-cell *matHeaderCellDef> Info </th>
+            <td mat-cell *matCellDef="let element">
+                @for (item of element.info; track $index) {
+                <div>
+                    <b>{{item[0]}}</b>: {{item[1]}}
+                </div>
+                }
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    }
+
+
+
+
+</div>

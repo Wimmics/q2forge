@@ -1,0 +1,21 @@
+<div class="container" [class.is-mobile]="isMobile()">
+  <mat-toolbar class="toolbar">
+    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <h1 class="app-name">Gen²KGBot</h1>
+  </mat-toolbar>
+
+  <mat-sidenav-container  class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
+    <mat-sidenav [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56">
+      <mat-nav-list>
+        @for (nav of navItem; track nav) {
+        <!-- <a mat-list-item><mat-icon>{{nav.icon}}</mat-icon> {{nav.name}}</a> -->
+        <a class="sidenav-item" mat-list-item href="{{nav.route}}"> <mat-icon>{{nav.icon}}</mat-icon> {{nav.name}}</a>
+        }
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="sidenav-content">
+      <router-outlet />
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
