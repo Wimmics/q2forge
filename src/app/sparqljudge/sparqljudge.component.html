@@ -87,7 +87,7 @@
     </table>
     }
 
-    <!-- @if (dataSource && dataSource.length > 0) { -->
+    @if (dataSource && dataSource.length > 0) {
 
     <hr>
 
@@ -102,7 +102,7 @@
         </mat-form-field>
         <button mat-raised-button (click)="getLLMasJudgeAnswer()">Get LLM as a Judge Answer</button>
     </div>
-    <!-- } -->
+    }
 
     @if (loadingLLMAnswer) {
     <div class="loading-message">Getting response...</div>
