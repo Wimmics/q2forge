@@ -4,21 +4,29 @@ import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { SPARQLQNExtractorService } from './../services/sparqlqnextractor.service';
 import { ExtractedData, SPARQLPartInfo } from './../models/extraction';
 import { JsonPipe } from '@angular/common';
+import { SPARQLQNExtractorService } from './../services/sparqlqnextractor.service';
 import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
+import { LLMJudgeService } from '../services/llmjudge.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipEditedEvent, MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { LLMJudgeStructureOutput, LLMModel } from '../models/llmmodel';
+import { MarkdownComponent, MarkdownService } from 'ngx-markdown';
+
 
 @Component({
   selector: 'app-sparqljudge',
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, JsonPipe, MatTableModule,
-    MatFormFieldModule, MatChipsModule, MatIconModule, MatSlideToggleModule
+    MatFormFieldModule, MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule,
+    MarkdownComponent
   ],
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
@@ -32,10 +40,12 @@ export class SPARQLJudgeComponent {
   error: string = '';
 
   constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
-    private additionalSPARQLInfoService: AdditionalSPARQLInfoService) { }
+    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
+    private llmJudgeService: LLMJudgeService) { }
 
   model = {
     endpoint: 'http://localhost:8080/sparql',
+    question: 'Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?',
     query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX sio: <http://semanticscience.org/resource/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -82,6 +92,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
       Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
     ]);
   query = new FormControl(this.model.query);
+  question = new FormControl(this.model.question);
 
   parsedData: ExtractedData | undefined;
 
@@ -152,6 +163,8 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
     this.loading = false;
     this.error = '';
     this.properties.set([...this.defaultProperties]);
+    this.loadingLLMAnswer = false;
+    this.llmAnswer = '';
   }
 
   readonly addOnBlur = true;
@@ -203,5 +216,54 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
       }
       return properties;
     });
+  }
+
+
+  availableLLMModels: LLMModel[] = [
+    {
+      modelProvider: "Ovh",
+      modelName: "Meta-Llama-3_1-70B-Instruct",
+      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1/chat/completions",
+    },
+    {
+      modelProvider: "Ovh",
+      modelName: "DeepSeek-R1-Distill-Llama-70B",
+      baseUri: "https://deepseek-r1-distill-llama-70b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
+    },
+    {
+      modelProvider: "OpenAI",
+      modelName: "o3-mini",
+      apiKey: "default",
+    },
+    {
+      modelProvider: "DeepSeek",
+      modelName: "deepseek-reasoner",
+    },
+    {
+      modelProvider: "DeepSeek",
+      modelName: "deepseek-chat",
+    },
+    {
+      modelProvider: "Ollama-local",
+      modelName: "llama3.2:1b",
+    }];
+  selectedLLM = this.availableLLMModels[0];
+  llmAnswer!: string;
+  loadingLLMAnswer = false;
+
+  getLLMasJudgeAnswer() {
+    if (this.question.value && this.query.value) {
+      this.loadingLLMAnswer = true;
+      this.llmAnswer = '';
+      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource).
+      then((result) => {
+        this.llmAnswer = result;
+        this.loadingLLMAnswer = false;
+        })
+    }
+  }
+
+  objectKeys(obj: any): string[] {
+    return Object.keys(obj);
   }
 }

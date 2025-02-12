@@ -16,6 +16,11 @@
         </mat-form-field>
 
         <mat-form-field class="full-width">
+            <mat-label>Question</mat-label>
+            <textarea rows="1" matInput placeholder="e.g. {{model.question}}" [formControl]="question"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
             <mat-label>SPARQL Query</mat-label>
             <textarea rows="20" matInput placeholder="e.g. {{model.query}}" [formControl]="query"></textarea>
         </mat-form-field>
@@ -82,7 +87,38 @@
     </table>
     }
 
+    <!-- @if (dataSource && dataSource.length > 0) { -->
 
+    <hr>
 
+    <div>
+        <mat-form-field>
+            <mat-label>LLM Model</mat-label>
+            <mat-select [(ngModel)]="selectedLLM" name="food">
+                @for (model of availableLLMModels; track model) {
+                <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <button mat-raised-button (click)="getLLMasJudgeAnswer()">Get LLM as a Judge Answer</button>
+    </div>
+    <!-- } -->
 
+    @if (loadingLLMAnswer) {
+    <div class="loading-message">Getting response...</div>
+    }
+
+    @if (llmAnswer ) {
+    <h2>LLM as a Judge Answer</h2>
+    <div>
+        <markdown [data]="llmAnswer"></markdown>
+        <!-- <p>
+            <strong>Grade:</strong> {{ llmAnswer.grade }}
+        </p>
+        <p>
+            <strong>Justification:</strong> {{ llmAnswer.justification }}
+        </p> -->
+    </div>
+
+    }
 </div>

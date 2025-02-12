@@ -1,7 +1,11 @@
 {
-
     "/sparql/*": {
         "target": "https://idsm.elixir-czech.cz/",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/chat": {
+        "target": "https://api.deepseek.com",
         "secure": false,
         "changeOrigin": true
     }
