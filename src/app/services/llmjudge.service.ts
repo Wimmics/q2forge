@@ -72,6 +72,14 @@ QName Context:
         },
       });
     }
+    else if (selectedLLM.modelProvider === 'OpenAI') {
+      llm = new ChatOpenAI({
+        model: selectedLLM.modelName,
+        configuration: {
+          apiKey : environment.OPENAI_API_KEY,
+        },
+      });
+    }
     // const structuredLLM = llm.withStructuredOutput(LLMJudgeStructureOutputSchema);
     const chainForJsonMode = promptForJsonMode.pipe(llm);
 
