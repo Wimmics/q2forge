@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { SPARQLPartInfo } from '../models/extraction';
-import { LLMJudgeStructureOutputSchema } from '../models/llmmodel';
-
 import { ChatOllama } from "@langchain/ollama";
 import { ChatDeepSeek } from "@langchain/deepseek";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { LLMModel } from '../models/llmmodel';
 import { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { environment } from '../../../environment';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({

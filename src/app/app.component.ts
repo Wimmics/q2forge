@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,7 +9,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule, MatListModule],
+  imports: [RouterOutlet, RouterLink, MatToolbarModule, MatButtonModule, MatIconModule, MatSidenavModule, MatListModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -44,7 +44,7 @@ export class AppComponent {
     this._mobileQuery = media.matchMedia('(max-width: 600px)');
     this.isMobile.set(this._mobileQuery.matches);
     this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
+    this._mobileQuery.addEventListener('change', this._mobileQueryListener);    
   }
 
   ngOnDestroy(): void {
