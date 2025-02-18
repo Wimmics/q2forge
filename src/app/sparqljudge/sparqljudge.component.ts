@@ -142,7 +142,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
                   }
                 }
               }
-
+              this.error = '';
             } else {
               this.error = 'No data found For :' + item.uri;
             }
@@ -223,7 +223,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
     {
       modelProvider: "Ovh",
       modelName: "Meta-Llama-3_1-70B-Instruct",
-      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1/chat/completions",
+      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
     },
     {
       modelProvider: "Ovh",
@@ -250,15 +250,18 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
   selectedLLM = this.availableLLMModels[0];
   llmAnswer!: string;
   loadingLLMAnswer = false;
-
+  errorLLMAnswer: string = '';
   getLLMasJudgeAnswer() {
     if (this.question.value && this.query.value) {
       this.loadingLLMAnswer = true;
       this.llmAnswer = '';
       this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource).
-      then((result) => {
-        this.llmAnswer = result;
-        this.loadingLLMAnswer = false;
+        subscribe((answer) => {
+          this.llmAnswer = answer.result;
+          this.loadingLLMAnswer = false;
+        }, (error) => {
+          this.errorLLMAnswer = error?.error?.detail
+          this.loadingLLMAnswer = false;
         })
     }
   }

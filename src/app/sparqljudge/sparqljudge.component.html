@@ -108,6 +108,10 @@
     <div class="loading-message">Getting response...</div>
     }
 
+    @if (errorLLMAnswer) {
+        <div class="error-message">Error: {{ errorLLMAnswer }}</div>
+        }
+
     @if (llmAnswer ) {
     <h2>LLM as a Judge Answer</h2>
     <div>
