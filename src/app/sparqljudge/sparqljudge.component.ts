@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ExtractedData, SPARQLPartInfo } from './../models/extraction';
-import { JsonPipe } from '@angular/common';
+// import { JsonPipe } from '@angular/common';
 import { SPARQLQNExtractorService } from './../services/sparqlqnextractor.service';
 import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
 import { LLMJudgeService } from '../services/llmjudge.service';
@@ -17,16 +17,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
-import { LLMJudgeStructureOutput, LLMModel } from '../models/llmmodel';
-import { MarkdownComponent, MarkdownService } from 'ngx-markdown';
+import { LLMModel } from '../models/llmmodel';
+import { MarkdownComponent } from 'ngx-markdown';
 
 
 @Component({
   selector: 'app-sparqljudge',
   imports: [
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, JsonPipe, MatTableModule,
-    MatFormFieldModule, MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule,
-    MarkdownComponent
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
+    MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
+    // JsonPipe
   ],
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
