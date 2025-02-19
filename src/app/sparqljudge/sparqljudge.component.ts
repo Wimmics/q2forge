@@ -5,7 +5,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ExtractedData, SPARQLPartInfo } from './../models/extraction';
-import { JsonPipe } from '@angular/common';
+// import { JsonPipe } from '@angular/common';
 import { SPARQLQNExtractorService } from './../services/sparqlqnextractor.service';
 import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
 import { LLMJudgeService } from '../services/llmjudge.service';
@@ -17,16 +17,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
-import { LLMJudgeStructureOutput, LLMModel } from '../models/llmmodel';
-import { MarkdownComponent, MarkdownService } from 'ngx-markdown';
+import { LLMModel } from '../models/llmmodel';
+import { MarkdownComponent } from 'ngx-markdown';
 
 
 @Component({
   selector: 'app-sparqljudge',
   imports: [
-    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, JsonPipe, MatTableModule,
-    MatFormFieldModule, MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule,
-    MarkdownComponent
+    FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
+    MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
+    // JsonPipe
   ],
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
@@ -142,7 +142,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
                   }
                 }
               }
-
+              this.error = '';
             } else {
               this.error = 'No data found For :' + item.uri;
             }
@@ -223,7 +223,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
     {
       modelProvider: "Ovh",
       modelName: "Meta-Llama-3_1-70B-Instruct",
-      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1/chat/completions",
+      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
     },
     {
       modelProvider: "Ovh",
@@ -250,15 +250,18 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
   selectedLLM = this.availableLLMModels[0];
   llmAnswer!: string;
   loadingLLMAnswer = false;
-
+  errorLLMAnswer: string = '';
   getLLMasJudgeAnswer() {
     if (this.question.value && this.query.value) {
       this.loadingLLMAnswer = true;
       this.llmAnswer = '';
       this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource).
-      then((result) => {
-        this.llmAnswer = result;
-        this.loadingLLMAnswer = false;
+        subscribe((answer) => {
+          this.llmAnswer = answer.result;
+          this.loadingLLMAnswer = false;
+        }, (error) => {
+          this.errorLLMAnswer = error?.error?.detail
+          this.loadingLLMAnswer = false;
         })
     }
   }

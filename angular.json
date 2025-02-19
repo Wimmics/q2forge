@@ -15,13 +15,13 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "main": "src/main.ts",
-            "customWebpackConfig": {
-              "path": "src/custom-webpack.config.ts"
+            "browser": "src/main.ts",
+            "outputPath": {
+              "base": "dist/dataset-tester",
+              "browser": ""
             },
-            "outputPath": "dist/dataset-tester",
             "index": "src/index.html",
             "polyfills": [
               "zone.js"
@@ -65,7 +65,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "gen2kgbot_test_dataset:build:production"
