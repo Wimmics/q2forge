@@ -1,0 +1,103 @@
+<div>
+    <h1>Question Dataset Generator</h1>
+
+
+    <form class="form">
+        <mat-form-field class="full-width">
+            <mat-label>Context Endpoint URI</mat-label>
+            <input matInput placeholder="Ex. https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
+                [formControl]="endpoint">
+            @if (endpoint.hasError('pattern')) {
+            <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
+            }
+            @if (endpoint.hasError('required')) {
+            <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
+            }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>KG Description</mat-label>
+            <textarea rows="10" matInput placeholder="e.g. {{model.kg_description}}"
+                [formControl]="kgDescription"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>KG Schema</mat-label>
+            <textarea rows="10" matInput placeholder="e.g. {{model.kg_schema}}" [formControl]="kgSchema"></textarea>
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Additional Context</mat-label>
+            <textarea rows="10" matInput placeholder="e.g. {{model.additional_context}}"
+                [formControl]="additionalContext"></textarea>
+        </mat-form-field>
+
+
+
+
+        <div class="form-actions">
+            <mat-form-field class="full-width">
+                <mat-label>LLM Model</mat-label>
+                <mat-select [(ngModel)]="selectedLLM" name="food">
+                    @for (model of availableLLMModels; track model) {
+                    <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label># Questions</mat-label>
+                <input matInput type="number" min="1" max="100" placeholder="e.g {{model.number_of_questions}}"
+                    [formControl]="number_of_questions_fc">
+                @if (number_of_questions_fc.hasError('min') || number_of_questions_fc.hasError('max')) {
+                <mat-error>Question Number Must be [1-100] </mat-error>
+                }
+                @if (number_of_questions_fc.hasError('required')) {
+                <mat-error># Questions is <strong>required</strong></mat-error>
+                }
+            </mat-form-field>
+
+            <mat-slide-toggle [formControl]="enforceStructuredOutput">
+                Enforce Structured Output
+            </mat-slide-toggle>
+
+            <button mat-raised-button (click)="generateQuestionWithLLM()">Generate Questions</button>
+            <button mat-raised-button (click)="sampleSchema()">Sample Schema</button>
+            <button mat-raised-button class="warning" (click)="reset()">Reset</button>
+        </div>
+    </form>
+    
+    
+    @if (loading) {
+        <div class="loading-message">Loading...</div>
+    }
+    @if (error) {
+        <div class="error-message">{{ error }}</div>
+    }
+    
+    
+    
+    @if (loadingLLMAnswer) {
+        <div class="loading-message">Getting response...</div>
+    }
+    
+    @if (errorLLMAnswer) {
+        <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
+    }
+    
+    @if (llmAnswer ) {
+        <h2>Generate Question Task</h2>
+        <div>
+            <markdown [data]="llmAnswer"></markdown>
+            <!-- <p>
+                <strong>Grade:</strong> {{ llmAnswer.grade }}
+            </p>
+            <p>
+                <strong>Justification:</strong> {{ llmAnswer.justification }}
+            </p> -->
+        </div>
+    }
+    @if (llmAnswer){
+        <button mat-raised-button (click)="downloadResults()">Download Results</button>
+    }
+</div>
