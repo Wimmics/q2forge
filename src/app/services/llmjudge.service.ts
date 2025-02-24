@@ -3,6 +3,7 @@ import { SPARQLPartInfo } from '../models/extraction';
 import { LLMModel } from '../models/llmmodel';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { JUDGE_QUERY_ENDPOINT } from './predefined-variables';
 
 
 @Injectable({
@@ -10,7 +11,6 @@ import { Observable } from 'rxjs';
 })
 export class LLMJudgeService {
 
-  judge_query_endpoint = "http://localhost:8000/api/test_dataset/judge_query"
   constructor(private http: HttpClient) { }
 
   getLLMAnswer(selectedLLM: LLMModel, question: string, sparqlQuery: string, dataSource: SPARQLPartInfo[]): Observable<any> {
@@ -24,6 +24,6 @@ export class LLMJudgeService {
       "sparql_query_context": dataSource.map((info) => `${info.uri}: ${info.info}`).join("\n")
     }
 
-    return this.http.post<any>(this.judge_query_endpoint, body);
+    return this.http.post<any>(JUDGE_QUERY_ENDPOINT, body);
   }
 }
