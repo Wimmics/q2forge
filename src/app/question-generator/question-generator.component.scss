@@ -1,0 +1,59 @@
+.form {
+    min-width: 150px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.warning {
+    color: red;
+}
+
+table {
+    width: 100%;
+}
+
+.error-message {
+    color: red;
+    margin: 16px;
+    padding: 16px;
+    border: 1px solid red;
+}
+
+.info-chip-list {
+    width: 100%;
+    margin: 8px;
+}
+
+.loading-message {
+    color: rgb(17, 129, 43);
+    margin: 16px;
+    padding: 16px;
+    border: 1px solid rgb(17, 129, 43);
+}
+
+.mat-column-uri {
+    width: 25%
+}
+
+.mat-column-info {
+    width: 75%
+}
+
+.endpoint_div{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}

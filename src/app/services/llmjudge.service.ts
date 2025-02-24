@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SPARQLPartInfo } from '../models/extraction';
 import { LLMModel } from '../models/llmmodel';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 

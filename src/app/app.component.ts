@@ -19,9 +19,13 @@ export class AppComponent {
     route: '/',
     icon: 'home'
   }, {
+    name: 'Question Dataset Generator',
+    route: '/question-generator',
+    icon: 'create'
+  }, {
     name: 'SPARQL Query Tester',
     route: '/sparql-judge',
-    icon: 'query_builder'
+    icon: 'check_circle_outline'
   }, {
     name: 'About',
     route: '/about',
@@ -44,7 +48,7 @@ export class AppComponent {
     this._mobileQuery = media.matchMedia('(max-width: 600px)');
     this.isMobile.set(this._mobileQuery.matches);
     this._mobileQueryListener = () => this.isMobile.set(this._mobileQuery.matches);
-    this._mobileQuery.addEventListener('change', this._mobileQueryListener);    
+    this._mobileQuery.addEventListener('change', this._mobileQueryListener);
   }
 
   ngOnDestroy(): void {

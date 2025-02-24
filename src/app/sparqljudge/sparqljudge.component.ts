@@ -19,6 +19,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { LLMModel } from '../models/llmmodel';
 import { MarkdownComponent } from 'ngx-markdown';
+import { DEFAULT_SPARQL_JUDGE_QUERY, KNOWN_PREFIXES, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 
 
 @Component({
@@ -44,47 +45,12 @@ export class SPARQLJudgeComponent {
     private llmJudgeService: LLMJudgeService) { }
 
   model = {
-    endpoint: 'http://localhost:8080/sparql',
-    question: 'Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?',
-    query: `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX compound: <http://rdf.ncbi.nlm.nih.gov/pubchem/compound/>
-PREFIX chebi: <http://purl.obolibrary.org/obo/CHEBI_>
-
-SELECT ?disease ?score ?disease_prefLabel
-FROM <http://rdf.ncbi.nlm.nih.gov/pubchem/cooccurrence>
-FROM <http://rdf.ncbi.nlm.nih.gov/pubchem/disease>
-WHERE {
-    ?cooccurrence rdf:subject ?compound .
-    ?compound a chebi:67079 .
-    ?cooccurrence rdf:object ?disease .
-    ?cooccurrence rdf:type sio:SIO_000993 .
-    ?cooccurrence sio:SIO_000300 ?score .
-    ?disease skos:prefLabel ?disease_prefLabel .
-}
-ORDER BY DESC(?score)
-LIMIT 5`,
+    endpoint: SPARQL_ENDPOINT_URI,
+    question: DEFAULT_JUDGE_QUESTION,
+    query: DEFAULT_SPARQL_JUDGE_QUERY,
   }
 
-  knownPrefixeds = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX compound: <http://rdf.ncbi.nlm.nih.gov/pubchem/compound/>
-PREFIX chebi: <http://purl.obolibrary.org/obo/CHEBI_>
-PREFIX schema: <http://schema.org/>
-PREFIX enpkg_module: <https://enpkg.commons-lab.org/module/>
-PREFIX pav: <http://purl.org/pav/>
-PREFIX example: <http://example.org/>
-PREFIX enpkg: <https://enpkg.commons-lab.org/kg/>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX cito: <http://purl.org/spar/cito/>
-PREFIX pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX bao: <http://www.bioassayontology.org/bao#>
-PREFIX chebi: <http://purl.obolibrary.org/obo/CHEBI_>
-PREFIX cheminf: <http://semanticscience.org/resource/CHEMINF_>
-PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
+  knownPrefixeds = KNOWN_PREFIXES;
 
   endpoint = new FormControl(this.model.endpoint,
     [
@@ -219,34 +185,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
   }
 
 
-  availableLLMModels: LLMModel[] = [
-    {
-      modelProvider: "Ovh",
-      modelName: "Meta-Llama-3_1-70B-Instruct",
-      baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
-    },
-    {
-      modelProvider: "Ovh",
-      modelName: "DeepSeek-R1-Distill-Llama-70B",
-      baseUri: "https://deepseek-r1-distill-llama-70b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
-    },
-    {
-      modelProvider: "OpenAI",
-      modelName: "o3-mini",
-      apiKey: "default",
-    },
-    {
-      modelProvider: "DeepSeek",
-      modelName: "deepseek-reasoner",
-    },
-    {
-      modelProvider: "DeepSeek",
-      modelName: "deepseek-chat",
-    },
-    {
-      modelProvider: "Ollama-local",
-      modelName: "llama3.2:1b",
-    }];
+  availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[0];
   llmAnswer!: string;
   loadingLLMAnswer = false;
@@ -255,6 +194,7 @@ PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`;
     if (this.question.value && this.query.value) {
       this.loadingLLMAnswer = true;
       this.llmAnswer = '';
+      this.errorLLMAnswer = '';
       this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource).
         subscribe((answer) => {
           this.llmAnswer = answer.result;
