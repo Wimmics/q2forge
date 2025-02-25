@@ -69,10 +69,11 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
     modelName: "llama3.2:1b",
   }];
 
-const SERVER = "http://134.59.134.239"
+const SERVER = "http://localhost:8000"
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
 export const GENERATE_QUESTION_ENDPOINT = `${SERVER}/api/test_dataset/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${SERVER}/api/test_dataset/judge_query`
+export const ANSWER_QUESTION_ENDPOINT = `${SERVER}/api/test_dataset/answer_question`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"
 

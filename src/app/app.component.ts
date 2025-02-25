@@ -23,6 +23,11 @@ export class AppComponent {
     route: '/question-generator',
     icon: 'create'
   }, {
+    name: 'KG Questions Answerer',
+    route: '/question-answerer',
+    icon: 'question_answer'
+  }, {
+
     name: 'SPARQL Query Tester',
     route: '/sparql-judge',
     icon: 'check_circle_outline'

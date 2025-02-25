@@ -5,7 +5,7 @@
   </mat-toolbar>
 
   <mat-sidenav-container  class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
-    <mat-sidenav [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56">
+    <mat-sidenav class="sidenav" [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56">
       <mat-nav-list>
         @for (nav of navItem; track nav) {
         <!-- <a mat-list-item><mat-icon>{{nav.icon}}</mat-icon> {{nav.name}}</a> -->

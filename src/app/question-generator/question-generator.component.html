@@ -1,12 +1,11 @@
 <div>
-    <h1>Question Dataset Generator</h1>
+    <div class="page-header">Question Dataset Generator</div>
 
 
     <form class="form">
         <mat-form-field class="full-width">
             <mat-label>Context Endpoint URI</mat-label>
-            <input matInput placeholder="Ex. https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
-                [formControl]="endpoint">
+            <input matInput placeholder="e.g. {{model.endpoint}} " [formControl]="endpoint">
             @if (endpoint.hasError('pattern')) {
             <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
             }
@@ -66,38 +65,38 @@
             <button mat-raised-button class="warning" (click)="reset()">Reset</button>
         </div>
     </form>
-    
-    
+
+
     @if (loading) {
-        <div class="loading-message">Loading...</div>
+    <div class="loading-message">Loading...</div>
     }
     @if (error) {
-        <div class="error-message">{{ error }}</div>
+    <div class="error-message">{{ error }}</div>
     }
-    
-    
-    
+
+
+
     @if (loadingLLMAnswer) {
-        <div class="loading-message">Getting response...</div>
+    <div class="loading-message">Getting response...</div>
     }
-    
+
     @if (errorLLMAnswer) {
-        <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
+    <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
     }
-    
+
     @if (llmAnswer ) {
-        <h2>Generate Question Task</h2>
-        <div>
-            <markdown [data]="llmAnswer"></markdown>
-            <!-- <p>
+    <h2>Generate Question Task</h2>
+    <div>
+        <markdown [data]="llmAnswer"></markdown>
+        <!-- <p>
                 <strong>Grade:</strong> {{ llmAnswer.grade }}
             </p>
             <p>
                 <strong>Justification:</strong> {{ llmAnswer.justification }}
             </p> -->
-        </div>
+    </div>
     }
     @if (llmAnswer){
-        <button mat-raised-button (click)="downloadResults()">Download Results</button>
+    <button mat-raised-button (click)="downloadResults()">Download Results</button>
     }
 </div>

@@ -1,0 +1,50 @@
+@use "../../styles/_variables" as *;
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.question-input {
+    flex: 1;
+}
+
+.question-container {
+    position: fixed;
+    bottom: 0px;
+    left: 5%;
+    right: 5%;
+    display: flex;
+    gap: 16px;
+    width: 90%;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 96px;
+}
+
+.message {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+}
+
+.user-message {
+    align-self: flex-end;
+    background-color: $user-message-background-color ;
+}
+
+.system-message {
+    align-self: flex-start;
+    background-color: $system-message-background-color;
+}

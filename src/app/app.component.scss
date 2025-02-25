@@ -1,21 +1,33 @@
+@use "../styles/_variables" as *;
+
 .container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+
 }
 
+.toolbar {
+    background-color: $primary-color;
+}
 
 h1.example-app-name {
     margin-left: 8px;
 }
 
 .sidenav-container {
-    /* When the sidenav is not fixed, stretch the sidenav container to fill the available space. This
-       causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
     flex: 1;
+    background-color: $primary-color;
 }
 
-.sidenav-content{
+.sidenav {
+    height: 85%;
+    width: 300px;
+    background-color: $primary-color;
+
+}
+
+.sidenav-content {
     border: 1px solid black;
     margin: 8px;
     padding: 8px;

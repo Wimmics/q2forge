@@ -1,0 +1,47 @@
+<div class="container">
+    <div class="page-header">KG Question Answerer</div>
+
+    <div class="chat-container">
+        @if (loadingLLMAnswer) {
+        <div class="loading-message">Getting response...</div>
+        }
+
+        @if (errorLLMAnswer) {
+        <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
+        }
+
+        @for (item of chat_messages; track $index) {
+        @if($index % 5 == 0) {
+        <div class="message user-message">
+            <markdown [data]="item"></markdown>
+        </div>
+        }@else {
+        <div class="message system-message">
+            <markdown [data]="item"></markdown>
+        </div>
+        }
+        }
+
+    </div>
+
+    <div class="question-container">
+        <mat-form-field class="full-width">
+            <mat-label>LLM Model</mat-label>
+            <mat-select [(ngModel)]="selectedLLM">
+                @for (model of availableLLMModels; track model) {
+                <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="question-input">
+            <mat-label>Question to answer</mat-label>
+            <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
+        </mat-form-field>
+
+        <button mat-mini-fab (click)="ask_question()">
+            <mat-icon>send</mat-icon>
+        </button>
+    </div>
+
+</div>

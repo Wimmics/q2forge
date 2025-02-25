@@ -1,4 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+@use './styles/_variables' as *;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: $secondary-color;
+}
+
+h1 {
+    color: $secondary-color;
+}
+
+.page-header {
+    width: 300px;
+
+    color: $secondary-color;
+    font-size: $font-size-page-header;
+    margin: 0 auto 16px auto;
+    font-weight: bold;
+
+    text-align: center;
+    padding: 10px;
+    border-radius: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 5px 5px 2px 5px rgba(0, 0, 0, 0.5);
+}
