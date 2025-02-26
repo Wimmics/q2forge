@@ -11,13 +11,13 @@
         }
 
         @for (item of chat_messages; track $index) {
-        @if($index % 5 == 0) {
+        @if(item.sender == "user") {
         <div class="message user-message">
-            <markdown [data]="item"></markdown>
+            <markdown lineNumbers [data]="item.content"></markdown>
         </div>
         }@else {
-        <div class="message system-message">
-            <markdown [data]="item"></markdown>
+        <div class="message system-message" [matTooltip]="item.sender" matTooltipPosition="above">
+            <markdown lineNumbers [data]="item.content"></markdown>
         </div>
         }
         }

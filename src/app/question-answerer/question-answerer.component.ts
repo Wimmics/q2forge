@@ -9,10 +9,13 @@ import { LLMModel } from '../models/llmmodel';
 import { MatSelectModule } from '@angular/material/select';
 import { MarkdownComponent } from 'ngx-markdown';
 import { JsonPipe } from '@angular/common';
+import { ChatMessage } from '../models/chat-message';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-question-answerer',
-  imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule, JsonPipe],
+  imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
+    JsonPipe, MatTooltipModule],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
@@ -30,7 +33,7 @@ export class QuestionAnswererComponent {
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[5];
 
-  chat_messages: string[] = [];
+  chat_messages: ChatMessage[] = [];
 
   constructor(private answerQuestionService: AnswerQuestionService) { }
 
@@ -38,7 +41,12 @@ export class QuestionAnswererComponent {
     if (this.question_fc.value) {
       this.loadingLLMAnswer = true;
       this.errorLLMAnswer = '';
-      this.chat_messages.push(this.question_fc.value)
+      this.chat_messages.push(
+        {
+          "sender": "user",
+          "content": this.question_fc.value
+        }
+      )
       this.answerQuestionService.answer_question(
         this.selectedLLM,
         this.question_fc.value!,
@@ -51,53 +59,60 @@ export class QuestionAnswererComponent {
         const read = () => {
           reader?.read().then(({ done, value }) => {
             if (done) {
-              processBuffer(buffer); // Process any remaining valid JSON
+              // console.log('Stream complete');
+              processBuffer(buffer, true); // Process any remaining valid JSON
               return;
             }
 
             buffer += decoder.decode(value, { stream: true }); // Append streamed data
 
-            processBuffer(buffer); // Try parsing valid JSON objects
+            // console.log('Buffer:', buffer);
+            processBuffer(buffer, false); // Try parsing valid JSON objects
 
             read();
           });
         };
 
-        const processBuffer = (data: any) => {
+        const processBuffer = (data: any, isComplete: boolean) => {
           try {
             let jsonObjects = [];
             let startIdx = 0;
+            let lastJsonEnd = 0;
+            // let tryCount = 0;
 
             while (startIdx < data.length) {
-              let openBraces = 0;
-              let closeBraces = 0;
-              let jsonStart = -1;
-              let jsonEnd = -1;
+              // console.log(`Try count: ${++tryCount}`);
 
-              for (let i = startIdx; i < data.length; i++) {
-                if (data[i] === '{') {
-                  if (jsonStart === -1) jsonStart = i;
-                  openBraces++;
-                }
-                if (data[i] === '}') {
-                  closeBraces++;
-                }
-
-                if (openBraces > 0 && openBraces === closeBraces) {
-                  jsonEnd = i + 1;
-                  break;
-                }
-              }
+              let jsonStart = data.indexOf('{', startIdx);
+              let jsonEnd = data.indexOf('}', lastJsonEnd);
 
               if (jsonStart !== -1 && jsonEnd !== -1) {
                 try {
-                  let jsonChunk = data.substring(jsonStart, jsonEnd);
+                  let jsonChunk = data.substring(jsonStart, jsonEnd + 1);
+                  // console.log(jsonChunk);
+
                   let parsedJson = JSON.parse(jsonChunk);
-                  jsonObjects.push(parsedJson);
-                  startIdx = jsonEnd; // Move to the next potential JSON object
+
+                  if (
+                    typeof parsedJson === 'object' &&
+                    parsedJson.hasOwnProperty('event') &&
+                    parsedJson.hasOwnProperty('node')
+                  ) {
+                    jsonObjects.push(parsedJson);
+                    // console.log(`Parsed JSON: ${JSON.stringify(parsedJson)}`);
+                    startIdx = jsonEnd + 1; // Move past processed JSON
+                  } else {
+                    // If it doesn't match the expected schema, ignore and continue
+                    // console.log('Invalid JSON:', jsonChunk);
+                    startIdx = jsonStart + 1;
+                  }
+
                 } catch (error) {
+                  lastJsonEnd = jsonEnd + 1;
+                  // console.error('JSON parsing error:', error);
+                  // console.log(`startIdx < data.length: ${startIdx < data.length}`);   
                   // Incomplete JSON, keep accumulating
-                  break;
+                  // break;
                 }
               } else {
                 // No complete JSON found, break
@@ -114,17 +129,42 @@ export class QuestionAnswererComponent {
 
 
               if (stream_part.event === 'on_chain_end') {
-                this.chat_messages.push(JSON.stringify(stream_part.data));
+                this.chat_messages.push(
+                  {
+                    "sender": stream_part.node,
+                    "content": this.extractDataFromStreamPart(stream_part.data, stream_part.node)
+                  }
+                );
               }
               else if (stream_part.event === 'on_chat_model_start') {
-                this.chat_messages.push(`Node ${stream_part.node} starts streaming the answer\n`);
-                this.chat_messages.push("");
+                this.chat_messages.push(
+                  {
+                    "sender": stream_part.node,
+                    "content": `Node ${stream_part.node} starts streaming the answer\n`
+                  }
+                );
+                this.chat_messages.push(
+                  {
+                    "sender": stream_part.node,
+                    "content": ""
+                  }
+                );
               }
               else if (stream_part.event === 'on_chat_model_stream') {
-                this.chat_messages[this.chat_messages.length - 1] = this.chat_messages[this.chat_messages.length - 1] + stream_part.data;
+                this.chat_messages[this.chat_messages.length - 1].content = this.chat_messages[this.chat_messages.length - 1].content + stream_part.data;
               }
               else if (stream_part.event === 'on_chat_model_end') {
-                this.chat_messages.push(`Node ${stream_part.node} ended streaming the answer\n`);
+                this.chat_messages.push({
+                  "sender": stream_part.node,
+                  "content": `Node ${stream_part.node} ended streaming the answer\n`
+                });
+              }
+
+              if (isComplete) {
+                this.chat_messages.push({
+                  "sender": "system",
+                  "content": `End of the conversation`
+                });
               }
             });
 
@@ -140,6 +180,38 @@ export class QuestionAnswererComponent {
           this.errorLLMAnswer = error?.error?.detail;
           this.loadingLLMAnswer = false;
         });
+    }
+  }
+  extractDataFromStreamPart(data: any, node: string): string {
+
+    switch (node) {
+      case "init":
+        return data.scenario_id;
+      case "preprocess_question":
+        return data.question_relevant_entities;
+      case "select_similar_query_examples":
+        return data.selected_queries;
+      case "select_similar_classes":
+        return data.selected_classes.join("\n");
+      case "get_context_class_from_cache":
+        return data.selected_classes_context.join("\n");
+      case "get_context_class_from_kg":
+        return data.selected_classes_context.join("\n");
+      case "create_prompt":
+        return data.query_generation_prompt;
+      case "create_retry_prompt":
+        return data.query_generation_prompt;
+      case "verify_query":
+        if (data.last_generated_query) {
+          return data.last_generated_query;
+        } else {
+          return data.number_of_tries;
+        }
+      case "run_query":
+        return data.last_query_results;
+
+      default:
+        return JSON.stringify(data);
     }
   }
 }
