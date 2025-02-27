@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { LLMModel } from '../models/llmmodel';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
 import { GENERATE_QUESTION_ENDPOINT } from './predefined-variables';
 
 
@@ -12,7 +11,8 @@ export class GenerateQuestionService {
 
   constructor(private http: HttpClient) { }
 
-  getLLMAnswer(selectedLLM: LLMModel, number_of_questions: number, kg_description: string, kg_schema: string, additional_context: string, enforce_structured_output: boolean): Observable<any> {
+  getLLMAnswer(selectedLLM: LLMModel, number_of_questions: number, kg_description: string, kg_schema: string, additional_context: string, enforce_structured_output: boolean):
+    Promise<Response> {
 
     const body = {
       "model_provider": selectedLLM.modelProvider,
@@ -25,6 +25,13 @@ export class GenerateQuestionService {
       "enforce_structured_output": enforce_structured_output,
     }
 
-    return this.http.post<any>(GENERATE_QUESTION_ENDPOINT, body);
+
+    return fetch(GENERATE_QUESTION_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
   }
 }

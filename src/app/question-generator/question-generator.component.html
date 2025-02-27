@@ -76,9 +76,9 @@
 
 
 
-    @if (loadingLLMAnswer) {
+    <!-- @if (loadingLLMAnswer) {
     <div class="loading-message">Getting response...</div>
-    }
+    } -->
 
     @if (errorLLMAnswer) {
     <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
@@ -96,7 +96,7 @@
             </p> -->
     </div>
     }
-    @if (llmAnswer){
+    @if (workflowDone){
     <button mat-raised-button (click)="downloadResults()">Download Results</button>
     }
 </div>

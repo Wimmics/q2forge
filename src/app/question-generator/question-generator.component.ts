@@ -38,6 +38,8 @@ export class QuestionGeneratorComponent {
     number_of_questions: NUMBER_OF_QUESTIONS_TO_GENERATE,
   }
 
+  workflowDone = false;
+
   endpoint = new FormControl(this.model.endpoint, [
     Validators.required,
     Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
@@ -53,7 +55,7 @@ export class QuestionGeneratorComponent {
   loading = false;
   error = '';
 
-  loadingLLMAnswer = false;
+  // loadingLLMAnswer = false;
   errorLLMAnswer = '';
   llmAnswer = '';
 
@@ -62,7 +64,7 @@ export class QuestionGeneratorComponent {
 
   generateQuestionWithLLM() {
     if (this.kgDescription.value && this.kgDescription.value) {
-      this.loadingLLMAnswer = true;
+      // this.loadingLLMAnswer = true;
       this.llmAnswer = '';
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
@@ -72,14 +74,112 @@ export class QuestionGeneratorComponent {
         this.kgSchema.value ? this.kgSchema.value : "No schema provided",
         this.additionalContext.value ? this.additionalContext.value : "No additional context provided",
         this.enforceStructuredOutput.value ? this.enforceStructuredOutput.value : false
-      ).
-        subscribe((answer) => {
-          this.llmAnswer = answer.result;
-          this.loadingLLMAnswer = false;
-        }, (error) => {
-          this.errorLLMAnswer = error?.error?.detail
-          this.loadingLLMAnswer = false;
+      )
+        // .subscribe((answer) => {
+        //   this.llmAnswer = answer.result;
+        //   this.loadingLLMAnswer = false;
+        // }, (error) => {
+        //   this.errorLLMAnswer = error?.error?.detail
+        //   this.loadingLLMAnswer = false;
+        // })
+        .then(response => {
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let buffer = ''; // Accumulate stream chunks
+
+          const read = () => {
+            reader?.read().then(({ done, value }) => {
+              if (done) {
+                // console.log('Stream complete');
+                processBuffer(buffer, true); // Process any remaining valid JSON
+                this.workflowDone = true;
+
+                return;
+              }
+
+              buffer += decoder.decode(value, { stream: true }); // Append streamed data
+
+              // console.log('Buffer:', buffer);
+              processBuffer(buffer, false); // Try parsing valid JSON objects
+
+              read();
+            });
+          };
+
+          const processBuffer = (data: any, isComplete: boolean) => {
+            try {
+              let jsonObjects = [];
+              let startIdx = 0;
+              let lastJsonEnd = 0;
+              // let tryCount = 0;
+
+              while (startIdx < data.length) {
+                // console.log(`Try count: ${++tryCount}`);
+
+                let jsonStart = data.indexOf('{', startIdx);
+                let jsonEnd = data.indexOf('}', lastJsonEnd);
+
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                  try {
+                    let jsonChunk = data.substring(jsonStart, jsonEnd + 1);
+                    // console.log(jsonChunk);
+
+                    let parsedJson = JSON.parse(jsonChunk);
+
+                    if (
+                      typeof parsedJson === 'object' &&
+                      parsedJson.hasOwnProperty('event')) {
+                      jsonObjects.push(parsedJson);
+                      // console.log(`Parsed JSON: ${JSON.stringify(parsedJson)}`);
+                      startIdx = jsonEnd + 1; // Move past processed JSON
+                    } else {
+                      // If it doesn't match the expected schema, ignore and continue
+                      // console.log('Invalid JSON:', jsonChunk);
+                      startIdx = jsonStart + 1;
+                    }
+
+                  } catch (error) {
+                    lastJsonEnd = jsonEnd + 1;
+                    // console.error('JSON parsing error:', error);
+                    // console.log(`startIdx < data.length: ${startIdx < data.length}`);   
+                    // Incomplete JSON, keep accumulating
+                    // break;
+                  }
+                } else {
+                  // No complete JSON found, break
+                  break;
+                }
+              }
+
+              // Keep only the unprocessed part in buffer
+              buffer = data.substring(startIdx);
+
+              // Process parsed JSON objects
+              jsonObjects.forEach(stream_part => {
+                // console.log(json); // Handle the valid JSON
+
+                if (stream_part.event === 'on_chat_model_start') {
+                  this.llmAnswer = `The answer from the model will be streamed soon ...\n`;
+                }
+                else if (stream_part.event === 'on_chat_model_stream') {
+                  this.llmAnswer += stream_part.data;
+                }
+                else if (stream_part.event === 'on_chat_model_end') {
+                  this.llmAnswer += `The streaming of the response ended.\n`;
+                }
+              });
+
+            } catch (error) {
+              console.error("JSON parsing error:", error);
+            }
+          };
+
+          read();
         })
+        .catch(error => {
+          console.error('Stream error:', error);
+          this.errorLLMAnswer = error?.error?.detail;
+        });
     }
   }
 
@@ -101,8 +201,9 @@ export class QuestionGeneratorComponent {
     this.loading = false;
     this.error = '';
     // this.properties.set([...this.defaultProperties]);
-    this.loadingLLMAnswer = false;
+    // this.loadingLLMAnswer = false;
     this.llmAnswer = '';
+    this.workflowDone = false;
   }
 
   downloadResults(): void {
