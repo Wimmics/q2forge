@@ -11,11 +11,12 @@ import { MarkdownComponent } from 'ngx-markdown';
 import { JsonPipe } from '@angular/common';
 import { ChatMessage } from '../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-question-answerer',
   imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
-    JsonPipe, MatTooltipModule],
+    JsonPipe, MatTooltipModule, MatExpansionModule],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
@@ -27,19 +28,32 @@ export class QuestionAnswererComponent {
 
   question_fc = new FormControl(this.model.question);
 
-  loadingLLMAnswer = false;
+  workflowRunning = false;
   errorLLMAnswer = '';
 
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[5];
 
-  chat_messages: ChatMessage[] = [];
+  chat_messages: ChatMessage[] = [
+    // {
+    //   "sender": "user",
+    //   "content": "What is the name of the person?"
+    // },
+    // {
+    //   "sender": "init",
+    //   "content": "I 🐢 ngx-markdown"
+    // },
+    // {
+    //   "sender": "system",
+    //   "content": "```turtle\n@prefix ex: <http://example.org/>\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nex:John rdf:type ex:Person .\n```"
+    // }
+  ];
 
   constructor(private answerQuestionService: AnswerQuestionService) { }
 
   ask_question() {
     if (this.question_fc.value) {
-      this.loadingLLMAnswer = true;
+      this.workflowRunning = true;
       this.errorLLMAnswer = '';
       this.chat_messages.push(
         {
@@ -54,13 +68,13 @@ export class QuestionAnswererComponent {
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let buffer = ''; // Accumulate stream chunks
-        this.loadingLLMAnswer = false;
 
         const read = () => {
           reader?.read().then(({ done, value }) => {
             if (done) {
               // console.log('Stream complete');
               processBuffer(buffer, true); // Process any remaining valid JSON
+              this.workflowRunning = false;
               return;
             }
 
@@ -140,7 +154,7 @@ export class QuestionAnswererComponent {
                 this.chat_messages.push(
                   {
                     "sender": stream_part.node,
-                    "content": `Node ${stream_part.node} starts streaming the answer\n`
+                    "content": `The answer from the model will be streamed soon ...\n`
                   }
                 );
                 this.chat_messages.push(
@@ -156,7 +170,7 @@ export class QuestionAnswererComponent {
               else if (stream_part.event === 'on_chat_model_end') {
                 this.chat_messages.push({
                   "sender": stream_part.node,
-                  "content": `Node ${stream_part.node} ended streaming the answer\n`
+                  "content": `The streaming of the response ended.\n`
                 });
               }
 
@@ -178,40 +192,61 @@ export class QuestionAnswererComponent {
         .catch(error => {
           console.error('Stream error:', error);
           this.errorLLMAnswer = error?.error?.detail;
-          this.loadingLLMAnswer = false;
+          this.workflowRunning = false;
         });
     }
   }
+
+
   extractDataFromStreamPart(data: any, node: string): string {
 
     switch (node) {
       case "init":
-        return data.scenario_id;
+        return "**Using the scenario:** " + data.scenario_id + ".";
       case "preprocess_question":
-        return data.question_relevant_entities;
+        return "**The relevant entities in the question:**\n" + data.question_relevant_entities.split(',').map((item: string) => `* ${item}.`).join("\n");
       case "select_similar_query_examples":
-        return data.selected_queries;
+        return "**The relevant found SPARQL query examples:**\n" + data.selected_queries;
       case "select_similar_classes":
-        return data.selected_classes.join("\n");
+        return "**The relevant retrieved classes with their label and description in the question:**\n" + data.selected_classes.map((item: string) => `* ${item}.`).join("\n")
       case "get_context_class_from_cache":
-        return data.selected_classes_context.join("\n");
+        return "**The following class context was retrieved from the cache 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
       case "get_context_class_from_kg":
-        return data.selected_classes_context.join("\n");
+        return "**The following class context was retrieved from the KG 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
       case "create_prompt":
-        return data.query_generation_prompt;
+        return "**The following prompt would be use to generate the SPARQL query:**\n" + data.query_generation_prompt;
       case "create_retry_prompt":
-        return data.query_generation_prompt;
+        return "**The following prompt would be use to generate the SPARQL query:**\n" + data.query_generation_prompt;
       case "verify_query":
         if (data.last_generated_query) {
-          return data.last_generated_query;
+          return "**We will verify the following query:**\n" + "```sparql\n" + data.last_generated_query + "\n```";
         } else {
-          return data.number_of_tries;
+          return "**The number of ties up to now:**" + data.number_of_tries;
         }
       case "run_query":
-        return data.last_query_results;
+        return this.csvToMarkdown(data.last_query_results);
 
       default:
         return JSON.stringify(data);
     }
+  }
+
+  csvToMarkdown(csv: string): string {
+    const rows = csv.trim().split("\r\n").map(row => row.split(","));
+
+    if (rows.length < 2) {
+        // throw new Error("CSV must have at least a header and one row of data.");
+        return "**After running the query we obtained an empty result 🫢**\n";
+    }
+
+    const header = `| ${rows[0].join(" | ")} |`;
+    const separator = `| ${rows[0].map(() => "---").join(" | ")} |`;
+    const dataRows = rows.slice(1).map(row => `| ${row.join(" | ")} |`);
+
+    return "**After running the query we obtained the following results:**\n" + [header, separator, ...dataRows].join("\n");
+  }
+
+  stop_wrkflow() {
+
   }
 }

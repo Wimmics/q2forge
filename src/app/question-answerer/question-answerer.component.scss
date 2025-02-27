@@ -1,4 +1,5 @@
 @use "../../styles/_variables" as *;
+@use '@angular/material' as mat;
 
 .container {
     display: flex;
@@ -10,7 +11,8 @@
 }
 
 .question-container {
-    position: fixed;
+    // position: fixed;
+    position: sticky;
     bottom: 0px;
     left: 5%;
     right: 5%;
@@ -34,17 +36,49 @@
 }
 
 .message {
+    @include mat.expansion-overrides((container-text-color: rgb(0, 0, 0),
+            header-hover-state-layer-color: rgb(255, 255, 255),
+        ));
+
     padding: 10px;
     border-radius: 10px;
     max-width: 70%;
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.3);
+    border-left: #15008f 8px solid;
+
+    // p {
+    //     a {
+    //         color: #3f3c50;
+    //     }
+    // }
 }
 
 .user-message {
     align-self: flex-end;
-    background-color: $user-message-background-color ;
+    @include mat.expansion-overrides((container-background-color: $user-message-background-color));
+
+    mat-expansion-panel-header {
+        background-color: rgb(197, 197, 197);
+        margin-bottom: 16px;
+
+    }
 }
 
 .system-message {
     align-self: flex-start;
-    background-color: $system-message-background-color;
+    @include mat.expansion-overrides((container-background-color: $system-message-background-color));
+
+    mat-expansion-panel-header {
+        background-color: rgb(197, 197, 197);
+        margin-bottom: 16px;
+    }
+}
+
+
+.message-sender {
+    font-size: 0.7rem;
+    color: #15008f;
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 3px;
 }
