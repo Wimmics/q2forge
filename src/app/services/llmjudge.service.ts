@@ -13,7 +13,7 @@ export class LLMJudgeService {
 
   constructor(private http: HttpClient) { }
 
-  getLLMAnswer(selectedLLM: LLMModel, question: string, sparqlQuery: string, dataSource: SPARQLPartInfo[]): Observable<any> {
+  getLLMAnswer(selectedLLM: LLMModel, question: string, sparqlQuery: string, dataSource: SPARQLPartInfo[]): Promise<Response> {
 
     const body = {
       "modelProvider": selectedLLM.modelProvider,
@@ -24,6 +24,12 @@ export class LLMJudgeService {
       "sparql_query_context": dataSource.map((info) => `${info.uri}: ${info.info}`).join("\n")
     }
 
-    return this.http.post<any>(JUDGE_QUERY_ENDPOINT, body);
+    return fetch(JUDGE_QUERY_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    })
   }
 }

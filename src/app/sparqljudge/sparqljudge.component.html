@@ -103,10 +103,6 @@
     </div>
     }
 
-    @if (loadingLLMAnswer) {
-    <div class="loading-message">Getting response...</div>
-    }
-
     @if (errorLLMAnswer) {
         <div class="error-message">Error: {{ errorLLMAnswer }}</div>
         }
@@ -115,12 +111,6 @@
     <h2>LLM as a Judge Answer</h2>
     <div>
         <markdown [data]="llmAnswer"></markdown>
-        <!-- <p>
-            <strong>Grade:</strong> {{ llmAnswer.grade }}
-        </p>
-        <p>
-            <strong>Justification:</strong> {{ llmAnswer.justification }}
-        </p> -->
     </div>
 
     }

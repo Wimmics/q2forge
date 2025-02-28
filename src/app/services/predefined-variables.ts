@@ -69,7 +69,8 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
     modelName: "llama3.2:1b",
   }];
 
-const SERVER = "http://localhost:8000"
+// const SERVER = "http://localhost:8000" // dev
+const SERVER = "http://134.59.134.239" // prod
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
 export const GENERATE_QUESTION_ENDPOINT = `${SERVER}/api/test_dataset/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${SERVER}/api/test_dataset/judge_query`

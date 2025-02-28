@@ -165,7 +165,7 @@ export class QuestionGeneratorComponent {
                   this.llmAnswer += stream_part.data;
                 }
                 else if (stream_part.event === 'on_chat_model_end') {
-                  this.llmAnswer += `The streaming of the response ended.\n`;
+                  this.llmAnswer += `\nThe streaming of the response ended.\n`;
                 }
               });
 

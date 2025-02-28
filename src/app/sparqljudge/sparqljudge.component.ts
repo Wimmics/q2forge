@@ -129,7 +129,6 @@ export class SPARQLJudgeComponent {
     this.loading = false;
     this.error = '';
     this.properties.set([...this.defaultProperties]);
-    this.loadingLLMAnswer = false;
     this.llmAnswer = '';
   }
 
@@ -188,21 +187,108 @@ export class SPARQLJudgeComponent {
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[0];
   llmAnswer!: string;
-  loadingLLMAnswer = false;
   errorLLMAnswer: string = '';
   getLLMasJudgeAnswer() {
     if (this.question.value && this.query.value) {
-      this.loadingLLMAnswer = true;
       this.llmAnswer = '';
       this.errorLLMAnswer = '';
-      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource).
-        subscribe((answer) => {
-          this.llmAnswer = answer.result;
-          this.loadingLLMAnswer = false;
-        }, (error) => {
-          this.errorLLMAnswer = error?.error?.detail
-          this.loadingLLMAnswer = false;
+      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource)
+        .then(response => {
+          const reader = response.body?.getReader();
+          const decoder = new TextDecoder();
+          let buffer = ''; // Accumulate stream chunks
+
+          const read = () => {
+            reader?.read().then(({ done, value }) => {
+              if (done) {
+                // console.log('Stream complete');
+                processBuffer(buffer, true); // Process any remaining valid JSON
+                return;
+              }
+
+              buffer += decoder.decode(value, { stream: true }); // Append streamed data
+
+              // console.log('Buffer:', buffer);
+              processBuffer(buffer, false); // Try parsing valid JSON objects
+
+              read();
+            });
+          };
+
+          const processBuffer = (data: any, isComplete: boolean) => {
+            try {
+              let jsonObjects = [];
+              let startIdx = 0;
+              let lastJsonEnd = 0;
+              // let tryCount = 0;
+
+              while (startIdx < data.length) {
+                // console.log(`Try count: ${++tryCount}`);
+
+                let jsonStart = data.indexOf('{', startIdx);
+                let jsonEnd = data.indexOf('}', lastJsonEnd);
+
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                  try {
+                    let jsonChunk = data.substring(jsonStart, jsonEnd + 1);
+                    // console.log(jsonChunk);
+
+                    let parsedJson = JSON.parse(jsonChunk);
+
+                    if (
+                      typeof parsedJson === 'object' &&
+                      parsedJson.hasOwnProperty('event')) {
+                      jsonObjects.push(parsedJson);
+                      // console.log(`Parsed JSON: ${JSON.stringify(parsedJson)}`);
+                      startIdx = jsonEnd + 1; // Move past processed JSON
+                    } else {
+                      // If it doesn't match the expected schema, ignore and continue
+                      // console.log('Invalid JSON:', jsonChunk);
+                      startIdx = jsonStart + 1;
+                    }
+
+                  } catch (error) {
+                    lastJsonEnd = jsonEnd + 1;
+                    // console.error('JSON parsing error:', error);
+                    // console.log(`startIdx < data.length: ${startIdx < data.length}`);   
+                    // Incomplete JSON, keep accumulating
+                    // break;
+                  }
+                } else {
+                  // No complete JSON found, break
+                  break;
+                }
+              }
+
+              // Keep only the unprocessed part in buffer
+              buffer = data.substring(startIdx);
+
+              // Process parsed JSON objects
+              jsonObjects.forEach(stream_part => {
+                // console.log(json); // Handle the valid JSON
+
+                if (stream_part.event === 'on_chat_model_start') {
+                  this.llmAnswer = `The answer from the model will be streamed soon ... \n\n`;
+                }
+                else if (stream_part.event === 'on_chat_model_stream') {
+                  this.llmAnswer += stream_part.data;
+                }
+                else if (stream_part.event === 'on_chat_model_end') {
+                  this.llmAnswer += `\nThe streaming of the response ended.\n`;
+                }
+              });
+
+            } catch (error) {
+              console.error("JSON parsing error:", error);
+            }
+          };
+
+          read();
         })
+        .catch(error => {
+          console.error('Stream error:', error);
+          this.errorLLMAnswer = error?.error?.detail;
+        });
     }
   }
 
