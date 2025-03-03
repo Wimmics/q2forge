@@ -10,6 +10,10 @@
     flex: 1;
 }
 
+.full-width {
+    width: 100%;
+}
+
 .input-container {
     position: sticky;
     bottom: 0px;
@@ -25,6 +29,7 @@
 .llm-scenario-container {
     display: flex;
     gap: 16px;
+
 }
 
 .schema-button-container {
@@ -37,8 +42,7 @@
     width: 450px;
     height: 500px;
     bottom: 80px;
-    z-index: 1;
-    transform: translateX(-50%);
+    transform: translateX(-90%);
     background-color: #d8d8d8;
     padding: 5px;
     border-radius: 5px;
@@ -53,7 +57,7 @@
     align-items: center;
 }
 
-.schema-tooltip-header{
+.schema-tooltip-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -61,15 +65,15 @@
     padding: 5px;
     border-radius: 5px;
 
-    button{
+    button {
         background-color: rgb(243, 134, 134);
         color: rgb(221, 220, 220);
     }
 }
 
 .schema-button {
-    background-color: #a8a8a8;
-    color: #fff;
+    // background-color: #839cc2;
+    // color: #fff;
     border-radius: 20px;
     padding: 10px;
     font-size: 1.5rem;
@@ -77,9 +81,6 @@
     cursor: pointer;
     transition: background-color 0.3s;
 
-    &:hover {
-        background-color: #0d0066;
-    }
 }
 
 .question-container {
@@ -99,6 +100,8 @@
 }
 
 .message {
+    z-index: 0;
+
     @include mat.expansion-overrides((container-text-color: rgb(0, 0, 0),
             header-hover-state-layer-color: rgb(255, 255, 255),
         ));

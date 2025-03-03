@@ -68,6 +68,7 @@ export class QuestionAnswererComponent implements OnInit {
       )
       this.answerQuestionService.answer_question(
         this.selectedLLM,
+        this.selectedScenario.scenario_id,
         this.question_fc.value!,
       ).then(response => {
         const reader = response.body?.getReader();
@@ -148,12 +149,15 @@ export class QuestionAnswererComponent implements OnInit {
 
 
               if (stream_part.event === 'on_chain_end') {
-                this.chat_messages.push(
-                  {
-                    "sender": stream_part.node,
-                    "content": this.extractDataFromStreamPart(stream_part.data, stream_part.node)
-                  }
-                );
+                let content = this.extractDataFromStreamPart(stream_part.data, stream_part.node);
+                if (content.length > 0) {
+                  this.chat_messages.push(
+                    {
+                      "sender": stream_part.node,
+                      "content": content
+                    }
+                  );
+                }
               }
               else if (stream_part.event === 'on_chat_model_start') {
                 this.chat_messages.push(
@@ -203,12 +207,12 @@ export class QuestionAnswererComponent implements OnInit {
   }
 
   graphSchemas: GraphSchema[] = [
-    { scenario_id: "1" },
-    { scenario_id: "2" },
-    { scenario_id: "3" },
-    { scenario_id: "4" },
-    { scenario_id: "5" },
-    { scenario_id: "6" }
+    { scenario_id: 1 },
+    { scenario_id: 2 },
+    { scenario_id: 3 },
+    { scenario_id: 4 },
+    { scenario_id: 5 },
+    { scenario_id: 6 }
   ];
 
   selectedScenario = this.graphSchemas[5];
@@ -218,16 +222,12 @@ export class QuestionAnswererComponent implements OnInit {
   init_scenario_schemas() {
     for (let scenario of this.graphSchemas) {
       this.answerQuestionService.get_graph_schema(scenario.scenario_id).subscribe(data => {
-        console.log(data);
         for (let i = 0; i < this.graphSchemas.length; i++) {
           if (this.graphSchemas[i].scenario_id == scenario.scenario_id) {
-            this.graphSchemas[i].schema = "```mermaid\n"+data.schema+"\n```";
+            this.graphSchemas[i].schema = "```mermaid\n" + data.schema + "\n```";
             break;
           }
         }
-
-        console.log(this.graphSchemas);
-        
       });
     }
   }
@@ -252,9 +252,13 @@ export class QuestionAnswererComponent implements OnInit {
       case "select_similar_classes":
         return "**The relevant retrieved classes with their label and description in the question:**\n" + data.selected_classes.map((item: string) => `* ${item}.`).join("\n")
       case "get_context_class_from_cache":
-        return "**The following class context was retrieved from the cache 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
-      case "get_context_class_from_kg":
-        return "**The following class context was retrieved from the KG 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
+      case "get_context_class_from_kg": {
+        let content = data.selected_classes_context[0].trim() as string;
+        if (content.length != 0) {
+          return "**The following class context was retrieved from the cache 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
+        } else
+          return "";
+      }
       case "create_prompt":
         return "**The following prompt would be use to generate the SPARQL query:**\n" + data.query_generation_prompt;
       case "create_retry_prompt":
