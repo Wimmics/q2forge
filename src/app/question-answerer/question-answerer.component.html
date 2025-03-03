@@ -1,7 +1,14 @@
 <div class="container">
     <div class="page-header">KG Question Answerer</div>
 
-    <div class="chat-container">
+    <!-- @for (item of graphSchemas; track $index) {
+    <div>
+        <p>{{item.scenario_id}}</p>
+        <markdown mermaid [data]="item.schema"> </markdown>
+    </div>
+    } -->
+
+    <div class=" chat-container">
         @if (errorLLMAnswer) {
         <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
         }
@@ -39,30 +46,64 @@
 
     </div>
 
-    <div class="question-container">
-        <mat-form-field class="full-width">
-            <mat-label>LLM Model</mat-label>
-            <mat-select [(ngModel)]="selectedLLM">
-                @for (model of availableLLMModels; track model) {
-                <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+    <div class="input-container">
+        <div class="llm-scenario-container">
+            <mat-form-field class="full-width">
+                <mat-label>LLM Model</mat-label>
+                <mat-select [(ngModel)]="selectedLLM">
+                    @for (model of availableLLMModels; track model) {
+                    <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field class="full-width">
+                <mat-label>Scenario</mat-label>
+                <mat-select [(ngModel)]="selectedScenario">
+                    @for (item of graphSchemas; track item) {
+                    <mat-option [value]="item">Scenario: {{item.scenario_id}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+
+            <div class="schema-button-container">
+
+                @if (isScenarioButtonHovered) {
+                <div class="schema-tooltip">
+                    <div class="schema-tooltip-header">
+                        <p><b>Mermaid Schema</b></p>
+                        <button mat-mini-fab (click)="hideSchemaDiv()">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                    <markdown mermaid [data]="selectedScenario.schema"> </markdown>
+                    <a [href]='"/home#scenario_"+ selectedScenario.scenario_id'>Go to scenario explanation</a>
+                </div>
                 }
-            </mat-select>
-        </mat-form-field>
 
-        <mat-form-field class="question-input">
-            <mat-label>Question to answer</mat-label>
-            <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
-        </mat-form-field>
+                <button class="schema-button" mat-mini-fab (click)="showHideSchemaDiv()">
+                    ?
+                </button>
+                <!-- Tooltip -->
 
-        @if(!workflowRunning) {
+            </div>
+        </div>
+        <div class="question-container">
+            <mat-form-field class="question-input">
+                <mat-label>Question to answer</mat-label>
+                <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
+            </mat-form-field>
+
+            @if(!workflowRunning) {
             <button mat-mini-fab (click)="ask_question()">
                 <mat-icon>send</mat-icon>
             </button>
-        }@else {
+            }@else {
             <button mat-mini-fab (click)="stop_wrkflow()" disabled="true">
                 <mat-icon>stop</mat-icon>
             </button>
-        }
+            }
+        </div>
     </div>
 
 </div>

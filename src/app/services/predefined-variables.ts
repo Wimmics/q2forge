@@ -69,12 +69,14 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
     modelName: "llama3.2:1b",
   }];
 
-// const SERVER = "http://localhost:8000" // dev
-const SERVER = "http://134.59.134.239" // prod
+const SERVER = "http://localhost:8000" // dev
+// const SERVER = "http://134.59.134.239" // prod
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
-export const GENERATE_QUESTION_ENDPOINT = `${SERVER}/api/test_dataset/generate-question`
-export const JUDGE_QUERY_ENDPOINT = `${SERVER}/api/test_dataset/judge_query`
-export const ANSWER_QUESTION_ENDPOINT = `${SERVER}/api/test_dataset/answer_question`
+const API_BASE = `${SERVER}/api/test_dataset`
+export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`
+export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
+export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`
+export const GRAPH_SCHEMA_ENDPOINT = `${API_BASE}/scenario_graph_schema`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"
 

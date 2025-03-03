@@ -159,7 +159,7 @@ export class QuestionGeneratorComponent {
                 // console.log(json); // Handle the valid JSON
 
                 if (stream_part.event === 'on_chat_model_start') {
-                  this.llmAnswer = `The answer from the model will be streamed soon ...\n`;
+                  this.llmAnswer = `The answer from the model will be streamed soon ... \n\n`;
                 }
                 else if (stream_part.event === 'on_chat_model_stream') {
                   this.llmAnswer += stream_part.data;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,7 @@ import { JsonPipe } from '@angular/common';
 import { ChatMessage } from '../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { GraphSchema } from '../models/graph-schema';
 
 @Component({
   selector: 'app-question-answerer',
@@ -20,7 +21,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
-export class QuestionAnswererComponent {
+export class QuestionAnswererComponent implements OnInit {
 
   model = {
     question: DEFAULT_JUDGE_QUESTION
@@ -50,6 +51,10 @@ export class QuestionAnswererComponent {
   ];
 
   constructor(private answerQuestionService: AnswerQuestionService) { }
+
+  ngOnInit(): void {
+    this.init_scenario_schemas();
+  }
 
   ask_question() {
     if (this.question_fc.value) {
@@ -197,6 +202,43 @@ export class QuestionAnswererComponent {
     }
   }
 
+  graphSchemas: GraphSchema[] = [
+    { scenario_id: "1" },
+    { scenario_id: "2" },
+    { scenario_id: "3" },
+    { scenario_id: "4" },
+    { scenario_id: "5" },
+    { scenario_id: "6" }
+  ];
+
+  selectedScenario = this.graphSchemas[5];
+
+  isScenarioButtonHovered = false;
+
+  init_scenario_schemas() {
+    for (let scenario of this.graphSchemas) {
+      this.answerQuestionService.get_graph_schema(scenario.scenario_id).subscribe(data => {
+        console.log(data);
+        for (let i = 0; i < this.graphSchemas.length; i++) {
+          if (this.graphSchemas[i].scenario_id == scenario.scenario_id) {
+            this.graphSchemas[i].schema = "```mermaid\n"+data.schema+"\n```";
+            break;
+          }
+        }
+
+        console.log(this.graphSchemas);
+        
+      });
+    }
+  }
+
+  showHideSchemaDiv() {
+    this.isScenarioButtonHovered = !this.isScenarioButtonHovered;
+  }
+
+  hideSchemaDiv() {
+    this.isScenarioButtonHovered = false;
+  }
 
   extractDataFromStreamPart(data: any, node: string): string {
 
@@ -235,8 +277,8 @@ export class QuestionAnswererComponent {
     const rows = csv.trim().split("\r\n").map(row => row.split(","));
 
     if (rows.length < 2) {
-        // throw new Error("CSV must have at least a header and one row of data.");
-        return "**After running the query we obtained an empty result 🫢**\n";
+      // throw new Error("CSV must have at least a header and one row of data.");
+      return "**After running the query we obtained an empty result 🫢**\n";
     }
 
     const header = `| ${rows[0].join(" | ")} |`;

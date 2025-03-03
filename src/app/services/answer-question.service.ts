@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { LLMModel } from '../models/llmmodel';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { ANSWER_QUESTION_ENDPOINT } from './predefined-variables';
+import { ANSWER_QUESTION_ENDPOINT, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
+import { Observable } from 'rxjs';
 
 
 @Injectable({
@@ -27,6 +28,14 @@ export class AnswerQuestionService {
       },
       body: JSON.stringify(body)
     })
-      
   }
+
+  get_graph_schema(scenario_id: string): Observable<any> {
+
+    const body = {
+      "scenario_id": scenario_id,
+    }
+    return this.http.post(GRAPH_SCHEMA_ENDPOINT, body);
+  }
+
 }
