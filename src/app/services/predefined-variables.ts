@@ -20,26 +20,6 @@ export const DEFAULT_SPARQL_JUDGE_QUERY = `PREFIX rdf: <http://www.w3.org/1999/0
       ORDER BY DESC(?score)
       LIMIT 5`
 
-export const KNOWN_PREFIXES = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX compound: <http://rdf.ncbi.nlm.nih.gov/pubchem/compound/>
-PREFIX chebi: <http://purl.obolibrary.org/obo/CHEBI_>
-PREFIX schema: <http://schema.org/>
-PREFIX enpkg_module: <https://enpkg.commons-lab.org/module/>
-PREFIX pav: <http://purl.org/pav/>
-PREFIX example: <http://example.org/>
-PREFIX enpkg: <https://enpkg.commons-lab.org/kg/>
-PREFIX obo: <http://purl.obolibrary.org/obo/>
-PREFIX cito: <http://purl.org/spar/cito/>
-PREFIX pubchem: <http://rdf.ncbi.nlm.nih.gov/pubchem/vocabulary#>
-PREFIX sio: <http://semanticscience.org/resource/>
-PREFIX bao: <http://www.bioassayontology.org/bao#>
-PREFIX chebi: <http://purl.obolibrary.org/obo/CHEBI_>
-PREFIX cheminf: <http://semanticscience.org/resource/CHEMINF_>
-PREFIX chembl: <http://rdf.ebi.ac.uk/terms/chembl#>`
-
-
 export const AVAILABLE_LLM_MODELS: LLMModel[] = [
   {
     modelProvider: "Ovh",
@@ -77,6 +57,7 @@ export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
 export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`
 export const GRAPH_SCHEMA_ENDPOINT = `${API_BASE}/scenario_graph_schema`
+export const DEFAULT_CONFIG_ENDPOINT = `${API_BASE}/default_config`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"
 

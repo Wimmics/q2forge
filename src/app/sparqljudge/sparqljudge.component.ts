@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,7 +19,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { LLMModel } from '../models/llmmodel';
 import { MarkdownComponent } from 'ngx-markdown';
-import { DEFAULT_SPARQL_JUDGE_QUERY, KNOWN_PREFIXES, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
+import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
+import { ConfigManagerService } from '../services/config-manager.service';
 
 
 @Component({
@@ -42,15 +43,14 @@ export class SPARQLJudgeComponent {
 
   constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
-    private llmJudgeService: LLMJudgeService) { }
+    private llmJudgeService: LLMJudgeService,
+    private configManagerService: ConfigManagerService) { }
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
     question: DEFAULT_JUDGE_QUESTION,
     query: DEFAULT_SPARQL_JUDGE_QUERY,
   }
-
-  knownPrefixeds = KNOWN_PREFIXES;
 
   endpoint = new FormControl(this.model.endpoint,
     [
@@ -81,7 +81,9 @@ export class SPARQLJudgeComponent {
   }
 
   addKnownPrefixes() {
-    this.query.setValue(this.knownPrefixeds + "\n" + this.query.value);
+    let knownPrefixes = this.configManagerService.getPrefixes();
+
+    this.query.setValue(Object.entries(knownPrefixes).map(([key, value]) => `PREFIX ${key}: <${value}> \n`).join("") + this.query.value);
   }
 
   getQandFQNamesInfo() {
