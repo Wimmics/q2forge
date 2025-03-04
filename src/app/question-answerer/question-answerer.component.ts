@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AnswerQuestionService } from '../services/answer-question.service';
-import { LLMModel } from '../models/llmmodel';
 import { MatSelectModule } from '@angular/material/select';
 import { MarkdownComponent } from 'ngx-markdown';
 import { JsonPipe } from '@angular/common';
@@ -13,6 +12,7 @@ import { ChatMessage } from '../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GraphSchema } from '../models/graph-schema';
+import { ConfigManagerService } from '../services/config-manager.service';
 
 @Component({
   selector: 'app-question-answerer',
@@ -21,7 +21,7 @@ import { GraphSchema } from '../models/graph-schema';
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
-export class QuestionAnswererComponent implements OnInit {
+export class QuestionAnswererComponent implements OnInit, AfterViewInit {
 
   model = {
     question: DEFAULT_JUDGE_QUESTION
@@ -32,8 +32,11 @@ export class QuestionAnswererComponent implements OnInit {
   workflowRunning = false;
   errorLLMAnswer = '';
 
-  availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
-  selectedLLM = this.availableLLMModels[5];
+  availableSeq2SeqModels: string[] = [];
+  selectedSeq2SeqModel!: string;
+
+  availableEmbeddingModels: string[] = [];
+  selectedEmbeddingModel!: string;
 
   chat_messages: ChatMessage[] = [
     // {
@@ -50,10 +53,15 @@ export class QuestionAnswererComponent implements OnInit {
     // }
   ];
 
-  constructor(private answerQuestionService: AnswerQuestionService) { }
+  constructor(private answerQuestionService: AnswerQuestionService,
+    private configManagerService: ConfigManagerService) { }
 
   ngOnInit(): void {
     this.init_scenario_schemas();
+  }
+
+  ngAfterViewInit(): void {
+    this.init_available_models();
   }
 
   ask_question() {
@@ -67,7 +75,8 @@ export class QuestionAnswererComponent implements OnInit {
         }
       )
       this.answerQuestionService.answer_question(
-        this.selectedLLM,
+        this.selectedSeq2SeqModel,
+        this.selectedEmbeddingModel,
         this.selectedScenario.scenario_id,
         this.question_fc.value!,
       ).then(response => {
@@ -232,6 +241,19 @@ export class QuestionAnswererComponent implements OnInit {
     }
   }
 
+  init_available_models() {
+
+    this.configManagerService.getSequ2SeqModels().then((data) => {
+      this.availableSeq2SeqModels = data;
+      this.selectedSeq2SeqModel = this.availableSeq2SeqModels[0];
+    });
+
+    this.configManagerService.getTextEmbeddingModels().then((data) => {
+      this.availableEmbeddingModels = data;
+      this.selectedEmbeddingModel = this.availableEmbeddingModels[0];
+    });
+  }
+
   showHideSchemaDiv() {
     this.isScenarioButtonHovered = !this.isScenarioButtonHovered;
   }
@@ -255,7 +277,7 @@ export class QuestionAnswererComponent implements OnInit {
       case "get_context_class_from_kg": {
         let content = data.selected_classes_context[0].trim() as string;
         if (content.length != 0) {
-          return "**The following class context was retrieved from the cache 🐢🐢🐢:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
+          return "**The following class context was retrieved from the cache:**\n" + "```turtle\n" + data.selected_classes_context[0] + "\n```";
         } else
           return "";
       }
@@ -267,7 +289,7 @@ export class QuestionAnswererComponent implements OnInit {
         if (data.last_generated_query) {
           return "**We will verify the following query:**\n" + "```sparql\n" + data.last_generated_query + "\n```";
         } else {
-          return "**The number of ties up to now:**" + data.number_of_tries;
+          return "**The number of tries up to now:** " + data.number_of_tries;
         }
       case "run_query":
         return this.csvToMarkdown(data.last_query_results);

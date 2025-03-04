@@ -49,10 +49,19 @@
     <div class="input-container">
         <div class="llm-scenario-container">
             <mat-form-field class="full-width">
-                <mat-label>LLM Model</mat-label>
-                <mat-select [(ngModel)]="selectedLLM">
-                    @for (model of availableLLMModels; track model) {
-                    <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+                <mat-label>Seq2Seq Model</mat-label>
+                <mat-select [(ngModel)]="selectedSeq2SeqModel">
+                    @for (item of availableSeq2SeqModels; track item) {
+                    <mat-option [value]="item">{{item}}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>Text Embedding Model</mat-label>
+                <mat-select [(ngModel)]="selectedEmbeddingModel" [disabled]="[1,2].includes(selectedScenario.scenario_id)">
+                    @for (item of availableEmbeddingModels; track item) {
+                    <mat-option [value]="item">{{item}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>

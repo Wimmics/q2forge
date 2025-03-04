@@ -12,16 +12,19 @@ export class AnswerQuestionService {
 
   constructor(private http: HttpClient) { }
 
-  answer_question(selectedLLM: LLMModel, scenario_id: number, question: string): Promise<Response> {
+  answer_question(seq2SeqModel: string, textEmbeddingModel: string, scenario_id: number, question: string): Promise<Response> {
 
-    const body = {
-      "model_provider": selectedLLM.modelProvider,
-      "model_name": selectedLLM.modelName,
-      "base_uri": selectedLLM.baseUri,
+
+    const body: Record<string, any> = {
+      "seq2seq_model": seq2SeqModel,
       "question": question,
       "scenario_id": scenario_id
     }
 
+    if (![1, 2].includes(scenario_id)) {
+      Object.assign(body, { "text_embedding_model": textEmbeddingModel });
+    }
+    
     return fetch(ANSWER_QUESTION_ENDPOINT, {
       method: 'POST',
       headers: {
