@@ -28,11 +28,6 @@
 
         </mat-expansion-panel>
         }@else {
-        <!-- <div class="message system-message" [matTooltip]="item.sender" matTooltipPosition="above">
-            <span class="message-sender"><b>Node >>></b> {{item.sender}}</span>
-            <markdown lineNumbers [data]="item.content"></markdown>
-        </div> -->
-
         <mat-expansion-panel class="message system-message" expanded="true">
             <mat-expansion-panel-header>
                 <mat-panel-title> <mat-icon>memory</mat-icon> ➡️ {{item.sender}}</mat-panel-title>
@@ -52,19 +47,30 @@
                 <mat-label>Seq2Seq Model</mat-label>
                 <mat-select [(ngModel)]="selectedSeq2SeqModel">
                     @for (item of availableSeq2SeqModels; track item) {
-                    <mat-option [value]="item">{{item}}</mat-option>
+                    <mat-option [value]="item">{{item.configName}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
 
+            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab matTooltip="{{selectedSeq2SeqModel | json}}"
+                matTooltipPosition="above" matTooltipHideDelay="2000">
+                ?
+            </button>
+
             <mat-form-field class="full-width">
                 <mat-label>Text Embedding Model</mat-label>
-                <mat-select [(ngModel)]="selectedEmbeddingModel" [disabled]="[1,2].includes(selectedScenario.scenario_id)">
+                <mat-select [(ngModel)]="selectedEmbeddingModel"
+                    [disabled]="[1,2].includes(selectedScenario.scenario_id)">
                     @for (item of availableEmbeddingModels; track item) {
-                    <mat-option [value]="item">{{item}}</mat-option>
+                    <mat-option [value]="item">{{item.configName}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
+            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab matTooltip="{{selectedEmbeddingModel | json}}"
+                matTooltipPosition="above" matTooltipHideDelay="2000">
+                ?
+            </button>
+
             <mat-form-field class="full-width">
                 <mat-label>Scenario</mat-label>
                 <mat-select [(ngModel)]="selectedScenario">
@@ -90,20 +96,25 @@
                 </div>
                 }
 
-                <button class="schema-button" mat-mini-fab (click)="showHideSchemaDiv()">
+                <button class="schema-button" mat-mini-fab (click)="showHideSchemaDiv()"
+                    matTooltip="Click to see the schema" matTooltipPosition="above" matTooltipHideDelay="2000">
                     ?
                 </button>
 
             </div>
         </div>
-        <div class="question-container">
+        <div class=" question-container">
             <mat-form-field class="question-input">
                 <mat-label>Question to answer</mat-label>
                 <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
+                @if (question_fc.hasError('required')) {
+                <mat-error>The question is <strong>required</strong></mat-error>
+                }
             </mat-form-field>
 
             @if(!workflowRunning) {
-            <button mat-mini-fab (click)="ask_question()">
+            <button mat-mini-fab (click)="ask_question()"
+                [disabled]="selectedSeq2SeqModel == undefined || selectedEmbeddingModel == undefined || selectedScenario == undefined || question_fc.invalid">
                 <mat-icon>send</mat-icon>
             </button>
             }@else {

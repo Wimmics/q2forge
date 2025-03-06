@@ -101,22 +101,11 @@
 
 .message {
     z-index: 0;
-
-    @include mat.expansion-overrides((container-text-color: rgb(0, 0, 0),
-            header-hover-state-layer-color: rgb(255, 255, 255),
-        ));
-
     padding: 10px;
     border-radius: 10px;
     max-width: 70%;
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.3);
     border-left: #15008f 8px solid;
-
-    // p {
-    //     a {
-    //         color: #3f3c50;
-    //     }
-    // }
 }
 
 .user-message {
@@ -147,4 +136,8 @@
     background-color: #fff;
     border-radius: 6px;
     padding: 3px;
+}
+
+.tooltip-multiline {
+    white-space: pre-line !important;; 
 }

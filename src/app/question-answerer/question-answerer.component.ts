@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AnswerQuestionService } from '../services/answer-question.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,6 +13,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { GraphSchema } from '../models/graph-schema';
 import { ConfigManagerService } from '../services/config-manager.service';
+import { Seq2SeqModel } from '../models/seq2seqmodel';
+import { TextEmbeddingModel } from '../models/text-embedding-model';
 
 @Component({
   selector: 'app-question-answerer',
@@ -27,16 +29,18 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
     question: DEFAULT_JUDGE_QUESTION
   }
 
-  question_fc = new FormControl(this.model.question);
+  question_fc = new FormControl(this.model.question, [
+    Validators.required,
+  ]);
 
   workflowRunning = false;
   errorLLMAnswer = '';
 
-  availableSeq2SeqModels: string[] = [];
-  selectedSeq2SeqModel!: string;
+  availableSeq2SeqModels: Seq2SeqModel[] = [];
+  selectedSeq2SeqModel!: Seq2SeqModel;
 
-  availableEmbeddingModels: string[] = [];
-  selectedEmbeddingModel!: string;
+  availableEmbeddingModels: TextEmbeddingModel[] = [];
+  selectedEmbeddingModel!: TextEmbeddingModel;
 
   chat_messages: ChatMessage[] = [
     // {
@@ -54,7 +58,8 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
   ];
 
   constructor(private answerQuestionService: AnswerQuestionService,
-    private configManagerService: ConfigManagerService) { }
+    private configManagerService: ConfigManagerService) {
+  }
 
   ngOnInit(): void {
     this.init_scenario_schemas();
@@ -243,7 +248,7 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
 
   init_available_models() {
 
-    this.configManagerService.getSequ2SeqModels().then((data) => {
+    this.configManagerService.getSeq2SeqModels().then((data) => {
       this.availableSeq2SeqModels = data;
       this.selectedSeq2SeqModel = this.availableSeq2SeqModels[0];
     });
@@ -317,4 +322,6 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
   stop_wrkflow() {
 
   }
+
+
 }

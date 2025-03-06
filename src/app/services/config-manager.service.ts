@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DEFAULT_CONFIG_ENDPOINT } from './predefined-variables';
+import { Seq2SeqModel } from '../models/seq2seqmodel';
+import { TextEmbeddingModel } from '../models/text-embedding-model';
 
 
 @Injectable({
@@ -27,10 +29,37 @@ export class ConfigManagerService {
     return this.defaultConfig.prefixes;
   }
 
-  getSequ2SeqModels(): Promise<any> {
+  transformSeq2SeqModels(): Seq2SeqModel[] {
+    return Object.entries(this.defaultConfig.seq2seq_models).map(([key, value]) => {
+      const model = value as Seq2SeqModel;
+      return {
+        configName: key,
+        base_url: model.base_url,
+        id: model.id,
+        max_retries: model.max_retries,
+        server_type: model.server_type,
+        temperature: model.temperature,
+        top_p: model.top_p
+      };
+    });
+  }
+
+  transformTextEmbeddingModels(): TextEmbeddingModel[] {
+    return Object.entries(this.defaultConfig.text_embedding_models).map(([key, value]) => {
+      const model = value as TextEmbeddingModel;
+      return {
+        configName: key,
+        server_type: model.server_type,
+        id: model.id,
+        vector_db: model.vector_db
+      };
+    });
+  }
+
+  getSeq2SeqModels(): Promise<Seq2SeqModel[]> {
     return new Promise((resolve) => {
       if (this.defaultConfig) {
-        resolve(Object.keys(this.defaultConfig.seq2seq_models));
+        resolve(this.transformSeq2SeqModels());
       } else {
         this.resolveSeq2SeqModelsFn = resolve;
       }
@@ -42,20 +71,20 @@ export class ConfigManagerService {
     this.defaultConfig = JSON.parse(value);
 
     if (this.resolveSeq2SeqModelsFn) {
-      this.resolveSeq2SeqModelsFn(Object.keys(this.defaultConfig.seq2seq_models));
+      this.resolveSeq2SeqModelsFn(this.transformSeq2SeqModels());
       this.resolveSeq2SeqModelsFn = null; // Prevent multiple calls
     }
 
     if (this.resolveTextEmbeddingModelsFn) {
-      this.resolveTextEmbeddingModelsFn(Object.keys(this.defaultConfig.text_embedding_models));
+      this.resolveTextEmbeddingModelsFn(this.transformTextEmbeddingModels());
       this.resolveTextEmbeddingModelsFn = null; // Prevent multiple calls
     }
   }
 
-  getTextEmbeddingModels(): Promise<any> {
+  getTextEmbeddingModels(): Promise<TextEmbeddingModel[]> {
     return new Promise((resolve) => {
       if (this.defaultConfig) {
-        resolve(Object.keys(this.defaultConfig.text_embedding_models));
+        resolve(this.transformTextEmbeddingModels());
       } else {
         this.resolveTextEmbeddingModelsFn = resolve;
       }
