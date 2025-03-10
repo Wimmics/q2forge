@@ -31,15 +31,16 @@ export class AppComponent {
     name: 'SPARQL Query Tester',
     route: '/sparql-judge',
     icon: 'check_circle_outline'
-  }, {
-    name: 'About',
-    route: '/about',
-    icon: 'info'
-  }, {
-    name: 'Contact',
-    route: '/contact',
-    icon: 'contact_mail'
-  }
+  },
+  //  {
+  //   name: 'About',
+  //   route: '/about',
+  //   icon: 'info'
+  // }, {
+  //   name: 'Contact',
+  //   route: '/contact',
+  //   icon: 'contact_mail'
+  // }
   ];
 
   protected readonly isMobile = signal(true);

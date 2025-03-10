@@ -89,7 +89,7 @@
                         </button>
                     </div>
                     <markdown mermaid [data]="selectedScenario.schema"> </markdown>
-                    <a target="_blank" [href]='"/#scenario_" + selectedScenario.scenario_id'>Go to scenario explanation</a>
+                    <a target="_blank" routerLink="/" fragment="scenario_{{ + selectedScenario.scenario_id}}" >Go to scenario explanation</a>
                 </div>
                 }
 

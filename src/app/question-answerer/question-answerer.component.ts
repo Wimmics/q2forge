@@ -15,11 +15,12 @@ import { GraphSchema } from '../models/graph-schema';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-question-answerer',
   imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
-    JsonPipe, MatTooltipModule, MatExpansionModule],
+    JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
