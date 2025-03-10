@@ -220,30 +220,16 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
     }
   }
 
-  graphSchemas: GraphSchema[] = [
-    { scenario_id: 1 },
-    { scenario_id: 2 },
-    { scenario_id: 3 },
-    { scenario_id: 4 },
-    { scenario_id: 5 },
-    { scenario_id: 6 }
-  ];
-
-  selectedScenario = this.graphSchemas[5];
+  graphSchemas: GraphSchema[] | undefined;
+  selectedScenario!: GraphSchema;
 
   isScenarioButtonHovered = false;
 
   init_scenario_schemas() {
-    for (let scenario of this.graphSchemas) {
-      this.answerQuestionService.get_graph_schema(scenario.scenario_id).subscribe(data => {
-        for (let i = 0; i < this.graphSchemas.length; i++) {
-          if (this.graphSchemas[i].scenario_id == scenario.scenario_id) {
-            this.graphSchemas[i].schema = "```mermaid\n" + data.schema + "\n```";
-            break;
-          }
-        }
-      });
-    }
+    this.configManagerService.getScenariosSchema().then(response => {
+      this.graphSchemas = response;
+      this.selectedScenario = response[5];
+    });
   }
 
   init_available_models() {

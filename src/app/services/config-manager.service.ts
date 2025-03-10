@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DEFAULT_CONFIG_ENDPOINT } from './predefined-variables';
+import { DEFAULT_CONFIG_ENDPOINT, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
+import { firstValueFrom, Observable, of } from 'rxjs';
+import { GraphSchema } from '../models/graph-schema';
 
 
 @Injectable({
@@ -10,10 +12,13 @@ import { TextEmbeddingModel } from '../models/text-embedding-model';
 })
 export class ConfigManagerService {
 
-  private defaultConfig: any
+  private currentConfig: any
+
+  private scenariosSchema: GraphSchema[] = [];
 
   resolveSeq2SeqModelsFn: ((value: any) => void) | null = null;
   resolveTextEmbeddingModelsFn: ((value: any) => void) | null = null;
+  resolveAvailableScenariosFn: ((value: any) => void) | null = null;
 
   constructor(private http: HttpClient) {
     this.initConfiguration();
@@ -25,12 +30,31 @@ export class ConfigManagerService {
     });
   }
 
+  setDefaultConfig(value: string) {
+    this.currentConfig = JSON.parse(value);
+
+    if (this.resolveSeq2SeqModelsFn) {
+      this.resolveSeq2SeqModelsFn(this.transformSeq2SeqModels());
+      this.resolveSeq2SeqModelsFn = null; // Prevent multiple calls
+    }
+
+    if (this.resolveTextEmbeddingModelsFn) {
+      this.resolveTextEmbeddingModelsFn(this.transformTextEmbeddingModels());
+      this.resolveTextEmbeddingModelsFn = null; // Prevent multiple calls
+    }
+
+    if (this.resolveAvailableScenariosFn) {
+      this.resolveAvailableScenariosFn(this.getScenariosSchema());
+      // this.resolveAvailableScenariosFn = null; // Prevent multiple calls
+    }
+  }
+
   getPrefixes() {
-    return this.defaultConfig.prefixes;
+    return this.currentConfig.prefixes;
   }
 
   transformSeq2SeqModels(): Seq2SeqModel[] {
-    return Object.entries(this.defaultConfig.seq2seq_models).map(([key, value]) => {
+    return Object.entries(this.currentConfig.seq2seq_models).map(([key, value]) => {
       const model = value as Seq2SeqModel;
       return {
         configName: key,
@@ -45,7 +69,7 @@ export class ConfigManagerService {
   }
 
   transformTextEmbeddingModels(): TextEmbeddingModel[] {
-    return Object.entries(this.defaultConfig.text_embedding_models).map(([key, value]) => {
+    return Object.entries(this.currentConfig.text_embedding_models).map(([key, value]) => {
       const model = value as TextEmbeddingModel;
       return {
         configName: key,
@@ -58,7 +82,7 @@ export class ConfigManagerService {
 
   getSeq2SeqModels(): Promise<Seq2SeqModel[]> {
     return new Promise((resolve) => {
-      if (this.defaultConfig) {
+      if (this.currentConfig) {
         resolve(this.transformSeq2SeqModels());
       } else {
         this.resolveSeq2SeqModelsFn = resolve;
@@ -66,27 +90,26 @@ export class ConfigManagerService {
     });
   }
 
-  // Set value and resolve promise
-  setDefaultConfig(value: string) {
-    this.defaultConfig = JSON.parse(value);
-
-    if (this.resolveSeq2SeqModelsFn) {
-      this.resolveSeq2SeqModelsFn(this.transformSeq2SeqModels());
-      this.resolveSeq2SeqModelsFn = null; // Prevent multiple calls
-    }
-
-    if (this.resolveTextEmbeddingModelsFn) {
-      this.resolveTextEmbeddingModelsFn(this.transformTextEmbeddingModels());
-      this.resolveTextEmbeddingModelsFn = null; // Prevent multiple calls
-    }
-  }
-
   getTextEmbeddingModels(): Promise<TextEmbeddingModel[]> {
     return new Promise((resolve) => {
-      if (this.defaultConfig) {
+      if (this.currentConfig) {
         resolve(this.transformTextEmbeddingModels());
       } else {
         this.resolveTextEmbeddingModelsFn = resolve;
+      }
+    });
+  }
+
+  getScenariosSchema(): Promise<GraphSchema[]> {
+    return new Promise((resolve) => {
+      if (this.scenariosSchema.length > 0) {
+        resolve(this.scenariosSchema);
+      }
+      else {
+        this.http.get<GraphSchema[]>(GRAPH_SCHEMA_ENDPOINT).subscribe((data: any) => {
+          this.scenariosSchema = data;
+          resolve(this.scenariosSchema);
+        });
       }
     });
   }

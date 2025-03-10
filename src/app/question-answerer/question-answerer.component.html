@@ -15,10 +15,6 @@
 
         @for (item of chat_messages; track $index) {
         @if(item.sender == "user") {
-        <!-- <div class="message user-message">
-            <markdown lineNumbers [data]="item.content"></markdown>
-        </div> -->
-
         <mat-expansion-panel class="message user-message" expanded="true">
             <mat-expansion-panel-header>
                 <mat-panel-title> <mat-icon>person_pin</mat-icon> ➡️ {{item.sender}}</mat-panel-title>
@@ -52,30 +48,31 @@
                 </mat-select>
             </mat-form-field>
 
-            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab matTooltip="{{selectedSeq2SeqModel | json}}"
-                matTooltipPosition="above" matTooltipHideDelay="2000">
+            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+                matTooltip="{{selectedSeq2SeqModel | json}}" matTooltipPosition="above" matTooltipHideDelay="2000"
+                [disabled]="selectedSeq2SeqModel == undefined">
                 ?
             </button>
 
             <mat-form-field class="full-width">
                 <mat-label>Text Embedding Model</mat-label>
                 <mat-select [(ngModel)]="selectedEmbeddingModel"
-                    [disabled]="[1,2].includes(selectedScenario.scenario_id)">
+                    [disabled]="(selectedScenario && [1,2].includes(selectedScenario.scenario_id))">
                     @for (item of availableEmbeddingModels; track item) {
                     <mat-option [value]="item">{{item.configName}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
-            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab matTooltip="{{selectedEmbeddingModel | json}}"
-                matTooltipPosition="above" matTooltipHideDelay="2000">
+            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+                matTooltip="{{selectedEmbeddingModel | json}}" matTooltipPosition="above" matTooltipHideDelay="2000"
+                [disabled]="selectedEmbeddingModel == undefined">
                 ?
             </button>
-
             <mat-form-field class="full-width">
                 <mat-label>Scenario</mat-label>
                 <mat-select [(ngModel)]="selectedScenario">
                     @for (item of graphSchemas; track item) {
-                    <mat-option [value]="item">Scenario: {{item.scenario_id}}</mat-option>
+                    <mat-option [value]="item">Scenario: {{item?.scenario_id}}</mat-option>
                     }
                 </mat-select>
             </mat-form-field>
@@ -92,12 +89,13 @@
                         </button>
                     </div>
                     <markdown mermaid [data]="selectedScenario.schema"> </markdown>
-                    <a [href]='"/home#scenario_"+ selectedScenario.scenario_id'>Go to scenario explanation</a>
+                    <a target="_blank" [href]='"/#scenario_" + selectedScenario.scenario_id'>Go to scenario explanation</a>
                 </div>
                 }
 
                 <button class="schema-button" mat-mini-fab (click)="showHideSchemaDiv()"
-                    matTooltip="Click to see the schema" matTooltipPosition="above" matTooltipHideDelay="2000">
+                    matTooltip="Click to see the schema" matTooltipPosition="above" matTooltipHideDelay="2000"
+                    [disabled]="selectedScenario == undefined">
                     ?
                 </button>
 

@@ -36,12 +36,4 @@ export class AnswerQuestionService {
     })
   }
 
-  get_graph_schema(scenario_id: number): Observable<any> {
-
-    const body = {
-      "scenario_id": scenario_id,
-    }
-    return this.http.post(GRAPH_SCHEMA_ENDPOINT, body);
-  }
-
 }

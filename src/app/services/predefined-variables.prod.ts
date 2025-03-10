@@ -43,13 +43,9 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
   {
     modelProvider: "DeepSeek",
     modelName: "deepseek-chat",
-  },
-  {
-    modelProvider: "Ollama-local",
-    modelName: "llama3.2:1b",
   }];
 
-const SERVER = "http://localhost:8000" // dev
+const SERVER = "http://gen2kgbot.i3s.unice.fr" // prod
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
 const API_BASE = `${SERVER}/api/test_dataset`
 export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`

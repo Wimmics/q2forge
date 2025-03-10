@@ -55,7 +55,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "2MB"
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -63,7 +63,13 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/services/predefined-variables.ts",
+                  "with": "src/app/services/predefined-variables.prod.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,

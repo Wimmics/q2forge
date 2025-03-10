@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MarkdownComponent } from 'ngx-markdown';
-import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION, KG_DESCRIPTION, KG_SCHEMA, llm_generation_answer, NUMBER_OF_QUESTIONS_TO_GENERATE, SPARQL_ENDPOINT_URI } from '../services/predefined-variables';
+import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION, KG_DESCRIPTION, KG_SCHEMA, NUMBER_OF_QUESTIONS_TO_GENERATE, SPARQL_ENDPOINT_URI } from '../services/predefined-variables';
 import { LLMModel } from '../models/llmmodel';
 import { GenerateQuestionService } from '../services/generate-question.service';
 import { JsonPipe } from '@angular/common';
