@@ -6,11 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MarkdownComponent } from 'ngx-markdown';
 import { QuestionAnswererConfig } from '../../models/question-answerer-config';
 import { Seq2SeqModel } from '../../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../../models/text-embedding-model';
-import { JsonPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
@@ -19,7 +17,7 @@ import { ScenarioSchemaDialog } from '../scenario-schema-dialog/scenario-schema-
 @Component({
   selector: 'app-question-answerer-config-dialog',
   imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, JsonPipe, RouterModule],
+    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './question-answerer-config-dialog.html',
   styleUrl: './question-answerer-config-dialog.scss'
 })

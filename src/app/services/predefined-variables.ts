@@ -60,6 +60,8 @@ export const DEFAULT_CONFIG_ENDPOINT = `${API_BASE}/default_config`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"
 
+export const DEFAULT_ANSWER_QUESTION = "What protein targets does donepezil (CHEBI_53289) inhibit with an IC50 less than 2 µM?"
+
 export const PROMPT_QUESTION_GENERATION = `
 Generate a well-structured list of {number_of_questions} scientifically relevant questions based on the following knowledge graph by researchers:
 - A brief description of the KG.

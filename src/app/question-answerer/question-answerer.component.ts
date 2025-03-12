@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
-import { AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,14 +10,11 @@ import { JsonPipe } from '@angular/common';
 import { ChatMessage } from '../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { GraphSchema } from '../models/graph-schema';
-import { ConfigManagerService } from '../services/config-manager.service';
-import { Seq2SeqModel } from '../models/seq2seqmodel';
-import { TextEmbeddingModel } from '../models/text-embedding-model';
 import { RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
-import { isQuestionAnswererConfig, QuestionAnswererConfig } from '../models/question-answerer-config';
+import { QuestionAnswererConfig } from '../models/question-answerer-config';
+import { DEFAULT_ANSWER_QUESTION } from '../services/predefined-variables';
 
 @Component({
   selector: 'app-question-answerer',
@@ -30,7 +26,7 @@ import { isQuestionAnswererConfig, QuestionAnswererConfig } from '../models/ques
 export class QuestionAnswererComponent {
 
   model = {
-    question: DEFAULT_JUDGE_QUESTION
+    question: DEFAULT_ANSWER_QUESTION
   }
 
   question_fc = new FormControl(this.model.question, [
