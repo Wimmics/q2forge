@@ -114,4 +114,18 @@ export class ConfigManagerService {
     });
   }
 
+  getScenarioSchema(scenario_id: number): Promise<GraphSchema> {
+    return new Promise((resolve) => {
+      if (this.scenariosSchema.length > 0) {
+        resolve(this.scenariosSchema.filter((schema) => schema.scenario_id === scenario_id)[0]);
+      }
+      else {
+        this.http.get<GraphSchema[]>(GRAPH_SCHEMA_ENDPOINT).subscribe((data: any) => {
+          this.scenariosSchema = data;
+          resolve(this.scenariosSchema.filter((schema) => schema.scenario_id === scenario_id)[0]);
+        });
+      }
+    });
+  }
+
 }

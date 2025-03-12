@@ -1,32 +1,36 @@
 import { Injectable } from '@angular/core';
-import { LLMModel } from '../models/llmmodel';
-import { HttpClient, HttpEventType } from '@angular/common/http';
-import { ANSWER_QUESTION_ENDPOINT, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
-import { Observable } from 'rxjs';
-import { Seq2SeqModel } from '../models/seq2seqmodel';
-import { TextEmbeddingModel } from '../models/text-embedding-model';
-
+import { ANSWER_QUESTION_ENDPOINT } from './predefined-variables';
+import { QuestionAnswererConfig } from '../models/question-answerer-config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnswerQuestionService {
 
-  constructor(private http: HttpClient) { }
-
-  answer_question(seq2SeqModel: Seq2SeqModel, textEmbeddingModel: TextEmbeddingModel, scenario_id: number, question: string): Promise<Response> {
-
+  answer_question(config: QuestionAnswererConfig, question: string): Promise<Response> {
 
     const body: Record<string, any> = {
-      "seq2seq_model": seq2SeqModel.configName,
       "question": question,
-      "scenario_id": scenario_id
+      "scenario_id": config.scenario_id,
+      "validate_question_model": config.validate_question_model,
     }
 
-    if (![1, 2].includes(scenario_id)) {
-      Object.assign(body, { "text_embedding_model": textEmbeddingModel.configName});
-    }    
- 
+    if (![1, 2].includes(config.scenario_id)) {
+      Object.assign(body, { "text_embedding_model": config.text_embedding_model });
+    }
+
+    if ([1].includes(config.scenario_id)) {
+      Object.assign(body, { "ask_question_model": config.ask_question_model });
+    }
+
+    if (![1].includes(config.scenario_id)) {
+      Object.assign(body, { "generate_query_model": config.generate_query_model });
+    }
+
+    if (![1].includes(config.scenario_id)) {
+      Object.assign(body, { "interpret_csv_query_results_model": config.interpret_csv_query_results_model });
+    }
+
     return fetch(ANSWER_QUESTION_ENDPOINT, {
       method: 'POST',
       headers: {

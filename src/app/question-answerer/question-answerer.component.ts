@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,9 @@ import { ConfigManagerService } from '../services/config-manager.service';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
 import { RouterModule } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
+import { isQuestionAnswererConfig, QuestionAnswererConfig } from '../models/question-answerer-config';
 
 @Component({
   selector: 'app-question-answerer',
@@ -24,7 +27,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
-export class QuestionAnswererComponent implements OnInit, AfterViewInit {
+export class QuestionAnswererComponent {
 
   model = {
     question: DEFAULT_JUDGE_QUESTION
@@ -36,12 +39,6 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
 
   workflowRunning = false;
   errorLLMAnswer = '';
-
-  availableSeq2SeqModels: Seq2SeqModel[] = [];
-  selectedSeq2SeqModel!: Seq2SeqModel;
-
-  availableEmbeddingModels: TextEmbeddingModel[] = [];
-  selectedEmbeddingModel!: TextEmbeddingModel;
 
   chat_messages: ChatMessage[] = [
     // {
@@ -58,20 +55,11 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
     // }
   ];
 
-  constructor(private answerQuestionService: AnswerQuestionService,
-    private configManagerService: ConfigManagerService) {
-  }
-
-  ngOnInit(): void {
-    this.init_scenario_schemas();
-  }
-
-  ngAfterViewInit(): void {
-    this.init_available_models();
+  constructor(private answerQuestionService: AnswerQuestionService) {
   }
 
   ask_question() {
-    if (this.question_fc.value) {
+    if (this.question_fc.value && this.currentConfig) {
       this.workflowRunning = true;
       this.errorLLMAnswer = '';
       this.chat_messages.push(
@@ -81,9 +69,7 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
         }
       )
       this.answerQuestionService.answer_question(
-        this.selectedSeq2SeqModel,
-        this.selectedEmbeddingModel,
-        this.selectedScenario.scenario_id,
+        this.currentConfig,
         this.question_fc.value!,
       ).then(response => {
         const reader = response.body?.getReader();
@@ -221,39 +207,6 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
     }
   }
 
-  graphSchemas: GraphSchema[] | undefined;
-  selectedScenario!: GraphSchema;
-
-  isScenarioButtonHovered = false;
-
-  init_scenario_schemas() {
-    this.configManagerService.getScenariosSchema().then(response => {
-      this.graphSchemas = response;
-      this.selectedScenario = response[5];
-    });
-  }
-
-  init_available_models() {
-
-    this.configManagerService.getSeq2SeqModels().then((data) => {
-      this.availableSeq2SeqModels = data;
-      this.selectedSeq2SeqModel = this.availableSeq2SeqModels[0];
-    });
-
-    this.configManagerService.getTextEmbeddingModels().then((data) => {
-      this.availableEmbeddingModels = data;
-      this.selectedEmbeddingModel = this.availableEmbeddingModels[0];
-    });
-  }
-
-  showHideSchemaDiv() {
-    this.isScenarioButtonHovered = !this.isScenarioButtonHovered;
-  }
-
-  hideSchemaDiv() {
-    this.isScenarioButtonHovered = false;
-  }
-
   extractDataFromStreamPart(data: any, node: string): string {
 
     switch (node) {
@@ -308,6 +261,29 @@ export class QuestionAnswererComponent implements OnInit, AfterViewInit {
 
   stop_wrkflow() {
 
+  }
+
+  readonly questionAnswererConfigDialog = inject(MatDialog);
+
+  currentConfig: QuestionAnswererConfig = {
+    scenario_id: 6,
+    text_embedding_model: "nomic-embed-text_chroma@local",
+    ask_question_model: "llama-3_1-70B@ovh",
+    validate_question_model: "llama-3_1-70B@ovh",
+    generate_query_model: "llama-3_1-70B@ovh",
+    interpret_csv_query_results_model: "llama-3_1-70B@ovh"
+  };
+
+  setConfiguration() {
+    const dialogRef = this.questionAnswererConfigDialog.open(QuestionAnswererConfigDialog, { data: this.currentConfig });
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   // console.log(`Dialog result: ${result}`);
+    //   // if (isQuestionAnswererConfig(result)) {
+    //   //   this.currentConfig = result;
+    //   // }
+
+    // });
   }
 
 

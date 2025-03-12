@@ -1,13 +1,6 @@
 <div class="container">
     <div class="page-header">KG Question Answerer</div>
 
-    <!-- @for (item of graphSchemas; track $index) {
-    <div>
-        <p>{{item.scenario_id}}</p>
-        <markdown mermaid [data]="item.schema"> </markdown>
-    </div>
-    } -->
-
     <div class=" chat-container">
         @if (errorLLMAnswer) {
         <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
@@ -37,90 +30,28 @@
 
     </div>
 
-    <div class="input-container">
-        <div class="llm-scenario-container">
-            <mat-form-field class="full-width">
-                <mat-label>Seq2Seq Model</mat-label>
-                <mat-select [(ngModel)]="selectedSeq2SeqModel">
-                    @for (item of availableSeq2SeqModels; track item) {
-                    <mat-option [value]="item">{{item.configName}}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-
-            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-                matTooltip="{{selectedSeq2SeqModel | json}}" matTooltipPosition="above" matTooltipHideDelay="2000"
-                [disabled]="selectedSeq2SeqModel == undefined">
-                ?
-            </button>
-
-            <mat-form-field class="full-width">
-                <mat-label>Text Embedding Model</mat-label>
-                <mat-select [(ngModel)]="selectedEmbeddingModel"
-                    [disabled]="(selectedScenario && [1,2].includes(selectedScenario.scenario_id))">
-                    @for (item of availableEmbeddingModels; track item) {
-                    <mat-option [value]="item">{{item.configName}}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-            <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-                matTooltip="{{selectedEmbeddingModel | json}}" matTooltipPosition="above" matTooltipHideDelay="2000"
-                [disabled]="selectedEmbeddingModel == undefined">
-                ?
-            </button>
-            <mat-form-field class="full-width">
-                <mat-label>Scenario</mat-label>
-                <mat-select [(ngModel)]="selectedScenario">
-                    @for (item of graphSchemas; track item) {
-                    <mat-option [value]="item">Scenario: {{item?.scenario_id}}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-
-
-            <div class="schema-button-container">
-
-                @if (isScenarioButtonHovered) {
-                <div class="schema-tooltip">
-                    <div class="schema-tooltip-header">
-                        <p><b>Mermaid Schema</b></p>
-                        <button mat-mini-fab (click)="hideSchemaDiv()">
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    </div>
-                    <markdown mermaid [data]="selectedScenario.schema"> </markdown>
-                    <a target="_blank" routerLink="/" fragment="scenario_{{ + selectedScenario.scenario_id}}" >Go to scenario explanation</a>
-                </div>
-                }
-
-                <button class="schema-button" mat-mini-fab (click)="showHideSchemaDiv()"
-                    matTooltip="Click to see the schema" matTooltipPosition="above" matTooltipHideDelay="2000"
-                    [disabled]="selectedScenario == undefined">
-                    ?
-                </button>
-
-            </div>
-        </div>
-        <div class=" question-container">
-            <mat-form-field class="question-input">
-                <mat-label>Question to answer</mat-label>
-                <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
-                @if (question_fc.hasError('required')) {
-                <mat-error>The question is <strong>required</strong></mat-error>
-                }
-            </mat-form-field>
-
-            @if(!workflowRunning) {
-            <button mat-mini-fab (click)="ask_question()"
-                [disabled]="selectedSeq2SeqModel == undefined || selectedEmbeddingModel == undefined || selectedScenario == undefined || question_fc.invalid">
-                <mat-icon>send</mat-icon>
-            </button>
-            }@else {
-            <button mat-mini-fab (click)="stop_wrkflow()" disabled="true">
-                <mat-icon>stop</mat-icon>
-            </button>
+    <div class=" question-container">
+        <mat-form-field class="question-input">
+            <mat-label>Question to answer</mat-label>
+            <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
+            @if (question_fc.hasError('required')) {
+            <mat-error>The question is <strong>required</strong></mat-error>
             }
-        </div>
+        </mat-form-field>
+
+        <button mat-mini-fab (click)="setConfiguration()">
+            <mat-icon>settings</mat-icon>
+        </button>
+
+        @if(!workflowRunning) {
+        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid">
+            <mat-icon>send</mat-icon>
+        </button>
+        }@else {
+        <button mat-mini-fab (click)="stop_wrkflow()" disabled="true">
+            <mat-icon>stop</mat-icon>
+        </button>
+        }
     </div>
 
 </div>

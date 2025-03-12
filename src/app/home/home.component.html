@@ -55,6 +55,15 @@
             <markdown mermaid [data]="scenariosSchema[5].schema"> </markdown>
             }
         </div>
+
+        <div id="scenario_7" class="scenario">
+            <h3>Scenario 7: Adding SPARQL judge capabilities</h3>
+            <p>SPARQL Judge is used after verifying the correct syntax of the generated SPARQL query to improve accuracy.</p>
+            @if (scenariosSchema[6]) {
+            <markdown mermaid [data]="scenariosSchema[6].schema"> </markdown>
+            }
+        </div>
+
         }@else {
         <div class="loading-container">
             <mat-spinner></mat-spinner>
