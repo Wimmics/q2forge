@@ -119,7 +119,9 @@
     <mat-dialog-content class="dialog-content">
       <div
         [ngStyle]="{'transform': 'scale(' + scale + ') translateY(' + translate + 'px) translateX(' + translate + 'px)'}">
-        <markdown mermaid [data]="graphSchemas[config.scenario_id-1]?.schema"> </markdown>
+        @if(graphSchemas[config.scenario_id-1]) {
+        <markdown mermaid [data]="graphSchemas[config.scenario_id-1].schema"> </markdown>
+        }
       </div>
     </mat-dialog-content>
     <mat-dialog-actions align="center">
