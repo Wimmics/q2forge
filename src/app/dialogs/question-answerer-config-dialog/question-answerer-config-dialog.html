@@ -1,123 +1,133 @@
 <h2 mat-dialog-title>Workflow Configuration</h2>
 
 <mat-dialog-content class="dialog-content">
+  <div class="config-container">
+    <h3>Scenario to use</h3>
 
-  <h3>Scenario to use</h3>
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Scenario</mat-label>
+        <mat-select [(ngModel)]="config.scenario_id">
+          @for (item of graphSchemas; track item) {
+          <mat-option [value]="item.scenario_id">Scenario: {{item?.scenario_id}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
 
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Scenario</mat-label>
-      <mat-select [(ngModel)]="config.scenario_id">
-        @for (item of graphSchemas; track item) {
-        <mat-option [value]="item.scenario_id">Scenario: {{item?.scenario_id}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+    <h3>Seq2Seq Model to use in the <i>Validate Question</i> Node</h3>
 
-    <button class="schema-button" mat-mini-fab (click)="showScenarioSchema()" matTooltip="Click to see the schema"
-      matTooltipPosition="above" matTooltipHideDelay="2000">
-      ?
-    </button>
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Validate Question</mat-label>
+        <mat-select [(ngModel)]="config.validate_question_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('validate_question_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+
+
+    @if ([1].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Ask Question</i> Node</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Ask Question</mat-label>
+        <mat-select [(ngModel)]="config.ask_question_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('ask_question_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
+
+    @if (![1].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Generate Query</i> Node</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Generate Query</mat-label>
+        <mat-select [(ngModel)]="config.generate_query_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('generate_query_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
+
+    @if (![1].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Interpret CSV Query Results</i> Node</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Interpret CSV Query Results</mat-label>
+        <mat-select [(ngModel)]="config.interpret_csv_query_results_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('interpret_csv_query_results_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
+
+    @if (![1,2].includes(config.scenario_id)) {
+    <h3>Embedding Model to use</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Text Embedding Model</mat-label>
+        <mat-select [(ngModel)]="config.text_embedding_model">
+          @for (item of availableEmbeddingModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getTextEmbeddingModelTooltip()" matTooltipPosition="above" matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
   </div>
 
-  <h3>Seq2Seq Model to use in the <i>Validate Question</i> Node</h3>
-
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Validate Question</mat-label>
-      <mat-select [(ngModel)]="config.validate_question_model">
-        @for (item of availableSeq2SeqModels; track item) {
-        <mat-option [value]="item.configName">{{item.configName}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-      [matTooltip]="getSeq2SeqModelTooltip('validate_question_model')" matTooltipPosition="above"
-      matTooltipHideDelay="2000">
-      ?
-    </button>
+  <div class="schema-container">
+    <h3 align="center">Mermaid Schema of Scenario {{config.scenario_id}}</h3>
+    <mat-dialog-content class="dialog-content">
+      <div
+        [ngStyle]="{'transform': 'scale(' + scale + ') translateY(' + translate + 'px) translateX(' + translate + 'px)'}">
+        <markdown mermaid [data]="graphSchemas[config.scenario_id-1]?.schema"> </markdown>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="center">
+      <button mat-mini-fab (click)="zoomIn()"><mat-icon>zoom_in</mat-icon></button>
+      <button mat-mini-fab (click)="zoomOut()"><mat-icon>zoom_out</mat-icon></button>
+    </mat-dialog-actions>
   </div>
-
-
-  @if ([1].includes(config.scenario_id)) {
-  <h3>Seq2Seq Model to use in the <i>Ask Question</i> Node</h3>
-
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Ask Question</mat-label>
-      <mat-select [(ngModel)]="config.ask_question_model">
-        @for (item of availableSeq2SeqModels; track item) {
-        <mat-option [value]="item.configName">{{item.configName}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-      [matTooltip]="getSeq2SeqModelTooltip('ask_question_model')" matTooltipPosition="above" matTooltipHideDelay="2000">
-      ?
-    </button>
-  </div>
-  }
-
-  @if (![1].includes(config.scenario_id)) {
-  <h3>Seq2Seq Model to use in the <i>Generate Query</i> Node</h3>
-
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Generate Query</mat-label>
-      <mat-select [(ngModel)]="config.generate_query_model">
-        @for (item of availableSeq2SeqModels; track item) {
-        <mat-option [value]="item.configName">{{item.configName}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-      [matTooltip]="getSeq2SeqModelTooltip('generate_query_model')" matTooltipPosition="above"
-      matTooltipHideDelay="2000">
-      ?
-    </button>
-  </div>
-  }
-
-  @if (![1].includes(config.scenario_id)) {
-  <h3>Seq2Seq Model to use in the <i>Interpret CSV Query Results</i> Node</h3>
-
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Interpret CSV Query Results</mat-label>
-      <mat-select [(ngModel)]="config.interpret_csv_query_results_model">
-        @for (item of availableSeq2SeqModels; track item) {
-        <mat-option [value]="item.configName">{{item.configName}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-      [matTooltip]="getSeq2SeqModelTooltip('interpret_csv_query_results_model')" matTooltipPosition="above"
-      matTooltipHideDelay="2000">
-      ?
-    </button>
-  </div>
-  }
-
-  @if (![1,2].includes(config.scenario_id)) {
-  <h3>Embedding Model to use</h3>
-
-  <div class="config-item-container">
-    <mat-form-field class="full-width">
-      <mat-label>Text Embedding Model</mat-label>
-      <mat-select [(ngModel)]="config.text_embedding_model">
-        @for (item of availableEmbeddingModels; track item) {
-        <mat-option [value]="item.configName">{{item.configName}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-    <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-      [matTooltip]="getTextEmbeddingModelTooltip()" matTooltipPosition="above" matTooltipHideDelay="2000">
-      ?
-    </button>
-  </div>
-  }
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Close</button>
-  <!-- <button mat-button [mat-dialog-close]="config" cdkFocusInitial>Validate</button> -->
+  <button mat-raised-button mat-dialog-close>Close</button>
 </mat-dialog-actions>

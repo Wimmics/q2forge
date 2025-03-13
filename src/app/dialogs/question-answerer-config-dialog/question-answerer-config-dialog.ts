@@ -12,12 +12,13 @@ import { TextEmbeddingModel } from '../../models/text-embedding-model';
 import { RouterModule } from '@angular/router';
 import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
-import { ScenarioSchemaDialog } from '../scenario-schema-dialog/scenario-schema-dialog';
+import { MarkdownComponent } from 'ngx-markdown';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-question-answerer-config-dialog',
   imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule],
+    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
   templateUrl: './question-answerer-config-dialog.html',
   styleUrl: './question-answerer-config-dialog.scss'
 })
@@ -30,6 +31,23 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
   availableEmbeddingModels: TextEmbeddingModel[] = [];
 
   graphSchemas: GraphSchema[] = [];
+
+
+  // showScenarioSchema = false;
+
+  scale: number = 1; // Default zoom level
+  translate: number = 0; // Default vertical translation
+  zoomIn() {
+    this.scale += 0.1; // Increase zoom level
+    this.translate += 50; // Increase vertical translation
+  }
+  
+  zoomOut() {
+    if (this.scale > 0.5) {
+      this.scale -= 0.1; // Decrease zoom level
+      this.translate -= 50; // Decrease vertical translation
+    }
+  }
 
   constructor(private configManagerService: ConfigManagerService, private dialogRef: MatDialogRef<QuestionAnswererConfigDialog>) { }
 
@@ -58,23 +76,23 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   readonly scenarioSchemaDialog = inject(MatDialog);
 
-  showScenarioSchema() {
-    const scenarioDialogRef = this.scenarioSchemaDialog.open(ScenarioSchemaDialog,
-      {
-        data: this.graphSchemas[this.config.scenario_id - 1],
-        width: '95vh',
-        // height: '95vh',
-        maxWidth: '100vh',
-        maxHeight: '100vh',
-        panelClass: 'scenario-schema',
-      });
+  // showScenarioSchema() {
+  //   const scenarioDialogRef = this.scenarioSchemaDialog.open(ScenarioSchemaDialog,
+  //     {
+  //       data: this.graphSchemas[this.config.scenario_id - 1],
+  //       width: '95vh',
+  //       // height: '95vh',
+  //       maxWidth: '100vh',
+  //       maxHeight: '100vh',
+  //       panelClass: 'scenario-schema',
+  //     });
 
-    scenarioDialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.dialogRef.close();
-      }
-    });
-  }
+  //   scenarioDialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       this.dialogRef.close();
+  //     }
+  //   });
+  // }
 
   getTextEmbeddingModelTooltip() {
     return JSON.stringify(this.availableEmbeddingModels.find(model => model.configName === this.config.text_embedding_model));

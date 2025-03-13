@@ -15,6 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../models/question-answerer-config';
 import { DEFAULT_ANSWER_QUESTION } from '../services/predefined-variables';
+import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-question-answerer',
@@ -262,7 +263,7 @@ export class QuestionAnswererComponent {
   readonly questionAnswererConfigDialog = inject(MatDialog);
 
   currentConfig: QuestionAnswererConfig = {
-    scenario_id: 6,
+    scenario_id: 1,
     text_embedding_model: "nomic-embed-text_chroma@local",
     ask_question_model: "llama-3_1-70B@ovh",
     validate_question_model: "llama-3_1-70B@ovh",
@@ -271,7 +272,17 @@ export class QuestionAnswererComponent {
   };
 
   setConfiguration() {
-    const dialogRef = this.questionAnswererConfigDialog.open(QuestionAnswererConfigDialog, { data: this.currentConfig });
+    const dialogRef = this.questionAnswererConfigDialog.open(QuestionAnswererConfigDialog,
+      {
+        data: this.currentConfig,
+        maxWidth: '95vw',
+        width: '1900px',
+      });
+
+    dialogRef.afterOpened().subscribe(result => {
+      this.fixMermaidGraphTextBug();
+    });
+
 
     // dialogRef.afterClosed().subscribe(result => {
     //   // console.log(`Dialog result: ${result}`);
@@ -280,6 +291,11 @@ export class QuestionAnswererComponent {
     //   // }
 
     // });
+  }
+  fixMermaidGraphTextBug() {
+    let old_scenario_id = this.currentConfig.scenario_id;
+    this.currentConfig.scenario_id = 2;
+    setTimeout(() => { this.currentConfig.scenario_id = old_scenario_id; }, 5);
   }
 
 
