@@ -7,25 +7,19 @@
         }
 
         @for (item of chat_messages; track $index) {
-        @if(item.sender == "user") {
-        <mat-expansion-panel class="message user-message" expanded="true">
+        <mat-expansion-panel class="message" expanded="true" [class.user-message]="item.sender == 'user'"
+            [class.system-message]="item.sender != 'user'"
+            [class.llm-message]="['on_chat_model_start','on_chat_model_stream','on_chat_model_end'].includes(item.eventType)">
             <mat-expansion-panel-header>
-                <mat-panel-title> <mat-icon>person_pin</mat-icon> ➡️ {{item.sender}}</mat-panel-title>
+                <mat-panel-title>
+                    <mat-icon>{{item.sender == 'user'?"person_pin":"memory"}}</mat-icon>
+                    ➡️ {{item.sender}} : <b>{{this.currentConfig[item.sender+"_model"]}}</b>
+                </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <markdown lineNumbers data="*{{item.content}}*"></markdown>
+            <markdown lineNumbers data="{{item.content}}" clipboard></markdown>
 
         </mat-expansion-panel>
-        }@else {
-        <mat-expansion-panel class="message system-message" expanded="true">
-            <mat-expansion-panel-header>
-                <mat-panel-title> <mat-icon>memory</mat-icon> ➡️ {{item.sender}}</mat-panel-title>
-            </mat-expansion-panel-header>
-
-            <markdown lineNumbers [data]="item.content" clipboard></markdown>
-
-        </mat-expansion-panel>
-        }
         }
 
     </div>

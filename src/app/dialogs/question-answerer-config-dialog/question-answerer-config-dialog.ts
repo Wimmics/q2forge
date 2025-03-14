@@ -32,7 +32,6 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   graphSchemas: GraphSchema[] = [];
 
-
   // showScenarioSchema = false;
 
   scale: number = 1; // Default zoom level

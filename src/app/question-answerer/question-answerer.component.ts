@@ -62,7 +62,8 @@ export class QuestionAnswererComponent {
       this.chat_messages.push(
         {
           "sender": "user",
-          "content": this.question_fc.value
+          "content": this.question_fc.value,
+          "eventType": "user_message"
         }
       )
       this.answerQuestionService.answer_question(
@@ -152,7 +153,8 @@ export class QuestionAnswererComponent {
                   this.chat_messages.push(
                     {
                       "sender": stream_part.node,
-                      "content": content
+                      "content": content,
+                      "eventType": stream_part.event
                     }
                   );
                 }
@@ -161,13 +163,15 @@ export class QuestionAnswererComponent {
                 this.chat_messages.push(
                   {
                     "sender": stream_part.node,
-                    "content": `The answer from the model will be streamed soon ...\n`
+                    "content": `The answer from the model will be streamed soon ...\n`,
+                    "eventType": stream_part.event
                   }
                 );
                 this.chat_messages.push(
                   {
                     "sender": stream_part.node,
-                    "content": ""
+                    "content": "",
+                    "eventType": "on_chat_model_stream"
                   }
                 );
               }
@@ -177,14 +181,16 @@ export class QuestionAnswererComponent {
               else if (stream_part.event === 'on_chat_model_end') {
                 this.chat_messages.push({
                   "sender": stream_part.node,
-                  "content": `The streaming of the response ended.\n`
+                  "content": `The streaming of the response ended.\n`,
+                  "eventType": stream_part.event
                 });
               }
 
               if (isComplete) {
                 this.chat_messages.push({
                   "sender": "system",
-                  "content": `End of the conversation`
+                  "content": `End of the conversation`,
+                  "eventType": "end_of_conversation"
                 });
               }
             });
@@ -292,11 +298,10 @@ export class QuestionAnswererComponent {
 
     // });
   }
+
   fixMermaidGraphTextBug() {
     let old_scenario_id = this.currentConfig.scenario_id;
     this.currentConfig.scenario_id = 2;
     setTimeout(() => { this.currentConfig.scenario_id = old_scenario_id; }, 5);
   }
-
-
 }
