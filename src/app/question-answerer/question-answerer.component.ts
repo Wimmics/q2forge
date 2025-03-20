@@ -84,6 +84,11 @@ export class QuestionAnswererComponent {
               // console.log('Stream complete');
               processBuffer(buffer, true); // Process any remaining valid JSON
               this.workflowRunning = false;
+              this.chat_messages.push({
+                "sender": "system",
+                "content": `End of the conversation`,
+                "eventType": "end_of_conversation"
+              });
               return;
             }
 
@@ -188,14 +193,6 @@ export class QuestionAnswererComponent {
                   "sender": stream_part.node,
                   "content": `The streaming of the response ended.\n`,
                   "eventType": stream_part.event
-                });
-              }
-
-              if (isComplete) {
-                this.chat_messages.push({
-                  "sender": "system",
-                  "content": `End of the conversation`,
-                  "eventType": "end_of_conversation"
                 });
               }
             });
