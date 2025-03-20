@@ -28,7 +28,15 @@ export class AnswerQuestionService {
     }
 
     if (![1].includes(config.scenario_id)) {
-      Object.assign(body, { "interpret_csv_query_results_model": config.interpret_csv_query_results_model });
+      Object.assign(body, { "interpret_results_model": config.interpret_results_model });
+    }
+
+    if ([7].includes(config.scenario_id)) {
+      Object.assign(body, { "judge_query_model": config.judge_query_model });
+    }
+
+    if ([7].includes(config.scenario_id)) {
+      Object.assign(body, { "judge_regenerate_query_model": config.judge_regenerate_query_model });
     }
 
     return fetch(ANSWER_QUESTION_ENDPOINT, {

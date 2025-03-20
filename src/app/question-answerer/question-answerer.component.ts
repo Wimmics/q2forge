@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../models/question-answerer-config';
 import { DEFAULT_ANSWER_QUESTION } from '../services/predefined-variables';
-import { timeout } from 'rxjs';
+import { toStringMarkdown } from '../models/judge-state';
 
 @Component({
   selector: 'app-question-answerer',
@@ -37,6 +37,7 @@ export class QuestionAnswererComponent {
   workflowRunning = false;
   errorLLMAnswer = '';
 
+
   chat_messages: ChatMessage[] = [
     // {
     //   "sender": "user",
@@ -44,13 +45,16 @@ export class QuestionAnswererComponent {
     // },
     // {
     //   "sender": "init",
-    //   "content": "I 🐢 ngx-markdown"
+    //   "content": toStringMarkdown(this.judgemnt_example),
+    //   "eventType": "init"
     // },
     // {
     //   "sender": "system",
     //   "content": "```turtle\n@prefix ex: <http://example.org/>\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nex:John rdf:type ex:Person .\n```"
     // }
   ];
+
+
 
   constructor(private answerQuestionService: AnswerQuestionService) {
   }
@@ -93,6 +97,7 @@ export class QuestionAnswererComponent {
         };
 
         const processBuffer = (data: any, isComplete: boolean) => {
+          // console.log(data);
           try {
             let jsonObjects = [];
             let startIdx = 0;
@@ -216,7 +221,7 @@ export class QuestionAnswererComponent {
       case "init":
         return "**Using the scenario:** " + data.scenario_id + ".";
       case "preprocess_question":
-        return "**The relevant entities in the question:**\n" + data.question_relevant_entities.split(',').map((item: string) => `* ${item}.`).join("\n");
+        return "**The relevant entities in the question:**\n" + data.question_relevant_entities.map((item: string) => `* ${item}.`).join("\n");
       case "select_similar_query_examples":
         return "**The relevant found SPARQL query examples:**\n" + data.selected_queries;
       case "select_similar_classes":
@@ -237,15 +242,26 @@ export class QuestionAnswererComponent {
         if (data.last_generated_query) {
           return "**We will verify the following query:**\n" + "```sparql\n" + data.last_generated_query + "\n```";
         } else {
-          return "**The number of tries up to now:** " + data.number_of_tries;
+          return "**The number of tries up to now:** " + data.number_of_tries + "\n\n";
         }
       case "run_query":
         return this.csvToMarkdown(data.last_query_results);
+
+      case "validate_sparql_syntax":
+        return "**The number of tries up to now:** " + data.number_of_tries + "\n\n " + toStringMarkdown(data.query_judgements.at(-1));
+      case "extract_query_qnames":
+        return toStringMarkdown(data.query_judgements.at(-1));
+      case "find_qnames_info":
+        return toStringMarkdown(data.query_judgements.at(-1));
+      case "judge_regeneration_prompt":
+        return toStringMarkdown(data.query_judgements.at(-1));
+
 
       default:
         return JSON.stringify(data);
     }
   }
+
 
   csvToMarkdown(csv: string): string {
     const rows = csv.trim().split("\r\n").map(row => row.split(","));
@@ -269,12 +285,14 @@ export class QuestionAnswererComponent {
   readonly questionAnswererConfigDialog = inject(MatDialog);
 
   currentConfig: QuestionAnswererConfig = {
-    scenario_id: 1,
-    text_embedding_model: "nomic-embed-text_chroma@local",
-    ask_question_model: "llama-3_1-70B@ovh",
-    validate_question_model: "llama-3_1-70B@ovh",
-    generate_query_model: "llama-3_1-70B@ovh",
-    interpret_csv_query_results_model: "llama-3_1-70B@ovh"
+    scenario_id: 7,
+    text_embedding_model: "nomic-embed-text_faiss@local",
+    ask_question_model: "llama-3_3-70B@ovh",
+    validate_question_model: "llama-3_3-70B@ovh",
+    generate_query_model: "llama-3_3-70B@ovh",
+    judge_query_model: "llama-3_3-70B@ovh",
+    judge_regenerate_query_model: "llama-3_3-70B@ovh",
+    interpret_results_model: "llama-3_3-70B@ovh"
   };
 
   setConfiguration() {

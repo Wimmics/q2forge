@@ -40,7 +40,7 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
     this.scale += 0.1; // Increase zoom level
     this.translate += 50; // Increase vertical translation
   }
-  
+
   zoomOut() {
     if (this.scale > 0.5) {
       this.scale -= 0.1; // Decrease zoom level
@@ -75,24 +75,6 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   readonly scenarioSchemaDialog = inject(MatDialog);
 
-  // showScenarioSchema() {
-  //   const scenarioDialogRef = this.scenarioSchemaDialog.open(ScenarioSchemaDialog,
-  //     {
-  //       data: this.graphSchemas[this.config.scenario_id - 1],
-  //       width: '95vh',
-  //       // height: '95vh',
-  //       maxWidth: '100vh',
-  //       maxHeight: '100vh',
-  //       panelClass: 'scenario-schema',
-  //     });
-
-  //   scenarioDialogRef.afterClosed().subscribe(result => {
-  //     if (result) {
-  //       this.dialogRef.close();
-  //     }
-  //   });
-  // }
-
   getTextEmbeddingModelTooltip() {
     return JSON.stringify(this.availableEmbeddingModels.find(model => model.configName === this.config.text_embedding_model));
   }
@@ -105,8 +87,12 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
         return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.ask_question_model));
       case 'generate_query_model':
         return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.generate_query_model));
-      case 'interpret_csv_query_results_model':
-        return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.interpret_csv_query_results_model));
+      case 'interpret_results_model':
+        return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.interpret_results_model));
+      case 'judge_query_model':
+        return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.judge_query_model));
+      case 'judge_regenerate_query_model':
+        return JSON.stringify(this.availableSeq2SeqModels.find(model => model.configName === this.config.judge_regenerate_query_model));
     }
     return '';
   }

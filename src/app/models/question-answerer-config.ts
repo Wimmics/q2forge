@@ -4,7 +4,9 @@ export interface QuestionAnswererConfig {
     validate_question_model: string;
     ask_question_model?: string;
     generate_query_model?: string;
-    interpret_csv_query_results_model?: string;
+    judge_query_model?: string;
+    interpret_results_model?: string;
+    judge_regenerate_query_model?: string;
     text_embedding_model?: string;
 }
 

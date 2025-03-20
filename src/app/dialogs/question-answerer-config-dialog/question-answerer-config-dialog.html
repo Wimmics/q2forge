@@ -74,20 +74,60 @@
     </div>
     }
 
-    @if (![1].includes(config.scenario_id)) {
-    <h3>Seq2Seq Model to use in the <i>Interpret CSV Query Results</i> Node</h3>
+    @if ([7].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Judge Query</i> Node</h3>
 
     <div class="config-item-container">
       <mat-form-field class="full-width">
-        <mat-label>Interpret CSV Query Results</mat-label>
-        <mat-select [(ngModel)]="config.interpret_csv_query_results_model">
+        <mat-label>Judge Query</mat-label>
+        <mat-select [(ngModel)]="config.judge_query_model">
           @for (item of availableSeq2SeqModels; track item) {
           <mat-option [value]="item.configName">{{item.configName}}</mat-option>
           }
         </mat-select>
       </mat-form-field>
       <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
-        [matTooltip]="getSeq2SeqModelTooltip('interpret_csv_query_results_model')" matTooltipPosition="above"
+        [matTooltip]="getSeq2SeqModelTooltip('judge_query_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
+
+    @if ([7].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Judge Regenerate Query</i> Node</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Judge Regenerate Query</mat-label>
+        <mat-select [(ngModel)]="config.judge_regenerate_query_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('judge_regenerate_query_model')" matTooltipPosition="above"
+        matTooltipHideDelay="2000">
+        ?
+      </button>
+    </div>
+    }
+
+    @if (![1].includes(config.scenario_id)) {
+    <h3>Seq2Seq Model to use in the <i>Interpret CSV Query Results</i> Node</h3>
+
+    <div class="config-item-container">
+      <mat-form-field class="full-width">
+        <mat-label>Interpret CSV Query Results</mat-label>
+        <mat-select [(ngModel)]="config.interpret_results_model">
+          @for (item of availableSeq2SeqModels; track item) {
+          <mat-option [value]="item.configName">{{item.configName}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button class="schema-button" matTooltipClass="tooltip-multiline" mat-mini-fab
+        [matTooltip]="getSeq2SeqModelTooltip('interpret_results_model')" matTooltipPosition="above"
         matTooltipHideDelay="2000">
         ?
       </button>
