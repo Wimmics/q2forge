@@ -1,30 +1,51 @@
 import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AnswerQuestionService } from '../services/answer-question.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MarkdownComponent } from 'ngx-markdown';
-import { JsonPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { ChatMessage } from '../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RouterModule } from '@angular/router';
+// import { DropzoneCdkModule } from '@ngx-dropzone/cdk';
+// import { DropzoneMaterialModule } from '@ngx-dropzone/material';
+import { MatDropzone } from '@ngx-dropzone/material';
+
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../models/question-answerer-config';
 import { DEFAULT_ANSWER_QUESTION } from '../services/predefined-variables';
 import { toStringMarkdown } from '../models/judge-state';
+import { map, Observable, startWith } from 'rxjs';
+import { MatChipRow } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
+import { FileInputDirective, FileInputValidators } from '@ngx-dropzone/cdk';
+import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
+import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 
 @Component({
   selector: 'app-question-answerer',
   imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
-    JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule],
+    JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe, MatDropzone,
+    MatChipRow, ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatChipsModule,
+    MatIconModule,
+    FileInputDirective,
+    // DropzoneCdkModule,
+    // DropzoneMaterialModule,
+  ],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
 })
-export class QuestionAnswererComponent {
+export class QuestionAnswererComponent implements OnInit {
 
   model = {
     question: DEFAULT_ANSWER_QUESTION
@@ -36,7 +57,6 @@ export class QuestionAnswererComponent {
 
   workflowRunning = false;
   errorLLMAnswer = '';
-
 
   chat_messages: ChatMessage[] = [
     // {
@@ -291,6 +311,14 @@ export class QuestionAnswererComponent {
     judge_regenerate_query_model: "llama-3_3-70B@ovh",
     interpret_results_model: "llama-3_3-70B@ovh"
   };
+  readonly notifyUserDialog = inject(MatDialog);
+
+  notifyUser(title: string, message: string) {
+    const dialogRef = this.notifyUserDialog.open(GenericDialog,
+      {
+        data: { title: title, message: message },
+      });
+  }
 
   setConfiguration() {
     const dialogRef = this.questionAnswererConfigDialog.open(QuestionAnswererConfigDialog,
@@ -303,20 +331,88 @@ export class QuestionAnswererComponent {
     dialogRef.afterOpened().subscribe(result => {
       this.fixMermaidGraphTextBug();
     });
-
-
-    // dialogRef.afterClosed().subscribe(result => {
-    //   // console.log(`Dialog result: ${result}`);
-    //   // if (isQuestionAnswererConfig(result)) {
-    //   //   this.currentConfig = result;
-    //   // }
-
-    // });
   }
 
   fixMermaidGraphTextBug() {
     let old_scenario_id = this.currentConfig.scenario_id;
     this.currentConfig.scenario_id = 2;
     setTimeout(() => { this.currentConfig.scenario_id = old_scenario_id; }, 5);
+  }
+
+
+  filteredQuestionOptions!: Observable<string[]>;
+
+  ngOnInit() {
+    this.filteredQuestionOptions = this.question_fc.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filter(value || ''))
+    );
+  }
+
+  private _filter(value: string): string[] {
+    const filterValue = value.toLowerCase();
+    return this.uploaded_questions.filter(option => option.toLowerCase().includes(filterValue));
+  }
+
+  onQuestionOptionSelected(event: any) {
+    this.question_fc.setValue(event.option.value);
+  }
+
+  addCustomQuestion() {
+    if (this.question_fc.value) {
+      const inputValue = this.question_fc.value.trim();
+      if (inputValue && !this.uploaded_questions.includes(inputValue)) {
+        this.uploaded_questions.push(inputValue); // Add custom input to list
+      }
+    }
+  }
+
+  filesCtrl: FormControl = new FormControl<File[]>([], [
+    FileInputValidators.accept("application/json"),
+    Validators.required
+  ]);
+
+  get questionFiles() {
+    const _files = this.filesCtrl.value;
+
+    if (!_files) return [];
+    return Array.isArray(_files) ? _files : [_files];
+  }
+
+  remove(file: File) {
+    if (Array.isArray(this.filesCtrl.value)) {
+      this.filesCtrl.setValue(this.filesCtrl.value.filter((i) => i !== file));
+      return;
+    }
+
+    this.filesCtrl.setValue(null);
+  }
+
+  uploaded_questions: string[] = []
+
+  uploadQuestions() {
+    this.questionFiles.forEach((file) => {
+      file.text().then((text: any) => {
+        let updated = false
+        try {
+          let obj = JSON.parse(text)
+          if (isCompetencyQuestion(obj) && !this.uploaded_questions.includes(obj.question)) {
+            updated = true
+            this.uploaded_questions.push(obj.question)
+          }
+          else if (isCompetencyQuestionArray(obj)) {
+            updated = true
+            this.uploaded_questions.push(...obj.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
+          } else {
+            this.notifyUser("Questions upload", `Invalid JSON format}`)
+          }
+        } catch (error) {
+          this.notifyUser("Questions upload", `Error in parsing JSON ${error}`)
+        }
+        if (updated) {
+          this.notifyUser("Questions uploaded", this.uploaded_questions.map((q) => `* ${q}`).join("\n"))
+        }
+      });
+    });
   }
 }
