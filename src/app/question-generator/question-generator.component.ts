@@ -58,14 +58,15 @@ export class QuestionGeneratorComponent {
   // loadingLLMAnswer = false;
   errorLLMAnswer = '';
   llmAnswer = '';
+  llmAnswerStructured = '';
 
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[0];
 
   generateQuestionWithLLM() {
     if (this.kgDescription.value && this.kgDescription.value) {
-      // this.loadingLLMAnswer = true;
       this.llmAnswer = '';
+      this.llmAnswerStructured = '';
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
         this.selectedLLM,
@@ -75,13 +76,6 @@ export class QuestionGeneratorComponent {
         this.additionalContext.value ? this.additionalContext.value : "No additional context provided",
         this.enforceStructuredOutput.value ? this.enforceStructuredOutput.value : false
       )
-        // .subscribe((answer) => {
-        //   this.llmAnswer = answer.result;
-        //   this.loadingLLMAnswer = false;
-        // }, (error) => {
-        //   this.errorLLMAnswer = error?.error?.detail
-        //   this.loadingLLMAnswer = false;
-        // })
         .then(response => {
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
@@ -93,7 +87,7 @@ export class QuestionGeneratorComponent {
                 // console.log('Stream complete');
                 processBuffer(buffer, true); // Process any remaining valid JSON
                 this.workflowDone = true;
-
+                this.extractStructuredOutput()
                 return;
               }
 
@@ -203,6 +197,7 @@ export class QuestionGeneratorComponent {
     // this.properties.set([...this.defaultProperties]);
     // this.loadingLLMAnswer = false;
     this.llmAnswer = '';
+    this.llmAnswerStructured = '';
     this.workflowDone = false;
   }
 
@@ -216,5 +211,41 @@ export class QuestionGeneratorComponent {
     a.click();
     document.body.removeChild(a);
     window.URL.revokeObjectURL(url);
+  }
+
+  downloadStructuredResults(): void {
+    const blob = new Blob([this.llmAnswerStructured]);
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = "generated_questions.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+
+  extractStructuredOutput() {
+    if (this.llmAnswer) {
+      try {
+        let jsonBlocks = this.findJsonBlocks(this.llmAnswer);
+
+        if (jsonBlocks.length > 0) {
+          JSON.parse(jsonBlocks[0]);
+          this.llmAnswerStructured = jsonBlocks[0];
+        } else {
+          JSON.parse(this.llmAnswer);
+          this.llmAnswerStructured = this.llmAnswer;
+        }
+
+      } catch (error) {
+        console.error('No JSON found in the generated output');
+      }
+    }
+  }
+
+  findJsonBlocks(text: string): string[] {
+    const matches = text.match(/```json([\s\S]*?)```/g);
+    return matches ? matches.map(match => match.replace(/```json|```/g, "").trim()) : [];
   }
 }

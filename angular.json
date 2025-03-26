@@ -46,6 +46,7 @@
               "src/app/highlight-prism/prism-sparql.js",
               "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js",
               "node_modules/prismjs/components/prism-turtle.js",
+              "node_modules/prismjs/components/prism-json.js",
               "node_modules/mermaid/dist/mermaid.min.js"
             ]
           },
