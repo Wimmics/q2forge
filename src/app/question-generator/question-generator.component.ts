@@ -15,6 +15,7 @@ import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION, KG_DE
 import { LLMModel } from '../models/llmmodel';
 import { GenerateQuestionService } from '../services/generate-question.service';
 import { JsonPipe } from '@angular/common';
+import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
 
 @Component({
   selector: 'app-question-generator',
@@ -27,7 +28,7 @@ import { JsonPipe } from '@angular/common';
 })
 export class QuestionGeneratorComponent {
 
-  constructor(private generateQuestionService: GenerateQuestionService) { }
+  constructor(private generateQuestionService: GenerateQuestionService, private extractCodeBlocksService: ExtractCodeBlocksService) { }
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
@@ -228,7 +229,7 @@ export class QuestionGeneratorComponent {
   extractStructuredOutput() {
     if (this.llmAnswer) {
       try {
-        let jsonBlocks = this.findJsonBlocks(this.llmAnswer);
+        let jsonBlocks = this.extractCodeBlocksService.findJsonBlocks(this.llmAnswer);
 
         if (jsonBlocks.length > 0) {
           JSON.parse(jsonBlocks[0]);
@@ -244,8 +245,4 @@ export class QuestionGeneratorComponent {
     }
   }
 
-  findJsonBlocks(text: string): string[] {
-    const matches = text.match(/```json([\s\S]*?)```/g);
-    return matches ? matches.map(match => match.replace(/```json|```/g, "").trim()) : [];
-  }
 }

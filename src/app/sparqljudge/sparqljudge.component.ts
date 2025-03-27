@@ -21,6 +21,7 @@ import { LLMModel } from '../models/llmmodel';
 import { MarkdownComponent } from 'ngx-markdown';
 import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
 import { ConfigManagerService } from '../services/config-manager.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -33,18 +34,20 @@ import { ConfigManagerService } from '../services/config-manager.service';
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
 })
-export class SPARQLJudgeComponent {
+export class SPARQLJudgeComponent implements OnInit {
+
+  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
+    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
+    private llmJudgeService: LLMJudgeService,
+    private configManagerService: ConfigManagerService,
+    private route: ActivatedRoute) { }
+
 
   displayedColumns: string[] = ['uri', 'info'];
   dataSource: SPARQLPartInfo[] = [];
 
   loading: boolean = false;
   error: string = '';
-
-  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
-    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
-    private llmJudgeService: LLMJudgeService,
-    private configManagerService: ConfigManagerService) { }
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
@@ -57,12 +60,22 @@ export class SPARQLJudgeComponent {
       Validators.required,
       Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
     ]);
+
   query = new FormControl(this.model.query);
   question = new FormControl(this.model.question);
 
   parsedData: ExtractedData | undefined;
 
   displayAllInfo = new FormControl(false);
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      const query = params.get('query');
+      const question = params.get('question');
+      this.query.setValue(query);
+      this.question.setValue(question);
+    });
+  }
 
   getQandFQNames() {
     if (this.query.value) {

@@ -98,13 +98,22 @@
     }
 }
 
-.upload-question-input{
+.upload-question-input {
     height: 250px;
 }
 
-.expand-all-container{
+.expand-all-container {
     margin: 0 auto;
     padding: 16px;
     border: #15008f 2px solid;
     border-radius: 16px;
+}
+
+.refine-query-container {
+    display: flex;
+    justify-content: center;
+
+    a {
+        background-color: rgb(183, 221, 183);
+    }
 }

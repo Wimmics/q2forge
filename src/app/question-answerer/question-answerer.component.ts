@@ -28,6 +28,7 @@ import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/compe
 import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 import { TEST_CHAT_MESSAGES } from '../services/testing-variable';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
 
 @Component({
   selector: 'app-question-answerer',
@@ -56,12 +57,12 @@ export class QuestionAnswererComponent implements OnInit {
   workflowRunning = false;
   errorLLMAnswer = '';
 
-  chat_messages: ChatMessage[] = TEST_CHAT_MESSAGES;
+  chat_messages: ChatMessage[] = [];
 
   expandAllMessages = true;
 
 
-  constructor(private answerQuestionService: AnswerQuestionService) {
+  constructor(private answerQuestionService: AnswerQuestionService, private extractCodeBlocksService: ExtractCodeBlocksService) {
   }
 
   ask_question() {
@@ -94,6 +95,7 @@ export class QuestionAnswererComponent implements OnInit {
                 "content": `End of the conversation`,
                 "eventType": "end_of_conversation"
               });
+              this.checkLlmMessagesWithSPARQLCodeBlock();
               return;
             }
 
@@ -400,4 +402,20 @@ export class QuestionAnswererComponent implements OnInit {
       });
     });
   }
+
+  checkLlmMessagesWithSPARQLCodeBlock(): void {
+    let lastSeenAskedQuestion = "";
+    for (let message of this.chat_messages) {
+      if (message.eventType === "on_chat_model_stream") {
+        let sparqlCodeBlocks = this.extractCodeBlocksService.findSPARQLBlocks(message.content);
+        if (sparqlCodeBlocks.length > 0) {
+          message.queryToRefine = sparqlCodeBlocks[0];
+          message.questionOfTheQueryToRefine = lastSeenAskedQuestion;
+        }
+      } else if (message.eventType === "user_message") {
+        lastSeenAskedQuestion = message.content;
+      }
+    }
+  }
+
 }

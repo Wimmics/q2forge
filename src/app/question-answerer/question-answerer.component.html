@@ -52,6 +52,17 @@
 
             <markdown lineNumbers data="{{item.content}}" clipboard></markdown>
 
+            @if (item.queryToRefine) {
+            <mat-action-row>
+                <div class="refine-query-container">
+                    <a mat-fab extended target="_blank" routerLink="/sparql-judge"
+                        [queryParams]="{query: item.queryToRefine, question: item.questionOfTheQueryToRefine}">
+                        <mat-icon>edit</mat-icon>
+                        Refine Query
+                    </a>
+                </div>
+            </mat-action-row>
+            }
         </mat-expansion-panel>
         }
 
