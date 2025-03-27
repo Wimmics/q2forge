@@ -12,8 +12,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RouterModule } from '@angular/router';
-// import { DropzoneCdkModule } from '@ngx-dropzone/cdk';
-// import { DropzoneMaterialModule } from '@ngx-dropzone/material';
 import { MatDropzone } from '@ngx-dropzone/material';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -28,19 +26,19 @@ import { MatChipsModule } from '@angular/material/chips';
 import { FileInputDirective, FileInputValidators } from '@ngx-dropzone/cdk';
 import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
 import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
+import { TEST_CHAT_MESSAGES } from '../services/testing-variable';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-question-answerer',
   imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
     JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe, MatDropzone,
-    MatChipRow, ReactiveFormsModule,
+    MatChipRow, ReactiveFormsModule, MatSlideToggleModule,
     MatFormFieldModule,
     MatInputModule,
     MatChipsModule,
     MatIconModule,
     FileInputDirective,
-    // DropzoneCdkModule,
-    // DropzoneMaterialModule,
   ],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
@@ -58,22 +56,9 @@ export class QuestionAnswererComponent implements OnInit {
   workflowRunning = false;
   errorLLMAnswer = '';
 
-  chat_messages: ChatMessage[] = [
-    // {
-    //   "sender": "user",
-    //   "content": "What is the name of the person?"
-    // },
-    // {
-    //   "sender": "init",
-    //   "content": toStringMarkdown(this.judgemnt_example),
-    //   "eventType": "init"
-    // },
-    // {
-    //   "sender": "system",
-    //   "content": "```turtle\n@prefix ex: <http://example.org/>\n@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n\nex:John rdf:type ex:Person .\n```"
-    // }
-  ];
+  chat_messages: ChatMessage[] = TEST_CHAT_MESSAGES;
 
+  expandAllMessages = true;
 
 
   constructor(private answerQuestionService: AnswerQuestionService) {

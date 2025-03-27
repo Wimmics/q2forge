@@ -33,8 +33,14 @@
         <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
         }
 
+        @if (chat_messages.length > 0) {
+        <div class="expand-all-container">
+            <mat-slide-toggle [(ngModel)]="expandAllMessages">Expand all messages</mat-slide-toggle>
+        </div>
+        }
+
         @for (item of chat_messages; track $index) {
-        <mat-expansion-panel class="message" expanded="true" [class.user-message]="item.sender == 'user'"
+        <mat-expansion-panel class="message" [expanded]="expandAllMessages" [class.user-message]="item.sender == 'user'"
             [class.system-message]="item.sender != 'user'"
             [class.llm-message]="['on_chat_model_start','on_chat_model_stream','on_chat_model_end'].includes(item.eventType)">
             <mat-expansion-panel-header>
