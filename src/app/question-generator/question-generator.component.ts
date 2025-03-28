@@ -11,11 +11,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MarkdownComponent } from 'ngx-markdown';
-import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_JUDGE_QUESTION, KG_DESCRIPTION, KG_SCHEMA, NUMBER_OF_QUESTIONS_TO_GENERATE, SPARQL_ENDPOINT_URI } from '../services/predefined-variables';
+import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_COOKIE_EXPIRATION_DAYS, DEFAULT_JUDGE_QUESTION, KG_DESCRIPTION, KG_SCHEMA, NUMBER_OF_QUESTIONS_TO_GENERATE, SPARQL_ENDPOINT_URI } from '../services/predefined-variables';
 import { LLMModel } from '../models/llmmodel';
 import { GenerateQuestionService } from '../services/generate-question.service';
 import { JsonPipe } from '@angular/common';
 import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
+import { CookieOptions, CookieService } from 'ngx-cookie-service';
+import { isQuestionsCookie, QuestionsCookie } from '../models/cookie-items';
+import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
+import { Router } from '@angular/router';
+import { DialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'app-question-generator',
@@ -28,7 +33,11 @@ import { ExtractCodeBlocksService } from '../services/extract-code-blocks.servic
 })
 export class QuestionGeneratorComponent {
 
-  constructor(private generateQuestionService: GenerateQuestionService, private extractCodeBlocksService: ExtractCodeBlocksService) { }
+  constructor(private generateQuestionService: GenerateQuestionService,
+    private extractCodeBlocksService: ExtractCodeBlocksService,
+    private cookieService: CookieService,
+    private router: Router,
+    private dialogService: DialogService) { }
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
@@ -59,7 +68,7 @@ export class QuestionGeneratorComponent {
   // loadingLLMAnswer = false;
   errorLLMAnswer = '';
   llmAnswer = '';
-  llmAnswerStructured = '';
+  competencyQuestions: CompetencyQuestion[] = [];
 
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[0];
@@ -67,7 +76,7 @@ export class QuestionGeneratorComponent {
   generateQuestionWithLLM() {
     if (this.kgDescription.value && this.kgDescription.value) {
       this.llmAnswer = '';
-      this.llmAnswerStructured = '';
+      this.competencyQuestions = [];
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
         this.selectedLLM,
@@ -198,7 +207,7 @@ export class QuestionGeneratorComponent {
     // this.properties.set([...this.defaultProperties]);
     // this.loadingLLMAnswer = false;
     this.llmAnswer = '';
-    this.llmAnswerStructured = '';
+    this.competencyQuestions = [];
     this.workflowDone = false;
   }
 
@@ -215,7 +224,7 @@ export class QuestionGeneratorComponent {
   }
 
   downloadStructuredResults(): void {
-    const blob = new Blob([this.llmAnswerStructured]);
+    const blob = new Blob([JSON.stringify(this.competencyQuestions)], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -226,17 +235,73 @@ export class QuestionGeneratorComponent {
     window.URL.revokeObjectURL(url);
   }
 
+  addQuestionsToCookies() {
+
+    let updated = false
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
+
+    let questionCookie: QuestionsCookie;
+
+    if (this.cookieService.check('questions')) {
+      try {
+        let cookie = JSON.parse(this.cookieService.get('questions'));
+
+        if (isQuestionsCookie(cookie)) {
+          this.competencyQuestions.forEach(question => {
+            if (!cookie.questions.includes(question)) {
+              cookie.questions.push(question);
+            } else {
+              this.dialogService.notifyUser('Duplicate Entry', 'The question: "' + question + '" already exists in the cookie.');
+              return;
+            }
+          });
+          cookie.expirationDate = expirationDate.toISOString();
+          questionCookie = cookie;
+        } else {
+          this.cookieService.delete('questions');
+          questionCookie = {
+            questions: this.competencyQuestions,
+            expirationDate: expirationDate.toISOString()
+          };
+        }
+      } catch (e) {
+        this.cookieService.delete('dataset');
+
+        questionCookie = {
+          questions: this.competencyQuestions,
+          expirationDate: expirationDate.toISOString()
+        };
+      }
+    } else {
+      questionCookie = {
+        questions: this.competencyQuestions,
+        expirationDate: expirationDate.toISOString()
+      };
+    }
+
+    this.cookieService.set('questions', JSON.stringify(questionCookie), { expires: 7 });
+
+    const url = this.router.createUrlTree(['/question-answerer']).toString();
+    window.open(url, '_blank');
+  }
+
   extractStructuredOutput() {
     if (this.llmAnswer) {
       try {
         let jsonBlocks = this.extractCodeBlocksService.findJsonBlocks(this.llmAnswer);
-
+        let obj;
         if (jsonBlocks.length > 0) {
-          JSON.parse(jsonBlocks[0]);
-          this.llmAnswerStructured = jsonBlocks[0];
+          obj = JSON.parse(jsonBlocks[0]);
         } else {
-          JSON.parse(this.llmAnswer);
-          this.llmAnswerStructured = this.llmAnswer;
+          obj = JSON.parse(this.llmAnswer);
+        }
+
+        if (isCompetencyQuestion(obj)) {
+          this.competencyQuestions = [obj];
+        } else if (isCompetencyQuestionArray(obj)) {
+          this.competencyQuestions = obj;
         }
 
       } catch (error) {

@@ -68,15 +68,12 @@
 
 
     </div>
-    <!-- <div>
-        {{question_fc.value}}
-    </div> -->
 
     <div class=" question-container">
         <mat-form-field appearance="outline" class="question-input">
             <mat-label>Question to answer</mat-label>
             <input type="text" matInput [formControl]="question_fc" [matAutocomplete]="auto"
-                (keydown.enter)="addCustomQuestion()" placeholder="Ex. {{model.question}}">
+                (keydown.enter)="addCustomQuestion()" placeholder="Ex. {{questionExample}}">
             @if (question_fc.hasError('required')) {
             <mat-error>The question is <strong>required</strong></mat-error>
             }
@@ -104,29 +101,5 @@
         }
 
     </div>
-
-    <!-- <div class=" question-container">
-        <mat-form-field class="question-input">
-            <mat-label>Question to answer</mat-label>
-            <input matInput placeholder="Ex. {{model.question}}" [formControl]="question_fc">
-            @if (question_fc.hasError('required')) {
-            <mat-error>The question is <strong>required</strong></mat-error>
-            }
-        </mat-form-field>
-
-        <button mat-mini-fab (click)="setConfiguration()">
-            <mat-icon>settings</mat-icon>
-        </button>
-
-        @if(!workflowRunning) {
-        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid">
-            <mat-icon>send</mat-icon>
-        </button>
-        }@else {
-        <button mat-mini-fab (click)="stop_wrkflow()" disabled="true">
-            <mat-icon>stop</mat-icon>
-        </button>
-        }
-    </div> -->
 
 </div>

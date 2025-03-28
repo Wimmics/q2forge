@@ -1,0 +1,19 @@
+.actions-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+
+    mat-form-field {
+        flex-grow: 0.5;
+    }
+
+}
+
+.dataset-table {
+    width: 100%;
+}
+
+.mat-column-actions {
+    width: 50px;
+}
+

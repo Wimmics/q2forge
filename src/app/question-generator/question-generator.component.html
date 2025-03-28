@@ -92,10 +92,20 @@
     }
     <div class="download-buttons">
         @if (workflowDone){
-        <button mat-raised-button (click)="downloadResults()">Download dump answer</button>
+        <button mat-raised-button (click)="downloadResults()">
+            <mat-icon>save_alt</mat-icon>
+            Download dump answer
+        </button>
         }
-        @if (this.llmAnswerStructured != ''){
-        <button mat-raised-button (click)="downloadStructuredResults()">Download JSON</button>
+        @if (this.competencyQuestions.length != 0) {
+        <button mat-raised-button (click)="downloadStructuredResults()">
+            <mat-icon>save_alt</mat-icon>
+            Extract and Download JSON
+        </button>
+        <button mat-raised-button (click)="addQuestionsToCookies()">
+            <mat-icon>bookmark</mat-icon>
+            Save and Answer
+        </button>
         }
     </div>
 </div>

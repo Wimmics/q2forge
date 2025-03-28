@@ -25,10 +25,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { FileInputDirective, FileInputValidators } from '@ngx-dropzone/cdk';
 import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
-import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 import { TEST_CHAT_MESSAGES } from '../services/testing-variable';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
+import { DialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'app-question-answerer',
@@ -47,7 +47,7 @@ import { ExtractCodeBlocksService } from '../services/extract-code-blocks.servic
 export class QuestionAnswererComponent implements OnInit {
 
   model = {
-    question: DEFAULT_ANSWER_QUESTION
+    question: ""
   }
 
   question_fc = new FormControl(this.model.question, [
@@ -61,8 +61,11 @@ export class QuestionAnswererComponent implements OnInit {
 
   expandAllMessages = true;
 
+  questionExample = DEFAULT_ANSWER_QUESTION;
 
-  constructor(private answerQuestionService: AnswerQuestionService, private extractCodeBlocksService: ExtractCodeBlocksService) {
+  constructor(private answerQuestionService: AnswerQuestionService,
+    private extractCodeBlocksService: ExtractCodeBlocksService,
+    private dialogService: DialogService) {
   }
 
   ask_question() {
@@ -298,14 +301,6 @@ export class QuestionAnswererComponent implements OnInit {
     judge_regenerate_query_model: "llama-3_3-70B@ovh",
     interpret_results_model: "llama-3_3-70B@ovh"
   };
-  readonly notifyUserDialog = inject(MatDialog);
-
-  notifyUser(title: string, message: string) {
-    const dialogRef = this.notifyUserDialog.open(GenericDialog,
-      {
-        data: { title: title, message: message },
-      });
-  }
 
   setConfiguration() {
     const dialogRef = this.questionAnswererConfigDialog.open(QuestionAnswererConfigDialog,
@@ -391,13 +386,13 @@ export class QuestionAnswererComponent implements OnInit {
             updated = true
             this.uploaded_questions.push(...obj.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
           } else {
-            this.notifyUser("Questions upload", `Invalid JSON format}`)
+            this.dialogService.notifyUser("Questions upload", `Invalid JSON format}`)
           }
         } catch (error) {
-          this.notifyUser("Questions upload", `Error in parsing JSON ${error}`)
+          this.dialogService.notifyUser("Questions upload", `Error in parsing JSON ${error}`)
         }
         if (updated) {
-          this.notifyUser("Questions uploaded", this.uploaded_questions.map((q) => `* ${q}`).join("\n"))
+          this.dialogService.notifyUser("Questions uploaded", this.uploaded_questions.map((q) => `* ${q}`).join("\n"))
         }
       });
     });

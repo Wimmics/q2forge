@@ -29,6 +29,7 @@
     "@ngx-dropzone/material": "^19.2.1",
     "clipboard": "^2.0.11",
     "mermaid": "^11.4.1",
+    "ngx-cookie-service": "^19.1.2",
     "ngx-markdown": "^19.1.0",
     "prismjs": "^1.29.0",
     "rxjs": "~7.8.0",

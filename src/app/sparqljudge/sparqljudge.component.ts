@@ -19,9 +19,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { LLMModel } from '../models/llmmodel';
 import { MarkdownComponent } from 'ngx-markdown';
-import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION } from '../services/predefined-variables';
+import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../services/predefined-variables';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
+import { MatDialog } from '@angular/material/dialog';
+import { ExportDatasetDialog } from '../dialogs/export-dataset-dialog/export-dataset-dialog';
+import { DataSetCookie, isDataSetCookie } from '../models/cookie-items';
+import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 
 
 @Component({
@@ -40,7 +45,8 @@ export class SPARQLJudgeComponent implements OnInit {
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
     private llmJudgeService: LLMJudgeService,
     private configManagerService: ConfigManagerService,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private cookieService: CookieService) { }
 
 
   displayedColumns: string[] = ['uri', 'info'];
@@ -61,8 +67,8 @@ export class SPARQLJudgeComponent implements OnInit {
       Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
     ]);
 
-  query = new FormControl(this.model.query);
-  question = new FormControl(this.model.question);
+  query = new FormControl(this.model.query, [Validators.required]);
+  question = new FormControl(this.model.question, [Validators.required]);
 
   parsedData: ExtractedData | undefined;
 
@@ -139,6 +145,7 @@ export class SPARQLJudgeComponent implements OnInit {
 
   reset() {
     this.dataSource = [];
+    this.question.setValue(this.model.question);
     this.query.setValue(this.model.query);
     this.endpoint.setValue(this.model.endpoint);
     this.loading = false;
@@ -310,4 +317,75 @@ export class SPARQLJudgeComponent implements OnInit {
   objectKeys(obj: any): string[] {
     return Object.keys(obj);
   }
+
+  readonly exportDatasetDialog = inject(MatDialog);
+  readonly genericDialog = inject(MatDialog);
+
+  exportDataset() {
+    const dialogRef = this.exportDatasetDialog.open(ExportDatasetDialog,
+      {
+        maxWidth: '95vw',
+        width: '80vw',
+      });
+  }
+
+  addToDataset() {
+
+    if (!this.question.value || !this.query.value) {
+      return;
+    }
+
+    let datasetCookie: DataSetCookie;
+
+    const datasetItem = {
+      question: this.question?.value,
+      query: this.query?.value
+    };
+
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
+
+    if (this.cookieService.check('dataset')) {
+      try {
+        let cookie = JSON.parse(this.cookieService.get('dataset'));
+        if (isDataSetCookie(cookie)) {
+          if (!cookie.dataset.some(item => item.query === datasetItem.query && item.question === datasetItem.question)) {
+            cookie.dataset.push(datasetItem);
+            cookie.expirationDate = expirationDate.toISOString();
+            datasetCookie = cookie;
+          } else {
+            this.genericDialog.open(GenericDialog, {
+              data: {
+                message: 'This dataset item already exists in the cookie.',
+                title: 'Duplicate Entry',
+              }
+            });
+            return;
+          }
+        } else {
+          this.cookieService.delete('dataset');
+          datasetCookie = {
+            dataset: [datasetItem],
+            expirationDate: expirationDate.toISOString()
+          };
+        }
+      } catch (e) {
+        this.cookieService.delete('dataset');
+
+        datasetCookie = {
+          dataset: [datasetItem],
+          expirationDate: expirationDate.toISOString()
+        };
+      }
+    } else {
+      datasetCookie = {
+        dataset: [datasetItem],
+        expirationDate: expirationDate.toISOString()
+      };
+    }
+
+    this.cookieService.set('dataset', JSON.stringify(datasetCookie), { expires: 7 });
+    this.exportDataset();
+  }
 }
+

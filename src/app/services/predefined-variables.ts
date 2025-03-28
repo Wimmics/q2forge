@@ -180,3 +180,4 @@ Fu G, Batchelor C, Dumontier M, Hastings J, Willighagen E, Bolton E. PubChemRDF:
 
 export const NUMBER_OF_QUESTIONS_TO_GENERATE = 5
 
+export const DEFAULT_COOKIE_EXPIRATION_DAYS = 7

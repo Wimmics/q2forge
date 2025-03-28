@@ -23,33 +23,55 @@
             <mat-label>SPARQL Query</mat-label>
             <textarea rows="20" matInput placeholder="e.g. {{model.query}}" [formControl]="query"></textarea>
         </mat-form-field>
-
-        <button mat-raised-button class="warning" (click)="reset()">Reset</button>
-        <button mat-raised-button (click)="addKnownPrefixes()">Add known Prefixes</button>
-        <button mat-raised-button (click)="getQandFQNames()" [disabled]="!query.value">Get QNames and FQN</button>
+        <div class="query-buttons-container">
+            <button mat-raised-button class="warning" (click)="reset()">
+                <mat-icon>restore</mat-icon>
+                Reset
+            </button>
+            <button mat-raised-button (click)="addKnownPrefixes()">
+                <mat-icon>add</mat-icon>
+                Add known Prefixes
+            </button>
+            <button mat-raised-button (click)="getQandFQNames()" [disabled]="!query.value">
+                <mat-icon>search</mat-icon>
+                Get QNames and FQN
+            </button>
+            <button mat-raised-button (click)="addToDataset()" [disabled]="!query.value || !question.value">
+                <mat-icon>playlist_add</mat-icon>
+                Add to Dataset
+            </button>
+            <button mat-raised-button extended (click)="exportDataset()">
+                <mat-icon>import_export</mat-icon>
+                Export Dataset
+            </button>
+        </div>
         <mat-form-field class="info-chip-list">
             <mat-label>Get these proporties</mat-label>
             <mat-chip-grid #chipGrid aria-label="Enter property">
                 @for (property of properties(); track property) {
-                <mat-chip-row (removed)="remove(property)" [editable]="true" (edited)="edit(property, $event)"
+                    <mat-chip-row (removed)="remove(property)" [editable]="true" (edited)="edit(property, $event)"
                     [aria-description]="'press enter to edit ' + property">
                     {{property}}
                     <button matChipRemove [attr.aria-label]="'remove ' + property">
                         <mat-icon>cancel</mat-icon>
                     </button>
                 </mat-chip-row>
-                }
-                <input placeholder="New property..." [matChipInputFor]="chipGrid"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                    (matChipInputTokenEnd)="add($event)" />
-            </mat-chip-grid>
-        </mat-form-field>
-
-        <mat-slide-toggle [formControl]="displayAllInfo" [disabled]="dataSource.length == 0">
+            }
+            <input placeholder="New property..." [matChipInputFor]="chipGrid"
+            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+            (matChipInputTokenEnd)="add($event)" />
+        </mat-chip-grid>
+    </mat-form-field>
+    
+    <div class="query-buttons-container">
+        <mat-slide-toggle [formControl]="displayAllInfo">
             displayAllInfo
         </mat-slide-toggle>
-        <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0">Get QNames and FQN
-            Info</button>
+        <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0">
+                <mat-icon>find_in_page</mat-icon>
+                Get QNames Info
+            </button>
+        </div>
     </form>
 
     @if (loading) {
@@ -90,28 +112,30 @@
 
     <hr>
 
-    <div>
+    <div class="query-buttons-container">
         <mat-form-field>
             <mat-label>LLM Model</mat-label>
-            <mat-select [(ngModel)]="selectedLLM" name="food">
+            <mat-select [(ngModel)]="selectedLLM">
                 @for (model of availableLLMModels; track model) {
                 <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
-        <button mat-raised-button (click)="getLLMasJudgeAnswer()">Get LLM as a Judge Answer</button>
+        <button mat-raised-button (click)="getLLMasJudgeAnswer()">
+            <mat-icon>gavel</mat-icon>
+            Judge Question / Query
+        </button>
     </div>
     }
 
     @if (errorLLMAnswer) {
-        <div class="error-message">Error: {{ errorLLMAnswer }}</div>
-        }
+    <div class="error-message">Error: {{ errorLLMAnswer }}</div>
+    }
 
     @if (llmAnswer ) {
     <h2>LLM as a Judge Answer</h2>
     <div>
         <markdown [data]="llmAnswer"></markdown>
     </div>
-
     }
 </div>
