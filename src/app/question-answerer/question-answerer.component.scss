@@ -93,9 +93,9 @@
     gap: 16px;
 
 
-    mat-form-field {
-        flex: 1;
-    }
+    // mat-form-field {
+    //     flex: 1;
+    // }
 }
 
 .upload-question-input {
@@ -116,4 +116,10 @@
     a {
         background-color: rgb(183, 221, 183);
     }
+}
+
+.dataset-buttons{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }

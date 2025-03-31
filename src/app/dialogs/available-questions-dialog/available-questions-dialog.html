@@ -1,8 +1,8 @@
 <h2 mat-dialog-title>
-  @if (datasetCookie.dataset.length === 0) {
-  The current dataset is empty!
+  @if (questionsCookie.questions.length === 0) {
+  The current question dataset is empty!
   } @else {
-  Number of items in the dataset: {{datasetCookie.dataset.length}}
+  Number of questions in the dataset: {{questionsCookie.questions.length}}
   }
 </h2>
 
@@ -10,25 +10,39 @@
 
 
 
-  <table mat-table [dataSource]="datasetCookie.dataset" class="mat-elevation-z8 dataset-table">
+  <table mat-table [dataSource]="questionsCookie.questions" class="mat-elevation-z8 dataset-table">
     <!-- Question Column -->
     <ng-container matColumnDef="question" class="mat-column-question">
       <th mat-header-cell *matHeaderCellDef> Question </th>
       <td mat-cell *matCellDef="let element"> {{element.question}} </td>
     </ng-container>
 
-    <!-- Query Column -->
-    <ng-container matColumnDef="query" class="mat-column-query">
-      <th mat-header-cell *matHeaderCellDef> Query </th>
+    <!-- Complexity Column -->
+    <ng-container matColumnDef="complexity" class="mat-column-complexity">
+      <th mat-header-cell *matHeaderCellDef> Complexity </th>
       <td mat-cell *matCellDef="let element">
-        <markdown [data]="element.query"></markdown>
+        {{element.complexity}}
+      </td>
+    </ng-container>
+    
+    <!-- Tags Column -->
+    <ng-container matColumnDef="tags" class="mat-column-tags">
+      <th mat-header-cell *matHeaderCellDef> Tags </th>
+      <td mat-cell *matCellDef="let element">
+        <ul>
+          @for (item of element.tags; track $index) {
+            <li>
+              {{item}}
+            </li>
+          }
+        </ul>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="actions" class="mat-column-actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-mini-fab class="warn-mini-fab-button" (click)="removeDatasetItem(element)">
+        <button mat-mini-fab class="warn-mini-fab-button" (click)="removeQuestion(element)">
           <mat-icon>delete_outline</mat-icon>
         </button>
       </td>
@@ -41,15 +55,15 @@
 <mat-dialog-actions class="actions-container">
   <mat-form-field>
     <mat-label>Export Format</mat-label>
-    <mat-select [(ngModel)]="selectedFormat" [disabled]="datasetCookie.dataset.length == 0">
+    <mat-select [(ngModel)]="selectedFormat" [disabled]="questionsCookie.questions.length == 0">
       @for (format of availableFormats; track format) {
       <mat-option [value]="format">{{format.name}}</mat-option>
       }
     </mat-select>
   </mat-form-field>
-  <button mat-raised-button (click)="exportDataset()" [disabled]="datasetCookie.dataset.length == 0">
+  <button mat-raised-button (click)="exportQuestions()" [disabled]="questionsCookie.questions.length == 0">
     <mat-icon>import_export</mat-icon>
-    Export Dataset
+    Export Questions
   </button>
   <button mat-raised-button mat-dialog-close>
     <mat-icon>close</mat-icon>

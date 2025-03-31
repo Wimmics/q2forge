@@ -35,9 +35,9 @@
 
 
         <div class="form-actions">
-            <mat-form-field class="full-width">
+            <mat-form-field >
                 <mat-label>LLM Model</mat-label>
-                <mat-select [(ngModel)]="selectedLLM" name="food">
+                <mat-select [(ngModel)]="selectedLLM" name="llm-model">
                     @for (model of availableLLMModels; track model) {
                     <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
                     }
@@ -60,9 +60,18 @@
                 Enforce Structured Output
             </mat-slide-toggle>
 
-            <button mat-raised-button (click)="generateQuestionWithLLM()">Generate Questions</button>
-            <button mat-raised-button (click)="sampleSchema()">Sample Schema</button>
-            <button mat-raised-button class="warning" (click)="reset()">Reset</button>
+            <button mat-raised-button (click)="generateQuestionWithLLM()">
+                <mat-icon>create</mat-icon>
+                Generate Questions
+            </button>
+            <button mat-raised-button (click)="sampleSchema()">
+                <mat-icon>space_bar</mat-icon>
+                Sample Schema
+            </button>
+            <button mat-raised-button class="warning" (click)="reset()">
+                <mat-icon>restore</mat-icon>
+                Reset
+            </button>
         </div>
     </form>
 
@@ -104,7 +113,7 @@
         </button>
         <button mat-raised-button (click)="addQuestionsToCookies()">
             <mat-icon>bookmark</mat-icon>
-            Save and Answer
+            Save to cookie and Answer
         </button>
         }
     </div>

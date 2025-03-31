@@ -23,10 +23,9 @@ import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, 
 import { ConfigManagerService } from '../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { MatDialog } from '@angular/material/dialog';
-import { ExportDatasetDialog } from '../dialogs/export-dataset-dialog/export-dataset-dialog';
 import { DataSetCookie, isDataSetCookie } from '../models/cookie-items';
 import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
+import { DialogService } from '../services/dialog.service';
 
 
 @Component({
@@ -46,7 +45,8 @@ export class SPARQLJudgeComponent implements OnInit {
     private llmJudgeService: LLMJudgeService,
     private configManagerService: ConfigManagerService,
     private route: ActivatedRoute,
-    private cookieService: CookieService) { }
+    private cookieService: CookieService,
+    private dialogService: DialogService) { }
 
 
   displayedColumns: string[] = ['uri', 'info'];
@@ -318,15 +318,8 @@ export class SPARQLJudgeComponent implements OnInit {
     return Object.keys(obj);
   }
 
-  readonly exportDatasetDialog = inject(MatDialog);
-  readonly genericDialog = inject(MatDialog);
-
   exportDataset() {
-    const dialogRef = this.exportDatasetDialog.open(ExportDatasetDialog,
-      {
-        maxWidth: '95vw',
-        width: '80vw',
-      });
+    this.dialogService.exportDataset();
   }
 
   addToDataset() {
@@ -354,12 +347,7 @@ export class SPARQLJudgeComponent implements OnInit {
             cookie.expirationDate = expirationDate.toISOString();
             datasetCookie = cookie;
           } else {
-            this.genericDialog.open(GenericDialog, {
-              data: {
-                message: 'This dataset item already exists in the cookie.',
-                title: 'Duplicate Entry',
-              }
-            });
+            this.dialogService.notifyUser('Duplicate Entry', 'This dataset item already exists in the cookie.');
             return;
           }
         } else {

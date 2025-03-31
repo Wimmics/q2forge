@@ -22,9 +22,17 @@
             <mat-error>Invalid file type</mat-error>
             }
         </mat-form-field>
-        <button mat-mini-fab (click)="uploadQuestions()" [disabled]="filesCtrl.errors != null">
-            <mat-icon>upload</mat-icon>
-        </button>
+        <div class="dataset-buttons">
+            <button mat-raised-button (click)="uploadQuestions()" [disabled]="filesCtrl.errors != null">
+                <mat-icon>upload</mat-icon>
+                Upload questions
+            </button>
+            
+            <button mat-raised-button extended (click)="checkCurrentQuestions()">
+                <mat-icon>search</mat-icon>
+                Current Questions
+            </button>
+        </div>
     </div>
     }
 

@@ -25,10 +25,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { FileInputDirective, FileInputValidators } from '@ngx-dropzone/cdk';
 import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
-import { TEST_CHAT_MESSAGES } from '../services/testing-variable';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
 import { DialogService } from '../services/dialog.service';
+import { CookieService } from 'ngx-cookie-service';
+import { isQuestionsCookie } from '../models/cookie-items';
+import { CookieManagerService } from '../services/cookie-manager.service';
 
 @Component({
   selector: 'app-question-answerer',
@@ -65,7 +67,9 @@ export class QuestionAnswererComponent implements OnInit {
 
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private cookieService: CookieService,
+    private cookieManagerService: CookieManagerService) {
   }
 
   ask_question() {
@@ -329,6 +333,24 @@ export class QuestionAnswererComponent implements OnInit {
       startWith(''),
       map(value => this._filter(value || ''))
     );
+
+    this.setQuestionsFromCookie();
+  }
+
+  setQuestionsFromCookie() {
+
+    if (this.cookieService.check('questions')) {
+      try {
+        let cookie = JSON.parse(this.cookieService.get('questions'));
+        if (isQuestionsCookie(cookie)) {
+          this.uploaded_questions.push(...cookie.questions.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
+        } else {
+          this.cookieService.delete('questions');
+        }
+      } catch (e) {
+        this.cookieService.delete('datquestionsaset');
+      }
+    }
   }
 
   private _filter(value: string): string[] {
@@ -380,11 +402,13 @@ export class QuestionAnswererComponent implements OnInit {
           let obj = JSON.parse(text)
           if (isCompetencyQuestion(obj) && !this.uploaded_questions.includes(obj.question)) {
             updated = true
-            this.uploaded_questions.push(obj.question)
+            this.cookieManagerService.addQuestionsToCookies([obj]);
+            this.setQuestionsFromCookie();
           }
           else if (isCompetencyQuestionArray(obj)) {
             updated = true
-            this.uploaded_questions.push(...obj.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
+            this.cookieManagerService.addQuestionsToCookies(obj);
+            this.setQuestionsFromCookie();
           } else {
             this.dialogService.notifyUser("Questions upload", `Invalid JSON format}`)
           }
@@ -392,7 +416,7 @@ export class QuestionAnswererComponent implements OnInit {
           this.dialogService.notifyUser("Questions upload", `Error in parsing JSON ${error}`)
         }
         if (updated) {
-          this.dialogService.notifyUser("Questions uploaded", this.uploaded_questions.map((q) => `* ${q}`).join("\n"))
+          this.dialogService.checkCurrentQuestions();
         }
       });
     });
@@ -413,4 +437,7 @@ export class QuestionAnswererComponent implements OnInit {
     }
   }
 
+  checkCurrentQuestions() {
+    this.dialogService.checkCurrentQuestions();
+  }
 }

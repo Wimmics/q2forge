@@ -21,6 +21,7 @@ import { isQuestionsCookie, QuestionsCookie } from '../models/cookie-items';
 import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
 import { Router } from '@angular/router';
 import { DialogService } from '../services/dialog.service';
+import { CookieManagerService } from '../services/cookie-manager.service';
 
 @Component({
   selector: 'app-question-generator',
@@ -37,7 +38,8 @@ export class QuestionGeneratorComponent {
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private cookieService: CookieService,
     private router: Router,
-    private dialogService: DialogService) { }
+    private dialogService: DialogService,
+    private cookieManagerService: CookieManagerService) { }
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
@@ -68,7 +70,18 @@ export class QuestionGeneratorComponent {
   // loadingLLMAnswer = false;
   errorLLMAnswer = '';
   llmAnswer = '';
-  competencyQuestions: CompetencyQuestion[] = [];
+  competencyQuestions: CompetencyQuestion[] = [
+    // {
+    //   "question": "What are the specific structural similarities between compounds classified under the CHEMINF ontology that exhibit biological activity in BioAssay experiments, categorized by disease associations in the Human Disease Ontology (DO)?",
+    //   "complexity": "Advanced",
+    //   "tags": ["compound", "bioassay", "ontology", "structure", "inference"]
+    // },
+    // {
+    //   "question": "What are the most common cell lines used in BioAssay experiments for compounds classified as anti-cancer agents under the ChEBI Ontology, according to the PubChemRDF data?",
+    //   "complexity": "Intermediate",
+    //   "tags": ["bioassay", "cell line", "ChEBI", "compound", "classification"]
+    // }
+  ];
 
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
   selectedLLM = this.availableLLMModels[0];
@@ -237,52 +250,7 @@ export class QuestionGeneratorComponent {
 
   addQuestionsToCookies() {
 
-    let updated = false
-
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
-
-    let questionCookie: QuestionsCookie;
-
-    if (this.cookieService.check('questions')) {
-      try {
-        let cookie = JSON.parse(this.cookieService.get('questions'));
-
-        if (isQuestionsCookie(cookie)) {
-          this.competencyQuestions.forEach(question => {
-            if (!cookie.questions.includes(question)) {
-              cookie.questions.push(question);
-            } else {
-              this.dialogService.notifyUser('Duplicate Entry', 'The question: "' + question + '" already exists in the cookie.');
-              return;
-            }
-          });
-          cookie.expirationDate = expirationDate.toISOString();
-          questionCookie = cookie;
-        } else {
-          this.cookieService.delete('questions');
-          questionCookie = {
-            questions: this.competencyQuestions,
-            expirationDate: expirationDate.toISOString()
-          };
-        }
-      } catch (e) {
-        this.cookieService.delete('dataset');
-
-        questionCookie = {
-          questions: this.competencyQuestions,
-          expirationDate: expirationDate.toISOString()
-        };
-      }
-    } else {
-      questionCookie = {
-        questions: this.competencyQuestions,
-        expirationDate: expirationDate.toISOString()
-      };
-    }
-
-    this.cookieService.set('questions', JSON.stringify(questionCookie), { expires: 7 });
-
+    this.cookieManagerService.addQuestionsToCookies(this.competencyQuestions);
     const url = this.router.createUrlTree(['/question-answerer']).toString();
     window.open(url, '_blank');
   }

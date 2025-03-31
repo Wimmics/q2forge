@@ -54,7 +54,8 @@ table {
 
 .form-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: baseline;
     gap: 10px;
 }
 
