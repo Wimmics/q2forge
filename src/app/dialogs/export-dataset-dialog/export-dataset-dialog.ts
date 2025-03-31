@@ -63,7 +63,7 @@ export class ExportDatasetDialog implements OnInit {
 
     if (this.selectedFormat.name === 'CSV') {
       data = 'question,query\n'
-        + this.datasetCookie.dataset.map(item => `${item.question},${item.query}`).join('\n');
+        + this.datasetCookie.dataset.map(item => `"${item.question}","${item.query}"`).join('\n');
     } else if (this.selectedFormat.name === 'JSONL') {
       data = this.datasetCookie.dataset.map(item => JSON.stringify(item)).join('\n');
     }

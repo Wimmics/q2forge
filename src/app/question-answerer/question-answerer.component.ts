@@ -338,6 +338,8 @@ export class QuestionAnswererComponent implements OnInit {
   }
 
   setQuestionsFromCookie() {
+    
+    this.uploaded_questions = []
 
     if (this.cookieService.check('questions')) {
       try {
@@ -348,7 +350,7 @@ export class QuestionAnswererComponent implements OnInit {
           this.cookieService.delete('questions');
         }
       } catch (e) {
-        this.cookieService.delete('datquestionsaset');
+        this.cookieService.delete('questions');
       }
     }
   }

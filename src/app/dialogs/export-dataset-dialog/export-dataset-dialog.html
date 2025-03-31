@@ -21,7 +21,7 @@
     <ng-container matColumnDef="query" class="mat-column-query">
       <th mat-header-cell *matHeaderCellDef> Query </th>
       <td mat-cell *matCellDef="let element">
-        <markdown [data]="element.query"></markdown>
+        <markdown>```sparql {{element.query}} ```</markdown>
       </td>
     </ng-container>
 

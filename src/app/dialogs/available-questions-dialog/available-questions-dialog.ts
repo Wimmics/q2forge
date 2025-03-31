@@ -51,7 +51,7 @@ export class AvailableQuestionsDialog implements OnInit {
           this.cookieService.delete('questions');
         }
       } catch (e) {
-        this.cookieService.delete('datquestionsaset');
+        this.cookieService.delete('questions');
       }
     }
 
