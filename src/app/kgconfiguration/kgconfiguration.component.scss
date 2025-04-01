@@ -1,0 +1,50 @@
+.mat-stepper-horizontal {
+    margin-top: 8px;
+}
+
+.mat-mdc-form-field {
+    margin-top: 16px;
+}
+
+.form-group-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.prefix-container {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.prefix-key {
+    flex-grow: 1;
+}
+
+.prefix-value {
+    flex-grow: 4;
+}
+
+.prefixes-container {
+    border: 1px solid #ccc;
+    padding: 16px;
+}
+
+.warn-mini-fab-button {
+    color: rgb(240, 233, 233);
+    background-color: rgb(228, 31, 31);
+}
+
+.green-mini-fab-button {
+    color: rgb(240, 233, 233);
+    background-color: rgb(47, 228, 31);
+}
+
+
+.stepper-actions{
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 16px;
+    gap: 16px;
+}

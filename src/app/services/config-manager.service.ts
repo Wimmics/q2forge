@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { DEFAULT_CONFIG_ENDPOINT, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Activate_CONFIG_ENDPOINT, CREATE_CONFIG_ENDPOINT, DEFAULT_CONFIG_ENDPOINT, GRAPH_SCHEMA_ENDPOINT, KG_DESCRIPTION_CONFIG_ENDPOINT, KG_EMBEDDINGS_CONFIG_ENDPOINT } from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { catchError, firstValueFrom, Observable, of } from 'rxjs';
 import { GraphSchema } from '../models/graph-schema';
+import { KGConfiguration } from '../models/kg-configuration';
 
 
 @Injectable({
@@ -26,7 +27,7 @@ export class ConfigManagerService {
 
   initConfiguration(): void {
     this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
-      this.setDefaultConfig(data);
+      this.setDefaultConfig(data);      
     });
   }
 
@@ -126,6 +127,47 @@ export class ConfigManagerService {
         });
       }
     });
+  }
+
+
+  createNewConfiguration(newConfig: KGConfiguration): Observable<any> {
+
+    const config = {
+      ...this.currentConfig,
+      ...newConfig
+    };
+
+    return this.http.post(CREATE_CONFIG_ENDPOINT, config)
+
+  }
+
+  activateConfiguration(kg_short_name: string): Observable<any> {
+    const config = {
+      "kg_short_name": kg_short_name
+    };
+
+    return this.http.post(Activate_CONFIG_ENDPOINT, config)
+
+  }
+
+
+
+  generateKGDescriptions(kg_short_name: string): Observable<any> {
+    const config = {
+      "kg_short_name": kg_short_name
+    };
+
+    return this.http.post(KG_DESCRIPTION_CONFIG_ENDPOINT, config)
+
+  }
+
+  generateKGEmbeddings(kg_short_name: string): Observable<any> {
+    const config = {
+      "kg_short_name": kg_short_name
+    };
+
+    return this.http.post(KG_EMBEDDINGS_CONFIG_ENDPOINT, config)
+
   }
 
 }

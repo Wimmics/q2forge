@@ -31,6 +31,11 @@ export class AppComponent {
     name: 'SPARQL Query Tester',
     route: '/sparql-judge',
     icon: 'check_circle_outline'
+  },{
+
+    name: 'New KG Configuration',
+    route: '/kg-configuration',
+    icon: 'settings'
   },
   //  {
   //   name: 'About',

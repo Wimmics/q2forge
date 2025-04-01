@@ -1,0 +1,239 @@
+<div class="container">
+    <div class="page-header">KG Configuration</div>
+
+    <!-- <button mat-raised-button (click)="isEditable = !isEditable">
+        {{!isEditable ? 'Enable edit mode' : 'Disable edit mode'}}
+    </button> -->
+
+    <mat-stepper linear #stepper>
+        <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Create a new Configuration</ng-template>
+                <div class="form-group-container">
+                    <mat-form-field>
+                        <mat-label>KG full name</mat-label>
+                        <input matInput formControlName="kg_full_name" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>KG short Name</mat-label>
+                        <input matInput formControlName="kg_short_name" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>KG description</mat-label>
+                        <textarea matInput formControlName="kg_description" required rows="3"></textarea>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>KG SPARQL endpoint URL</mat-label>
+                        <input matInput formControlName="kg_sparql_endpoint_url" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Ontologies SPARQL endpoint URL</mat-label>
+                        <input matInput formControlName="ontologies_sparql_endpoint_url">
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Properties QNames info</mat-label>
+                        <mat-chip-grid #chipPropertiesGrid aria-label="Enter property">
+                            @for (property of configuration().properties_qnames_info; track property) {
+                            <mat-chip-row (removed)="removePropertyQName(property)" [editable]="true"
+                                (edited)="editPropertyQName(property, $event)"
+                                [aria-description]="'press enter to edit ' + property">
+                                {{property}}
+                                <button matChipRemove [attr.aria-label]="'remove ' + property">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            </mat-chip-row>
+                            }
+                            <input placeholder="New property..." [matChipInputFor]="chipPropertiesGrid"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+                                (matChipInputTokenEnd)="addPropertyQName($event)" />
+                        </mat-chip-grid>
+                    </mat-form-field>
+                    <!-- <div class="prefixes-container" formGroupName="prefixes">
+                        <h3 align="center">Prefixes</h3>
+                        @for (item of configuration().prefixes | keyvalue; track $index) {
+                        <div class="prefix-container">
+                            <mat-form-field class="prefix-key">
+                                <mat-label>prefix</mat-label>
+                                <input matInput formControlName="{{item.key}}" required >
+                            </mat-form-field>
+                            <mat-form-field class="prefix-value">
+                                <mat-label>value</mat-label>
+                                <input matInput formControlName="{{item.value}}" required >
+                            </mat-form-field>
+                            <button mat-mini-fab class="green-mini-fab-button"
+                                (click)="validatePrefix(item.key,item.value)">
+                                <mat-icon>check</mat-icon>
+                            </button>
+                            <button mat-mini-fab class="warn-mini-fab-button" (click)="deletePrefix(item.key)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                        }
+
+                        <button mat-raised-button (click)="addPrefix()">
+                            <mat-icon>add</mat-icon>
+                            Add prefix
+                        </button>
+                    </div> -->
+                    <mat-form-field>
+                        <mat-label>Ontology named graphs</mat-label>
+                        <mat-chip-grid #chipOntologyNamedGraphsGrid aria-label="Enter named graph">
+                            @for (property of configuration().ontology_named_graphs; track property) {
+                            <mat-chip-row (removed)="removeOntologyNamedGraphs(property)" [editable]="true"
+                                (edited)="editOntologyNamedGraphs(property, $event)"
+                                [aria-description]="'press enter to edit ' + property">
+                                {{property}}
+                                <button matChipRemove [attr.aria-label]="'remove ' + property">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            </mat-chip-row>
+                            }
+                            <input placeholder="New named graph..." [matChipInputFor]="chipOntologyNamedGraphsGrid"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+                                (matChipInputTokenEnd)="addOntologyNamedGraphs($event)" />
+                        </mat-chip-grid>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Max similar classes</mat-label>
+                        <input matInput formControlName="max_similar_classes" required type="number" min="1">
+                    </mat-form-field>
+                    <mat-slide-toggle formControlName="expand_similar_classes">Expand similar classes
+                    </mat-slide-toggle>
+                    <mat-form-field>
+                        <mat-label>Class context format</mat-label>
+                        <mat-select formControlName="class_context_format">
+                            @for (format of availableClassoCntextFormats; track format) {
+                            <mat-option [value]="format">{{format}}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Excluded classes namespaces</mat-label>
+                        <mat-chip-grid #chipExcludedClassesNamespacesGrid aria-label="Enter namespace">
+                            @for (property of configuration().excluded_classes_namespaces; track property) {
+                            <mat-chip-row (removed)="removeExcludedClassesNamespaces(property)" [editable]="true"
+                                (edited)="editExcludedClassesNamespaces(property, $event)"
+                                [aria-description]="'press enter to edit ' + property">
+                                {{property}}
+                                <button matChipRemove [attr.aria-label]="'remove ' + property">
+                                    <mat-icon>cancel</mat-icon>
+                                </button>
+                            </mat-chip-row>
+                            }
+                            <input placeholder="New namespace..." [matChipInputFor]="chipExcludedClassesNamespacesGrid"
+                                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+                                (matChipInputTokenEnd)="addExcludedClassesNamespaces($event)" />
+                        </mat-chip-grid>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Data directory</mat-label>
+                        <input matInput formControlName="data_directory" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Class embeddings subdir</mat-label>
+                        <input matInput formControlName="class_embeddings_subdir" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Property embeddings subdir</mat-label>
+                        <input matInput formControlName="property_embeddings_subdir" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Queries embeddings subdir</mat-label>
+                        <input matInput formControlName="queries_embeddings_subdir" required>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Temp directory</mat-label>
+                        <input matInput formControlName="temp_directory" required>
+                    </mat-form-field>
+                </div>
+                @if (isInConfigCreatedTask) {
+                <mat-spinner></mat-spinner>
+                }
+            </form>
+            <div class="stepper-actions">
+                <button mat-raised-button (click)="createConfiguration()">
+                    <mat-icon>add</mat-icon>
+                    Create configuration
+                </button>
+                <button mat-raised-button matStepperNext [disabled]="!isConfigCreated">
+                    Next
+                    <mat-icon matSuffix>skip_next</mat-icon>
+                </button>
+            </div>
+            <!-- <div>
+                {{firstFormGroup.value | json}}
+            </div> -->
+        </mat-step>
+        <mat-step [completed]="isKGDescriptionsGenerated" [editable]="isEditable">
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Generate KG Descriptions</ng-template>
+                <div class="form-group-container">
+                    <mat-form-field>
+                        <mat-label>KG short Name</mat-label>
+                        <input matInput formControlName="kg_short_name" required>
+                    </mat-form-field>
+
+                    <button mat-raised-button (click)="activateConfiguration()" [disabled]="isConfigActivated">
+                        Activate configuration
+                        <mat-icon matSuffix>create</mat-icon>
+                    </button>
+                    @if (isInConfigActivatedTask) {
+                    <mat-spinner></mat-spinner>
+                    }
+                    <button mat-raised-button (click)="generateKGDescriptions()" [disabled]="!isConfigActivated || isKGDescriptionsGenerated">
+                        Generate KG descriptions
+                        <mat-icon matSuffix>create</mat-icon>
+                    </button>
+                    @if (isInKGDescriptionsGeneratedTask) {
+                    <mat-spinner></mat-spinner>
+                    }
+                </div>
+            </form>
+            <div class="stepper-actions">
+                <!-- <button mat-button matStepperPrevious>Back</button> -->
+                <button mat-raised-button matStepperNext [disabled]="!isKGDescriptionsGenerated">
+                    Next
+                    <mat-icon matSuffix>skip_next</mat-icon>
+                </button>
+            </div>
+        </mat-step>
+        <mat-step [completed]="isKGEmbeddingGenerated" [editable]="isEditable">
+            <form [formGroup]="thirdFormGroup">
+                <ng-template matStepLabel>Generate KG Embeddings</ng-template>
+                <div class="form-group-container">
+                    <mat-form-field>
+                        <mat-label>KG short Name</mat-label>
+                        <input matInput formControlName="kg_short_name" required>
+                    </mat-form-field>
+
+                    <button mat-raised-button (click)="generateKGEmbeddings()" [disabled]="isKGEmbeddingGenerated">
+                        Generate KG embeddings
+                        <mat-icon matSuffix>create</mat-icon>
+                    </button>
+                </div>
+                @if (isInKGEmbeddingGeneratedTask) {
+                <mat-spinner></mat-spinner>
+                }
+                <div class="stepper-actions">
+                    <!-- <button mat-button matStepperPrevious>Back</button> -->
+                    <button mat-raised-button matStepperNext [disabled]="!isKGEmbeddingGenerated">
+                        Next
+                        <mat-icon matSuffix>skip_next</mat-icon>
+                    </button>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step>
+            <ng-template matStepLabel>Done</ng-template>
+            <p>You are now done.</p>
+            <div class="stepper-actions">
+                <!-- <button mat-button matStepperPrevious>Back</button> -->
+                <button mat-raised-button (click)="stepper.reset()">
+                    <mat-icon matSuffix>replay</mat-icon>
+                    Reset
+                </button>
+            </div>
+        </mat-step>
+    </mat-stepper>
+
+</div>
