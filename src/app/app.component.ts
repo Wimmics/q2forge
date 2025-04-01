@@ -19,16 +19,16 @@ export class AppComponent {
     route: '/',
     icon: 'home'
   }, {
-    name: 'Question Dataset Generator',
+    name: 'Competency Question Generator',
     route: '/question-generator',
     icon: 'create'
   }, {
-    name: 'KG Questions Answerer',
+    name: 'SPARQL Query Generator',
     route: '/question-answerer',
     icon: 'question_answer'
   }, {
 
-    name: 'SPARQL Query Tester',
+    name: 'SPARQL Query Refinment',
     route: '/sparql-judge',
     icon: 'check_circle_outline'
   },{
