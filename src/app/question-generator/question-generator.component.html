@@ -1,15 +1,17 @@
 <div>
     <div class="page-header">Competency Question Generator</div>
 
-
-    <form class="form">
+    <!-- <div>
+        {{model | json}}
+    </div> -->
+    <form class="form" [formGroup]="formGroup">
         <mat-form-field class="full-width">
             <mat-label>Context Endpoint URI</mat-label>
-            <input matInput placeholder="e.g. {{model.endpoint}} " [formControl]="endpoint">
-            @if (endpoint.hasError('pattern')) {
+            <input matInput placeholder="e.g. {{model.endpoint}} " formControlName="endpoint">
+            @if (formGroup.get("endpoint")?.hasError('pattern')) {
             <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
             }
-            @if (endpoint.hasError('required')) {
+            @if (formGroup.get("endpoint")?.hasError('required')) {
             <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
             }
         </mat-form-field>
@@ -17,27 +19,27 @@
         <mat-form-field class="full-width">
             <mat-label>KG Description</mat-label>
             <textarea rows="10" matInput placeholder="e.g. {{model.kg_description}}"
-                [formControl]="kgDescription"></textarea>
+                formControlName="kg_description"></textarea>
         </mat-form-field>
 
         <mat-form-field class="full-width">
             <mat-label>KG Schema</mat-label>
-            <textarea rows="10" matInput placeholder="e.g. {{model.kg_schema}}" [formControl]="kgSchema"></textarea>
+            <textarea rows="10" matInput placeholder="e.g. {{model.kg_schema}}" formControlName="kg_schema"></textarea>
         </mat-form-field>
 
         <mat-form-field class="full-width">
             <mat-label>Additional Context</mat-label>
             <textarea rows="10" matInput placeholder="e.g. {{model.additional_context}}"
-                [formControl]="additionalContext"></textarea>
+                formControlName="additional_context"></textarea>
         </mat-form-field>
 
 
 
 
         <div class="form-actions">
-            <mat-form-field >
+            <mat-form-field>
                 <mat-label>LLM Model</mat-label>
-                <mat-select [(ngModel)]="selectedLLM" name="llm-model">
+                <mat-select formControlName="selected_LLM" name="llm-model">
                     @for (model of availableLLMModels; track model) {
                     <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
                     }
@@ -47,11 +49,12 @@
             <mat-form-field>
                 <mat-label># Questions</mat-label>
                 <input matInput type="number" min="1" max="100" placeholder="e.g {{model.number_of_questions}}"
-                    [formControl]="number_of_questions_fc">
-                @if (number_of_questions_fc.hasError('min') || number_of_questions_fc.hasError('max')) {
+                    formControlName="number_of_questions">
+                @if (formGroup.get("number_of_questions")?.hasError('min') 
+                || formGroup.get("number_of_questions")?.hasError('max')) {
                 <mat-error>Question Number Must be [1-100] </mat-error>
                 }
-                @if (number_of_questions_fc.hasError('required')) {
+                @if (formGroup.get("number_of_questions")?.hasError('required')) {
                 <mat-error># Questions is <strong>required</strong></mat-error>
                 }
             </mat-form-field>

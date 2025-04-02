@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -22,6 +22,7 @@ import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } f
 import { Router } from '@angular/router';
 import { DialogService } from '../services/dialog.service';
 import { CookieManagerService } from '../services/cookie-manager.service';
+import { ConfigManagerService } from '../services/config-manager.service';
 
 @Component({
   selector: 'app-question-generator',
@@ -39,29 +40,60 @@ export class QuestionGeneratorComponent {
     private cookieService: CookieService,
     private router: Router,
     private dialogService: DialogService,
-    private cookieManagerService: CookieManagerService) { }
+    private cookieManagerService: CookieManagerService,
+    private configManagerService: ConfigManagerService,
+    private _formBuilder: FormBuilder) {
+
+    this.currentConfig = configManagerService.getDefaultConfig()
+      .then((config) => {
+
+        console.log(config);
+
+        // this.model.endpoint = config.kg_sparql_endpoint_url;
+        this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
+        this.formGroup.get("kg_description")?.setValue(config.kg_description);
+        this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n '));
+        // this.model.kg_description = config.kg_description;
+        // this.model.kg_schema = config.ontology_named_graphs.join(', ');
+
+      });
+
+    this.formGroup = this._formBuilder.group({
+      endpoint: ["", Validators.required],
+      kg_description: ["", Validators.required],
+      kg_schema: ["", Validators.required],
+      additional_context: ["", Validators.required],
+      number_of_questions: [5, Validators.required],
+      selected_LLM: [AVAILABLE_LLM_MODELS[0], Validators.required],
+    })
+  }
+
+
+  currentConfig: any;
+
+  formGroup: FormGroup;
 
   model = {
     endpoint: SPARQL_ENDPOINT_URI,
-    question: DEFAULT_JUDGE_QUESTION,
     kg_description: KG_DESCRIPTION,
     kg_schema: KG_SCHEMA,
-    additional_context: ADDITIONAL_CONTEXT,
+    additional_context: "",
     number_of_questions: NUMBER_OF_QUESTIONS_TO_GENERATE,
+    selected_LLM: AVAILABLE_LLM_MODELS[0],
   }
 
   workflowDone = false;
 
-  endpoint = new FormControl(this.model.endpoint, [
-    Validators.required,
-    Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
-  ]);
-  kgDescription = new FormControl(this.model.kg_description, [
-    Validators.required,
-  ])
-  kgSchema = new FormControl(this.model.kg_schema)
-  additionalContext = new FormControl(this.model.additional_context)
-  number_of_questions_fc = new FormControl(this.model.number_of_questions, [Validators.required, Validators.min(1), Validators.max(100)]);
+  // endpoint = new FormControl(this.model.endpoint, [
+  //   Validators.required,
+  //   Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
+  // ]);
+  // kgDescription = new FormControl(this.model.kg_description, [
+  //   Validators.required,
+  // ])
+  // kgSchema = new FormControl(this.model.kg_schema)
+  // additionalContext = new FormControl(this.model.additional_context)
+  // number_of_questions_fc = new FormControl(this.model.number_of_questions, [Validators.required, Validators.min(1), Validators.max(100)]);
   enforceStructuredOutput = new FormControl(false);
 
   loading = false;
@@ -87,16 +119,22 @@ export class QuestionGeneratorComponent {
   selectedLLM = this.availableLLMModels[0];
 
   generateQuestionWithLLM() {
-    if (this.kgDescription.value && this.kgDescription.value) {
+    let endpoint = this.formGroup.get("endpoint")?.value;
+    let kg_description = this.formGroup.get("kg_description")?.value;
+    let kg_schema = this.formGroup.get("kg_schema")?.value;
+    let number_of_questions = this.formGroup.get("number_of_questions")?.value;
+    let additional_context = this.formGroup.get("additional_context")?.value;
+
+    if (kg_description) {
       this.llmAnswer = '';
       this.competencyQuestions = [];
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
         this.selectedLLM,
-        this.number_of_questions_fc.value!,
-        this.kgDescription.value,
-        this.kgSchema.value ? this.kgSchema.value : "No schema provided",
-        this.additionalContext.value ? this.additionalContext.value : "No additional context provided",
+        number_of_questions,
+        kg_description,
+        kg_schema,
+        additional_context,
         this.enforceStructuredOutput.value ? this.enforceStructuredOutput.value : false
       )
         .then(response => {
@@ -211,10 +249,11 @@ export class QuestionGeneratorComponent {
   reset() {
     // this.dataSource = [];
     // this.query.setValue(this.model.query);
-    this.endpoint.setValue(this.model.endpoint);
-    this.kgDescription.setValue(this.model.kg_description);
-    this.kgSchema.setValue(this.model.kg_schema);
-    this.additionalContext.setValue(this.model.additional_context);
+    this.formGroup.reset();
+    // this.endpoint.setValue(this.model.endpoint);
+    // this.kgDescription.setValue(this.model.kg_description);
+    // this.kgSchema.setValue(this.model.kg_schema);
+    // this.additionalContext.setValue(this.model.additional_context);
     this.loading = false;
     this.error = '';
     // this.properties.set([...this.defaultProperties]);

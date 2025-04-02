@@ -28,7 +28,7 @@ export class AppComponent {
     icon: 'question_answer'
   }, {
 
-    name: 'SPARQL Query Refinment',
+    name: 'SPARQL Query Refinement',
     route: '/sparql-judge',
     icon: 'check_circle_outline'
   },{

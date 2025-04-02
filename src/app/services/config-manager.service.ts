@@ -31,6 +31,19 @@ export class ConfigManagerService {
     });
   }
 
+  getDefaultConfig(): Promise<KGConfiguration> {
+    return new Promise((resolve) => {
+      if (this.currentConfig) {
+        resolve(this.currentConfig);
+      } else {
+        this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
+          this.setDefaultConfig(data);
+          resolve(this.currentConfig);
+        });
+      }
+    });
+  }
+
   setDefaultConfig(value: string) {
     this.currentConfig = JSON.parse(value);
 
