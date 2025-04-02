@@ -1,7 +1,7 @@
-import { AfterViewInit, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
-import { AbstractControl, FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { AnswerQuestionService } from '../services/answer-question.service';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,7 +13,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RouterModule } from '@angular/router';
 import { MatDropzone } from '@ngx-dropzone/material';
-
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../models/question-answerer-config';
@@ -23,6 +22,7 @@ import { map, Observable, startWith } from 'rxjs';
 import { MatChipRow } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FileInputDirective, FileInputValidators } from '@ngx-dropzone/cdk';
 import { isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -34,14 +34,11 @@ import { CookieManagerService } from '../services/cookie-manager.service';
 
 @Component({
   selector: 'app-question-answerer',
-  imports: [MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent, FormsModule,
-    JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe, MatDropzone,
-    MatChipRow, ReactiveFormsModule, MatSlideToggleModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatChipsModule,
-    MatIconModule,
-    FileInputDirective,
+  imports: [
+    MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent,
+    FormsModule, JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe,
+    MatDropzone, MatChipRow, ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule,
+    MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule
   ],
   templateUrl: './question-answerer.component.html',
   styleUrl: './question-answerer.component.scss'
@@ -338,7 +335,7 @@ export class QuestionAnswererComponent implements OnInit {
   }
 
   setQuestionsFromCookie() {
-    
+
     this.uploaded_questions = []
 
     if (this.cookieService.check('questions')) {

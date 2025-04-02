@@ -27,7 +27,7 @@
                 <mat-icon>upload</mat-icon>
                 Upload questions
             </button>
-            
+
             <button mat-raised-button extended (click)="checkCurrentQuestions()">
                 <mat-icon>search</mat-icon>
                 Current Questions
@@ -53,8 +53,76 @@
             [class.llm-message]="['on_chat_model_start','on_chat_model_stream','on_chat_model_end'].includes(item.eventType)">
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <mat-icon>{{item.sender == 'user'?"person_pin":"memory"}}</mat-icon>
-                    ➡️ {{item.sender}} : <b>{{this.currentConfig[item.sender+"_model"]}}</b>
+                    @switch (item.sender) {
+                    @case ('user'){
+                    💬
+                    }
+                    @case ('init'){
+                    🏁
+                    }
+                    @case ('preprocess_question'){
+                    ✂️
+                    }
+                    @case ('select_similar_query_examples'){
+                    🔍 📚
+                    }
+                    @case ('select_similar_classes'){
+                    🔍 🏷️
+                    }
+                    @case ('get_context_class_from_cache'){
+                    🎯 💾
+                    }
+                    @case ('get_context_class_from_kg'){
+                    🎯 🕸️
+                    }
+                    @case ('create_prompt'){
+                    ✍️ 📜
+                    }
+                    @case ('create_retry_prompt'){
+                    ✍️ ✏️
+                    }
+                    @case ('verify_query'){
+                    ✅ ⚠️
+                    }
+                    @case ('validate_sparql_syntax'){
+                    ✅ ⚠️
+                    }
+                    @case ('extract_query_qnames'){
+                    📤
+                    }
+                    @case ('find_qnames_info'){
+                    🔍 🕸️
+                    }
+                    @case ('judge_regeneration_prompt'){
+                    ✍️ ✏️
+                    }
+                    @case ('run_query'){
+                    🚀
+                    }
+                    @case ('validate_question'){
+                    🤖 ✅
+                    }
+                    @case ('generate_query'){
+                    🤖 ✍️
+                    }
+                    @case ('interpret_results'){
+                    🤖 📊
+                    }
+                    @case ('ask_question'){
+                    🤖 ❓
+                    }
+                    @case ('judge_query'){
+                    🤖 ⚖️
+                    }
+                    @case ('judge_regenerate_query'){
+                    🤖 🔄
+                    }
+                    @default {
+                    🤖
+                    }
+
+                    }
+                    &nbsp;{{item.sender}}&nbsp;:&nbsp;<b>{{this.currentConfig[item.sender+"_model"]}}</b>
                 </mat-panel-title>
             </mat-expansion-panel-header>
 
@@ -74,6 +142,11 @@
         </mat-expansion-panel>
         }
 
+        @if (workflowRunning) {
+        <div>
+            <mat-spinner></mat-spinner>
+        </div>
+        }
 
     </div>
 
