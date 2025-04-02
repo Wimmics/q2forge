@@ -67,3 +67,14 @@ h1 {
     color: rgb(240, 233, 233);
     background-color: rgb(228, 31, 31);
 }
+
+.form-errors-container{
+    margin: 0 auto;
+    width: 80%;
+    color: rgb(110, 0, 0);
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #f7cbcb;
+    border: 1px solid #ccc;
+    box-shadow: 2px 5px 5px 5px rgba(126, 2, 2, 0.5);
+}

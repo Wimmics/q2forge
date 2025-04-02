@@ -1,10 +1,6 @@
 <div class="container">
     <div class="page-header">KG Configuration</div>
 
-    <!-- <button mat-raised-button (click)="isEditable = !isEditable">
-        {{!isEditable ? 'Enable edit mode' : 'Disable edit mode'}}
-    </button> -->
-
     <mat-stepper linear #stepper>
         <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
             <form [formGroup]="firstFormGroup">
@@ -125,30 +121,11 @@
                                 (matChipInputTokenEnd)="addExcludedClassesNamespaces($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Data directory</mat-label>
-                        <input matInput formControlName="data_directory" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Class embeddings subdir</mat-label>
-                        <input matInput formControlName="class_embeddings_subdir" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Property embeddings subdir</mat-label>
-                        <input matInput formControlName="property_embeddings_subdir" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Queries embeddings subdir</mat-label>
-                        <input matInput formControlName="queries_embeddings_subdir" required>
-                    </mat-form-field>
-                    <mat-form-field>
-                        <mat-label>Temp directory</mat-label>
-                        <input matInput formControlName="temp_directory" required>
-                    </mat-form-field>
                 </div>
                 @if (isInConfigCreatedTask) {
                 <mat-spinner></mat-spinner>
                 }
+            
             </form>
             <div class="stepper-actions">
                 <button mat-raised-button (click)="createConfiguration()">
@@ -180,7 +157,8 @@
                     @if (isInConfigActivatedTask) {
                     <mat-spinner></mat-spinner>
                     }
-                    <button mat-raised-button (click)="generateKGDescriptions()" [disabled]="!isConfigActivated || isKGDescriptionsGenerated">
+                    <button mat-raised-button (click)="generateKGDescriptions()"
+                        [disabled]="!isConfigActivated || isKGDescriptionsGenerated">
                         Generate KG descriptions
                         <mat-icon matSuffix>create</mat-icon>
                     </button>

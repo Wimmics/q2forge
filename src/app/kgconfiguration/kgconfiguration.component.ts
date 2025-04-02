@@ -1,6 +1,6 @@
 import { JsonPipe, KeyValuePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -112,7 +112,7 @@ export class KGConfigurationComponent {
     temp_directory: "./tmp",
   })
 
-  configuration = signal<KGConfiguration>({
+  configuration_d2kab = signal<KGConfiguration>({
     kg_full_name: "WheatGenomic Scienctific Literature Knowledge Graph",
     kg_short_name: "d2kab",
     kg_description: "The Wheat Genomics Scientific Literature Knowledge Graph (WheatGenomicsSLKG) is a FAIR knowledge graph that exploits the Semantic Web technologies to describe PubMed scientific articles on wheat genetics and genomics. It represents Named Entities (NE) about genes, phenotypes, taxa and varieties, mentioned in the title and the abstract of the articles, and the relationships between wheat mentions of varieties and phenotypes.",
@@ -162,12 +162,36 @@ export class KGConfigurationComponent {
     temp_directory: "./tmp"
   })
 
+  configuration = signal<KGConfiguration>({
+    kg_full_name: "",
+    kg_short_name: "",
+    kg_description: "",
+    kg_sparql_endpoint_url: "",
+    ontologies_sparql_endpoint_url: "",
+    properties_qnames_info: [],
+    prefixes: {
+    },
+    ontology_named_graphs: [
+    ],
+    max_similar_classes: 10,
+    expand_similar_classes: false,
+    class_context_format: "turtle",
+    excluded_classes_namespaces: [],
+    data_directory: "./data",
+    class_embeddings_subdir: "classes_with_instance_nomic",
+    property_embeddings_subdir: "properties_nomic",
+    queries_embeddings_subdir: "sparql_queries_nomic",
+    temp_directory: "./tmp"
+  })
+
   firstFormGroup: FormGroup;
 
   secondFormGroup: FormGroup;
-  
+
   thirdFormGroup: FormGroup;
-  
+
+  isEditable = false
+
   constructor(private configManagerService: ConfigManagerService,
     private dialogService: DialogService) {
 
@@ -184,11 +208,11 @@ export class KGConfigurationComponent {
       expand_similar_classes: [this.configuration().expand_similar_classes, Validators.required],
       class_context_format: [this.configuration().class_context_format, Validators.required],
       excluded_classes_namespaces: [this.configuration().excluded_classes_namespaces, []],
-      data_directory: [this.configuration().data_directory, Validators.required],
-      class_embeddings_subdir: [this.configuration().class_embeddings_subdir, Validators.required],
-      property_embeddings_subdir: [this.configuration().property_embeddings_subdir, Validators.required],
-      queries_embeddings_subdir: [this.configuration().queries_embeddings_subdir, Validators.required],
-      temp_directory: [this.configuration().temp_directory, Validators.required],
+      // data_directory: [this.configuration().data_directory, Validators.required],
+      // class_embeddings_subdir: [this.configuration().class_embeddings_subdir, Validators.required],
+      // property_embeddings_subdir: [this.configuration().property_embeddings_subdir, Validators.required],
+      // queries_embeddings_subdir: [this.configuration().queries_embeddings_subdir, Validators.required],
+      // temp_directory: [this.configuration().temp_directory, Validators.required],
     });
 
     // Dynamically create form controls inside the prefixes FormGroup
@@ -210,8 +234,6 @@ export class KGConfigurationComponent {
     this.thirdFormGroup.get('kg_short_name')?.disable();
 
   }
-
-  isEditable = false;
 
   isConfigCreated = false;
 
@@ -366,6 +388,12 @@ export class KGConfigurationComponent {
   }
 
   createConfiguration() {
+
+    if (this.firstFormGroup.invalid) {
+      this.dialogService.notifyFormGroupValidationError(this.firstFormGroup);
+      return; // Prevent further processing
+    }
+
     this.isInConfigCreatedTask = true;
     this.configManagerService.createNewConfiguration(this.firstFormGroup.value)
       .subscribe({
@@ -464,4 +492,5 @@ export class KGConfigurationComponent {
       });
 
   }
+
 }
