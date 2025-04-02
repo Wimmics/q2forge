@@ -17,26 +17,35 @@
                         <mat-label>KG short Name</mat-label>
                         <input matInput formControlName="kg_short_name" required>
                         @if (firstFormGroup.get('kg_short_name')?.hasError('required')) {
-                            <mat-error>This field is <strong>required</strong></mat-error>
-                            }
+                        <mat-error>This field is <strong>required</strong></mat-error>
+                        }
+                        @if (firstFormGroup.get('kg_short_name')?.hasError('pattern')) {
+                        <mat-error>Only lowercase letters, numbers and underscores are allowed</mat-error>
+                        }
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>KG description</mat-label>
                         <textarea matInput formControlName="kg_description" required rows="3"></textarea>
                         @if (firstFormGroup.get('kg_description')?.hasError('required')) {
-                            <mat-error>This field is <strong>required</strong></mat-error>
-                            }
+                        <mat-error>This field is <strong>required</strong></mat-error>
+                        }
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>KG SPARQL endpoint URL</mat-label>
                         <input matInput formControlName="kg_sparql_endpoint_url" required>
                         @if (firstFormGroup.get('kg_sparql_endpoint_url')?.hasError('required')) {
-                            <mat-error>This field is <strong>required</strong></mat-error>
-                            }
+                        <mat-error>This field is <strong>required</strong></mat-error>
+                        }
+                        @if (firstFormGroup.get('kg_sparql_endpoint_url')?.hasError('pattern')) {
+                        <mat-error>Please enter a valid URI</mat-error>
+                        }
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Ontologies SPARQL endpoint URL</mat-label>
                         <input matInput formControlName="ontologies_sparql_endpoint_url">
+                        @if (firstFormGroup.get('ontologies_sparql_endpoint_url')?.hasError('pattern')) {
+                        <mat-error>Please enter a valid URI</mat-error>
+                        }
                     </mat-form-field>
                     <mat-form-field>
                         <mat-label>Properties QNames info</mat-label>
@@ -56,23 +65,29 @@
                                 (matChipInputTokenEnd)="addPropertyQName($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
-                    <!-- <div class="prefixes-container" formGroupName="prefixes">
+                    <div class="prefixes-container" formArrayName="prefixes">
                         <h3 align="center">Prefixes</h3>
-                        @for (item of configuration().prefixes | keyvalue; track $index) {
-                        <div class="prefix-container">
+                        @for (prefixCtrl of prefixArray.controls; track $index) {
+                        <div class="prefix-container" formGroupName="{{$index}}">
                             <mat-form-field class="prefix-key">
                                 <mat-label>prefix</mat-label>
-                                <input matInput formControlName="{{item.key}}" required >
+                                <input matInput formControlName="key" required>
+                                @if (prefixArray.at($index).get('key')?.hasError('required')) {
+                                <mat-error>This field is <strong>required</strong></mat-error>
+                                }
                             </mat-form-field>
                             <mat-form-field class="prefix-value">
                                 <mat-label>value</mat-label>
-                                <input matInput formControlName="{{item.value}}" required >
+                                <input matInput formControlName="value" required>
+                                @if (prefixArray.at($index).get('value')?.hasError('required')) {
+                                <mat-error>This field is <strong>required</strong></mat-error>
+                                }
+                                @if (prefixArray.at($index).get('value')?.hasError('pattern')) {
+                                <mat-error>Please enter a valid URI</mat-error>
+                                }
                             </mat-form-field>
-                            <button mat-mini-fab class="green-mini-fab-button"
-                                (click)="validatePrefix(item.key,item.value)">
-                                <mat-icon>check</mat-icon>
-                            </button>
-                            <button mat-mini-fab class="warn-mini-fab-button" (click)="deletePrefix(item.key)">
+                            <button mat-mini-fab class="warn-mini-fab-button"
+                                (click)="deletePrefix(prefixCtrl.get('key')?.value, $index)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </div>
@@ -82,7 +97,7 @@
                             <mat-icon>add</mat-icon>
                             Add prefix
                         </button>
-                    </div> -->
+                    </div>
                     <mat-form-field>
                         <mat-label>Ontology named graphs</mat-label>
                         <mat-chip-grid #chipOntologyNamedGraphsGrid aria-label="Enter named graph">
@@ -105,8 +120,12 @@
                         <mat-label>Max similar classes</mat-label>
                         <input matInput formControlName="max_similar_classes" required type="number" min="1">
                         @if (firstFormGroup.get('max_similar_classes')?.hasError('required')) {
-                            <mat-error>This field is <strong>required</strong></mat-error>
+                        <mat-error>This field is <strong>required</strong></mat-error>
+                        }
+                        @if (firstFormGroup.get('max_similar_classes')?.hasError('min')) {
+                            <mat-error>The minimum value is <strong>1</strong></mat-error>
                             }
+
                     </mat-form-field>
                     <mat-slide-toggle formControlName="expand_similar_classes">Expand similar classes
                     </mat-slide-toggle>
@@ -140,8 +159,8 @@
                 @if (isInConfigCreatedTask) {
                 <mat-spinner></mat-spinner>
                 }
-
             </form>
+            <!-- <markdown [data]="firstFormValueMarkdown"> </markdown> -->
             <div class="stepper-actions">
                 <button mat-raised-button (click)="createConfiguration()">
                     <mat-icon>add</mat-icon>
@@ -152,9 +171,6 @@
                     <mat-icon matSuffix>skip_next</mat-icon>
                 </button>
             </div>
-            <!-- <div>
-                {{firstFormGroup.value | json}}
-            </div> -->
         </mat-step>
         <mat-step [completed]="isKGDescriptionsGenerated" [editable]="isEditable">
             <form [formGroup]="secondFormGroup">

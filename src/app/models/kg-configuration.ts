@@ -11,9 +11,4 @@ export interface KGConfiguration {
     expand_similar_classes: boolean;
     class_context_format: string;
     excluded_classes_namespaces: string[];
-    data_directory: string;
-    class_embeddings_subdir: string;
-    property_embeddings_subdir: string;
-    queries_embeddings_subdir: string;
-    temp_directory: string;
 }

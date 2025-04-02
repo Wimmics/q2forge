@@ -145,12 +145,7 @@ export class ConfigManagerService {
 
   createNewConfiguration(newConfig: KGConfiguration): Observable<any> {
 
-    const config = {
-      ...this.currentConfig,
-      ...newConfig
-    };
-
-    return this.http.post(CREATE_CONFIG_ENDPOINT, config)
+    return this.http.post(CREATE_CONFIG_ENDPOINT, newConfig)
 
   }
 

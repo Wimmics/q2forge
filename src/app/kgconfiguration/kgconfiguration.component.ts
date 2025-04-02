@@ -1,6 +1,6 @@
-import { JsonPipe, KeyValuePipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { JsonPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { DialogService } from '../services/dialog.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MarkdownComponent, MarkdownModule } from 'ngx-markdown';
 
 @Component({
   selector: 'app-kgconfiguration',
@@ -35,8 +36,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatSlideToggleModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MarkdownModule,
     JsonPipe,
-    KeyValuePipe
   ],
   templateUrl: './kgconfiguration.component.html',
   styleUrl: './kgconfiguration.component.scss'
@@ -45,6 +46,9 @@ export class KGConfigurationComponent {
 
   private _formBuilder = inject(FormBuilder);
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
+
+  readonly httpPatternValidator = Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
+
 
   availableClassoCntextFormats = ["turtle", "tuple"]
 
@@ -105,14 +109,9 @@ export class KGConfigurationComponent {
       "http://data.epo.org/linked-data/def/patent/Publication",
       "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#"
     ],
-    data_directory: "./data",
-    class_embeddings_subdir: "classes_with_instance_nomic",
-    property_embeddings_subdir: "properties_nomic",
-    queries_embeddings_subdir: "sparql_queries_nomic",
-    temp_directory: "./tmp",
   })
 
-  configuration_d2kab = signal<KGConfiguration>({
+  configuration = signal<KGConfiguration>({
     kg_full_name: "WheatGenomic Scienctific Literature Knowledge Graph",
     kg_short_name: "d2kab",
     kg_description: "The Wheat Genomics Scientific Literature Knowledge Graph (WheatGenomicsSLKG) is a FAIR knowledge graph that exploits the Semantic Web technologies to describe PubMed scientific articles on wheat genetics and genomics. It represents Named Entities (NE) about genes, phenotypes, taxa and varieties, mentioned in the title and the abstract of the articles, and the relationships between wheat mentions of varieties and phenotypes.",
@@ -155,14 +154,9 @@ export class KGConfigurationComponent {
     expand_similar_classes: true,
     class_context_format: "turtle",
     excluded_classes_namespaces: [],
-    data_directory: "./data",
-    class_embeddings_subdir: "classes_with_instance_nomic",
-    property_embeddings_subdir: "properties_nomic",
-    queries_embeddings_subdir: "sparql_queries_nomic",
-    temp_directory: "./tmp"
   })
 
-  configuration = signal<KGConfiguration>({
+  configuration_ = signal<KGConfiguration>({
     kg_full_name: "",
     kg_short_name: "",
     kg_description: "",
@@ -177,11 +171,6 @@ export class KGConfigurationComponent {
     expand_similar_classes: false,
     class_context_format: "turtle",
     excluded_classes_namespaces: [],
-    data_directory: "./data",
-    class_embeddings_subdir: "classes_with_instance_nomic",
-    property_embeddings_subdir: "properties_nomic",
-    queries_embeddings_subdir: "sparql_queries_nomic",
-    temp_directory: "./tmp"
   })
 
   firstFormGroup: FormGroup;
@@ -197,29 +186,20 @@ export class KGConfigurationComponent {
 
     this.firstFormGroup = this._formBuilder.group({
       kg_full_name: [this.configuration().kg_full_name, Validators.required],
-      kg_short_name: [this.configuration().kg_short_name, Validators.required],
+      kg_short_name: [this.configuration().kg_short_name, [Validators.required,Validators.pattern(/^[a-z0-9_]+$/)]],
       kg_description: [this.configuration().kg_description, Validators.required],
-      kg_sparql_endpoint_url: [this.configuration().kg_sparql_endpoint_url, Validators.required],
-      ontologies_sparql_endpoint_url: [this.configuration().ontologies_sparql_endpoint_url, []],
+      kg_sparql_endpoint_url: [this.configuration().kg_sparql_endpoint_url, [Validators.required, this.httpPatternValidator]],
+      ontologies_sparql_endpoint_url: [this.configuration().ontologies_sparql_endpoint_url, [this.httpPatternValidator]],
       properties_qnames_info: [this.configuration().properties_qnames_info, []],
-      // prefixes: this._formBuilder.group({}),
+      prefixes: this._formBuilder.array([]),
       ontology_named_graphs: [this.configuration().ontology_named_graphs],
-      max_similar_classes: [this.configuration().max_similar_classes, Validators.required],
+      max_similar_classes: [this.configuration().max_similar_classes, [Validators.required, Validators.min(1)]],
       expand_similar_classes: [this.configuration().expand_similar_classes, Validators.required],
       class_context_format: [this.configuration().class_context_format, Validators.required],
       excluded_classes_namespaces: [this.configuration().excluded_classes_namespaces, []],
-      // data_directory: [this.configuration().data_directory, Validators.required],
-      // class_embeddings_subdir: [this.configuration().class_embeddings_subdir, Validators.required],
-      // property_embeddings_subdir: [this.configuration().property_embeddings_subdir, Validators.required],
-      // queries_embeddings_subdir: [this.configuration().queries_embeddings_subdir, Validators.required],
-      // temp_directory: [this.configuration().temp_directory, Validators.required],
     });
 
-    // Dynamically create form controls inside the prefixes FormGroup
-    // const prefixGroup = this.firstFormGroup.get('prefixes') as FormGroup;
-    // Object.keys(this.configuration().prefixes).forEach((key) => {
-    //   prefixGroup.addControl(key, this._formBuilder.control(this.configuration().prefixes[key]));
-    // });
+    this.fillPrefixesFormArray()
 
     this.secondFormGroup = this._formBuilder.group({
       kg_short_name: [this.configuration().kg_short_name, Validators.required],
@@ -375,16 +355,33 @@ export class KGConfigurationComponent {
     return this.configuration().prefixes;
   }
 
-  deletePrefix(key: string): boolean {
-    if (this.configuration().prefixes[key]) {
+  deletePrefix(key: string, index: number) {
+
+
+    this.configuration().prefixes = this.prefixArray.controls.reduce((acc, control) => {
+      const key: string = control.get('key')?.value || "";
+      const value: string = control.get('value')?.value || "";
+
+      acc[key] = value;
+
+      return acc;
+    }, {} as { [key: string]: string });
+
+    this.prefixArray.clear()
+
+    setTimeout(() => {
       delete this.configuration().prefixes[key];
-      return true; // Successfully deleted
-    }
-    return false; // Key not found
+      this.fillPrefixesFormArray();
+    }, 100);
   }
 
   addPrefix() {
-    this.configuration().prefixes["z===     ===z"] = "";
+    this.prefixArray.push(this._formBuilder.group(
+      {
+        key: this._formBuilder.control('', [Validators.required]),
+        value: this._formBuilder.control('', [Validators.required, this.httpPatternValidator])
+      })
+    );
   }
 
   createConfiguration() {
@@ -394,8 +391,30 @@ export class KGConfigurationComponent {
       return; // Prevent further processing
     }
 
+    // format the prefixes object
+    this.configuration().prefixes = this.prefixArray.controls.reduce((acc, control) => {
+      const key = control.get('key')?.value;
+      const value = control.get('value')?.value;
+      if (key && value) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as { [key: string]: string });
+
+    this.configuration().kg_full_name = this.firstFormGroup.value.kg_full_name;
+    this.configuration().kg_short_name = this.firstFormGroup.value.kg_short_name;
+    this.configuration().kg_description = this.firstFormGroup.value.kg_description;
+    this.configuration().kg_sparql_endpoint_url = this.firstFormGroup.value.kg_sparql_endpoint_url;
+    this.configuration().ontologies_sparql_endpoint_url = this.firstFormGroup.value.ontologies_sparql_endpoint_url;
+    this.configuration().properties_qnames_info = this.firstFormGroup.value.properties_qnames_info;
+    this.configuration().ontology_named_graphs = this.firstFormGroup.value.ontology_named_graphs;
+    this.configuration().max_similar_classes = this.firstFormGroup.value.max_similar_classes;
+    this.configuration().expand_similar_classes = this.firstFormGroup.value.expand_similar_classes;
+    this.configuration().class_context_format = this.firstFormGroup.value.class_context_format;
+    this.configuration().excluded_classes_namespaces = this.firstFormGroup.value.excluded_classes_namespaces;
+
     this.isInConfigCreatedTask = true;
-    this.configManagerService.createNewConfiguration(this.firstFormGroup.value)
+    this.configManagerService.createNewConfiguration(this.configuration())
       .subscribe({
         next: value => {
           this.isInConfigCreatedTask = false;
@@ -491,6 +510,27 @@ export class KGConfigurationComponent {
         }
       });
 
+  }
+
+  fillPrefixesFormArray() {
+    // Dynamically create form controls inside the prefixes FormGroup
+    const prefixArray = this.firstFormGroup.get('prefixes') as FormArray;
+
+    // Iterate over the prefixes object and create FormGroup for each prefix
+    Object.entries(this.configuration().prefixes).forEach(([key, value]) => {
+      prefixArray.push(this._formBuilder.group(
+        {
+          key: this._formBuilder.control(key, [Validators.required]),
+          value: this._formBuilder.control(value, [Validators.required, this.httpPatternValidator])
+        }))
+    });
+  }
+  get prefixArray() {
+    return this.firstFormGroup.get('prefixes') as FormArray;
+  }
+
+  get firstFormValueMarkdown() {
+    return "```json \n" + JSON.stringify(this.firstFormGroup.value, null, 2) + "\n```";
   }
 
 }
