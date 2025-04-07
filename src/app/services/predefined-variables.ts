@@ -50,7 +50,7 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
   }];
 
 const SERVER = "http://localhost:8000" // dev
-export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
+export const SPARQL_ENDPOINT_URI = `http://localhost:8080/sparql`
 const API_BASE = `${SERVER}/api/test_dataset`
 export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`

@@ -1,42 +1,31 @@
 <div>
     <div class="page-header">SPARQL Query Refinement</div>
 
-    <form class="form">
-        <mat-form-field class="full-width">
-            <mat-label>Context Endpoint URI</mat-label>
-            <input matInput placeholder="Ex. https://idsm.elixir-czech.cz/sparql/endpoint/idsm"
-                [formControl]="endpoint">
-            @if (endpoint.hasError('pattern')) {
-            <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
-            }
-            @if (endpoint.hasError('required')) {
-            <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
-            }
-        </mat-form-field>
-
+    <div class="form">
         <mat-form-field class="full-width">
             <mat-label>Question</mat-label>
             <textarea rows="1" matInput placeholder="e.g. {{model.question}}" [formControl]="question"></textarea>
+            @if (question.hasError('required')) {
+            <mat-error>The question is <strong>required</strong></mat-error>
+            }
         </mat-form-field>
 
-        <mat-form-field class="full-width">
-            <mat-label>SPARQL Query</mat-label>
-            <textarea rows="20" matInput placeholder="e.g. {{model.query}}" [formControl]="query"></textarea>
-        </mat-form-field>
+        <div #yasgui class="yasgui-container"></div>
         <div class="query-buttons-container">
             <button mat-raised-button class="warning" (click)="reset()">
                 <mat-icon>restore</mat-icon>
                 Reset
             </button>
-            <button mat-raised-button (click)="addKnownPrefixes()">
+            <button mat-raised-button (click)="addKnownPrefixes()" [disabled]="!currentQuery">
                 <mat-icon>add</mat-icon>
                 Add known Prefixes
             </button>
-            <button mat-raised-button (click)="getQandFQNames()" [disabled]="!query.value">
+            <button mat-raised-button (click)="getQandFQNames()" [disabled]="!currentQuery || currentQuery == ''">
                 <mat-icon>search</mat-icon>
                 Get QNames and FQN
             </button>
-            <button mat-raised-button (click)="addToDataset()" [disabled]="!query.value || !question.value">
+            <button mat-raised-button (click)="addToDataset()"
+                [disabled]="!currentQuery || currentQuery == '' || !question.value">
                 <mat-icon>playlist_add</mat-icon>
                 Add to Dataset
             </button>
@@ -44,35 +33,39 @@
                 <mat-icon>import_export</mat-icon>
                 Export Dataset
             </button>
+            <!-- <button mat-raised-button extended (click)="getInfo()">
+                <mat-icon>import_export</mat-icon>
+                TMP get Info
+            </button> -->
         </div>
         <mat-form-field class="info-chip-list">
             <mat-label>Get these proporties</mat-label>
             <mat-chip-grid #chipGrid aria-label="Enter property">
                 @for (property of properties(); track property) {
-                    <mat-chip-row (removed)="remove(property)" [editable]="true" (edited)="edit(property, $event)"
+                <mat-chip-row (removed)="remove(property)" [editable]="true" (edited)="edit(property, $event)"
                     [aria-description]="'press enter to edit ' + property">
                     {{property}}
                     <button matChipRemove [attr.aria-label]="'remove ' + property">
                         <mat-icon>cancel</mat-icon>
                     </button>
                 </mat-chip-row>
-            }
-            <input placeholder="New property..." [matChipInputFor]="chipGrid"
-            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-            (matChipInputTokenEnd)="add($event)" />
-        </mat-chip-grid>
-    </mat-form-field>
-    
-    <div class="query-buttons-container">
-        <mat-slide-toggle [formControl]="displayAllInfo">
-            displayAllInfo
-        </mat-slide-toggle>
-        <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0">
+                }
+                <input placeholder="New property..." [matChipInputFor]="chipGrid"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="add($event)" />
+            </mat-chip-grid>
+        </mat-form-field>
+
+        <div class="query-buttons-container">
+            <mat-slide-toggle [formControl]="displayAllInfo">
+                displayAllInfo
+            </mat-slide-toggle>
+            <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0">
                 <mat-icon>find_in_page</mat-icon>
                 Get QNames Info
             </button>
         </div>
-    </form>
+    </div>
 
     @if (loading) {
     <div class="loading-message">Loading...</div>

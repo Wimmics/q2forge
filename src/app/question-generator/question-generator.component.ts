@@ -47,8 +47,6 @@ export class QuestionGeneratorComponent {
     this.currentConfig = configManagerService.getDefaultConfig()
       .then((config) => {
 
-        console.log(config);
-
         // this.model.endpoint = config.kg_sparql_endpoint_url;
         this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
         this.formGroup.get("kg_description")?.setValue(config.kg_description);
@@ -61,8 +59,8 @@ export class QuestionGeneratorComponent {
     this.formGroup = this._formBuilder.group({
       endpoint: ["", Validators.required],
       kg_description: ["", Validators.required],
-      kg_schema: ["", Validators.required],
-      additional_context: ["", Validators.required],
+      kg_schema: [""],
+      additional_context: [""],
       number_of_questions: [5, Validators.required],
       selected_LLM: [AVAILABLE_LLM_MODELS[0], Validators.required],
     })

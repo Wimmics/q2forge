@@ -38,7 +38,8 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
               "node_modules/prismjs/themes/prism-coy.min.css",
-              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css"
+              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.css",
+              "node_modules/@triply/yasgui/build/yasgui.min.css"
             ],
             "scripts": [
               "node_modules/clipboard/dist/clipboard.min.js",
@@ -47,7 +48,8 @@
               "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js",
               "node_modules/prismjs/components/prism-turtle.js",
               "node_modules/prismjs/components/prism-json.js",
-              "node_modules/mermaid/dist/mermaid.min.js"
+              "node_modules/mermaid/dist/mermaid.min.js",
+              "node_modules/@triply/yasgui/build/yasgui.min.js"
             ]
           },
           "configurations": {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,6 +26,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { DataSetCookie, isDataSetCookie } from '../models/cookie-items';
 import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 import { DialogService } from '../services/dialog.service';
+import Yasgui from "@triply/yasgui/";
 
 
 @Component({
@@ -38,7 +39,7 @@ import { DialogService } from '../services/dialog.service';
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
 })
-export class SPARQLJudgeComponent implements OnInit {
+export class SPARQLJudgeComponent implements AfterViewInit {
 
   constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
@@ -61,33 +62,56 @@ export class SPARQLJudgeComponent implements OnInit {
     query: DEFAULT_SPARQL_JUDGE_QUERY,
   }
 
-  endpoint = new FormControl(this.model.endpoint,
-    [
-      Validators.required,
-      Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
-    ]);
-
-  query = new FormControl(this.model.query, [Validators.required]);
   question = new FormControl(this.model.question, [Validators.required]);
 
   parsedData: ExtractedData | undefined;
 
   displayAllInfo = new FormControl(false);
 
-  ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      const query = params.get('query');
-      const question = params.get('question');
-      this.query.setValue(query);
-      this.question.setValue(question);
+  @ViewChild('yasgui') ygContaier: any;
+
+  yasgui?: Yasgui;
+
+
+  ngAfterViewInit(): void {
+
+    setTimeout(() => {
+      try {
+
+        this.yasgui = new Yasgui(this.ygContaier.nativeElement, {
+          requestConfig: {
+            endpoint: this.model.endpoint,
+          },
+        })
+
+      } catch (error) {
+        console.error("Error initializing Yasgui:", error);
+        console.warn("Clear the local storage of Yasgui to fix the issue.");
+        localStorage.removeItem("yagui__config");
+
+        this.yasgui = new Yasgui(this.ygContaier.nativeElement, {
+          requestConfig: {
+            endpoint: this.model.endpoint,
+          },
+        })
+      }
+
+      this.route.queryParamMap.subscribe(params => {
+        const question = params.get('question');
+        this.question.setValue(question);
+      });
     });
   }
 
+
   getQandFQNames() {
-    if (this.query.value) {
+
+    let query = this.currentQuery;
+
+    if (query && query !== "") {
       try {
 
-        this.parsedData = this.sparqlExtractorQNService.parseQuery(this.query.value);
+        this.parsedData = this.sparqlExtractorQNService.parseQuery(query);
         this.dataSource = [];
         for (let qname of this.parsedData.qnames) {
           this.dataSource.push({ uri: qname });
@@ -99,18 +123,59 @@ export class SPARQLJudgeComponent implements OnInit {
     }
   }
 
+  get currentQuery(): string | undefined {
+
+    let activeId = this.yasgui?.persistentConfig.getActiveId();
+
+    // console.log(this.yasgui);
+
+    if (activeId) {
+      return this.yasgui?.persistentConfig.getTab(activeId).yasqe.value;
+    }
+
+    return undefined;
+  }
+
+  set currentQuery(query: string) {
+
+    let activeId = this.yasgui?.persistentConfig.getActiveId();
+
+    this.yasgui?.getTab(activeId)?.setQuery(query);
+
+  }
+
+  get currentEndpoint(): string | undefined {
+
+    let activeId = this.yasgui?.persistentConfig.getActiveId();
+
+    if (activeId) {
+      let answer = this.yasgui?.persistentConfig.getTab(activeId).requestConfig.endpoint;
+
+      if (typeof answer === 'string') {
+        return answer;
+      }
+
+    }
+
+    return undefined;
+  }
+
   addKnownPrefixes() {
     let knownPrefixes = this.configManagerService.getPrefixes();
 
-    this.query.setValue(Object.entries(knownPrefixes).map(([key, value]) => `PREFIX ${key}: <${value}> \n`).join("") + this.query.value);
+    let query = this.currentQuery;
+    this.currentQuery = Object.entries(knownPrefixes).map(([key, value]) => `PREFIX ${key}: <${value}> \n`).join("") + (query ? query : "");
   }
 
   getQandFQNamesInfo() {
-    if (this.endpoint.value) {
+
+    let endpoint = this.currentEndpoint;
+
+    if (endpoint && endpoint !== "") {
       this.loading = true;
       for (let item of this.dataSource) {
         const ppts = this.properties()
-        this.additionalSPARQLInfoService.getPropertyDetails(item.uri, this.endpoint.value, ppts).subscribe(
+        this.additionalSPARQLInfoService.getPropertyDetails(item.uri, endpoint, ppts).subscribe(
           (response) => {
             this.loading = false;
             if (response.results.bindings.length > 0) {
@@ -145,13 +210,13 @@ export class SPARQLJudgeComponent implements OnInit {
 
   reset() {
     this.dataSource = [];
-    this.question.setValue(this.model.question);
-    this.query.setValue(this.model.query);
-    this.endpoint.setValue(this.model.endpoint);
+    this.question.setValue('');
     this.loading = false;
     this.error = '';
     this.properties.set([...this.defaultProperties]);
     this.llmAnswer = '';
+    this.currentQuery = '';
+    this.yasgui?.getTab(this.yasgui?.persistentConfig.getActiveId())?.close();
   }
 
   readonly addOnBlur = true;
@@ -211,10 +276,11 @@ export class SPARQLJudgeComponent implements OnInit {
   llmAnswer!: string;
   errorLLMAnswer: string = '';
   getLLMasJudgeAnswer() {
-    if (this.question.value && this.query.value) {
+    let query = this.currentQuery;
+    if (this.question.value && query && query !== "") {
       this.llmAnswer = '';
       this.errorLLMAnswer = '';
-      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, this.query.value, this.dataSource)
+      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, query, this.dataSource)
         .then(response => {
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
@@ -323,8 +389,10 @@ export class SPARQLJudgeComponent implements OnInit {
   }
 
   addToDataset() {
+    let query = this.currentQuery;
+    console.log(query);
 
-    if (!this.question.value || !this.query.value) {
+    if (!this.question.value || !query || query == "") {
       return;
     }
 
@@ -332,7 +400,7 @@ export class SPARQLJudgeComponent implements OnInit {
 
     const datasetItem = {
       question: this.question?.value,
-      query: this.query?.value
+      query: query
     };
 
     const expirationDate = new Date();
