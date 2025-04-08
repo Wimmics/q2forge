@@ -390,22 +390,22 @@ export class SPARQLJudgeComponent implements AfterViewInit {
 
   addToDataset() {
     let query = this.currentQuery;
-    console.log(query);
+    // console.log(query);
 
     if (!this.question.value || !query || query == "") {
       return;
     }
 
     let datasetCookie: DataSetCookie;
-
+    
     const datasetItem = {
       question: this.question?.value,
       query: query
     };
-
+    
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
-
+    
     if (this.cookieService.check('dataset')) {
       try {
         let cookie = JSON.parse(this.cookieService.get('dataset'));

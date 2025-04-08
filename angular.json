@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gen2kgbot_test_dataset": {
+    "gen2kgbot_dataset_forge": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -86,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gen2kgbot_test_dataset:build:production"
+              "buildTarget": "gen2kgbot_dataset_forge:build:production"
             },
             "development": {
-              "buildTarget": "gen2kgbot_test_dataset:build:development"
+              "buildTarget": "gen2kgbot_dataset_forge:build:development"
             }
           },
           "defaultConfiguration": "development"
