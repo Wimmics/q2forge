@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
 import { DialogService } from '../services/dialog.service';
 import { CookieManagerService } from '../services/cookie-manager.service';
 import { ConfigManagerService } from '../services/config-manager.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-question-generator',
@@ -42,7 +43,8 @@ export class QuestionGeneratorComponent {
     private dialogService: DialogService,
     private cookieManagerService: CookieManagerService,
     private configManagerService: ConfigManagerService,
-    private _formBuilder: FormBuilder) {
+    private _formBuilder: FormBuilder,
+    private location: Location) {
 
     this.currentConfig = configManagerService.getDefaultConfig()
       .then((config) => {
@@ -286,9 +288,9 @@ export class QuestionGeneratorComponent {
   }
 
   addQuestionsToCookies() {
-
     this.cookieManagerService.addQuestionsToCookies(this.competencyQuestions);
-    const url = this.router.createUrlTree(['/question-answerer']).toString();
+    let url = this.router.createUrlTree(['question-answerer']).toString();
+    url = this.location.prepareExternalUrl(url); // adds base href
     window.open(url, '_blank');
   }
 
