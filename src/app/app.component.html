@@ -1,15 +1,25 @@
 <div class="container" [class.is-mobile]="isMobile()">
   <mat-toolbar class="toolbar">
-    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-    <img src="favicon.ico">
-    <h1 class="app-name">Dataset Forge</h1>
+    <div class="toolbar-left">
+      <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+      <img src="favicon.ico">
+      <h1 class="app-name">Dataset Forge</h1>
+    </div>
+
+    <div>
+      <a href="https://github.com/Wimmics/gen2kgbot_test_dataset" class="fa-icon-link" target="_blank">
+        <fa-icon [icon]="faSquareGithub" size="2xl"> </fa-icon>
+      </a>
+    </div>
   </mat-toolbar>
 
-  <mat-sidenav-container  class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
-    <mat-sidenav class="sidenav" [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'" [fixedInViewport]="isMobile()" fixedTopGap="56">
+  <mat-sidenav-container class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
+    <mat-sidenav class="sidenav" [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'"
+      [fixedInViewport]="isMobile()" fixedTopGap="56">
       <mat-nav-list>
         @for (nav of navItem; track nav) {
-        <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}"> <mat-icon>{{nav.icon}}</mat-icon> {{nav.name}}</a>
+        <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}"> <mat-icon>{{nav.icon}}</mat-icon>
+          {{nav.name}}</a>
         }
       </mat-nav-list>
     </mat-sidenav>

@@ -21,6 +21,8 @@
     "@angular/platform-browser": "^19.1.0",
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/router": "^19.1.0",
+    "@fortawesome/angular-fontawesome": "^1.0.0",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@langchain/core": "^0.3.39",
     "@langchain/deepseek": "^0.0.1",
     "@langchain/ollama": "^0.2.0",

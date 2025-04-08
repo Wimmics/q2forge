@@ -9,6 +9,13 @@
 
 .toolbar {
     background-color: $primary-color;
+    display: flex;
+    justify-content: space-between;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
 }
 
 h1.example-app-name {

@@ -160,7 +160,6 @@
                 <mat-spinner></mat-spinner>
                 }
             </form>
-            <!-- <markdown [data]="firstFormValueMarkdown"> </markdown> -->
             <div class="stepper-actions">
                 <button mat-raised-button (click)="createConfiguration()">
                     <mat-icon>add</mat-icon>
@@ -199,7 +198,6 @@
                 </div>
             </form>
             <div class="stepper-actions">
-                <!-- <button mat-button matStepperPrevious>Back</button> -->
                 <button mat-raised-button matStepperNext [disabled]="!isKGDescriptionsGenerated">
                     Next
                     <mat-icon matSuffix>skip_next</mat-icon>
@@ -224,7 +222,6 @@
                 <mat-spinner></mat-spinner>
                 }
                 <div class="stepper-actions">
-                    <!-- <button mat-button matStepperPrevious>Back</button> -->
                     <button mat-raised-button matStepperNext [disabled]="!isKGEmbeddingGenerated">
                         Next
                         <mat-icon matSuffix>skip_next</mat-icon>
@@ -236,7 +233,6 @@
             <ng-template matStepLabel>Done</ng-template>
             <p>You are now done.</p>
             <div class="stepper-actions">
-                <!-- <button mat-button matStepperPrevious>Back</button> -->
                 <button mat-raised-button (click)="stepper.reset()">
                     <mat-icon matSuffix>replay</mat-icon>
                     Reset

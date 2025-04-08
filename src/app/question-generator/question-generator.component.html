@@ -1,9 +1,6 @@
 <div>
     <div class="page-header">Competency Question Generator</div>
 
-    <!-- <div>
-        {{model | json}}
-    </div> -->
     <form class="form" [formGroup]="formGroup">
         <mat-form-field class="full-width">
             <mat-label>Context Endpoint URI</mat-label>
@@ -50,7 +47,7 @@
                 <mat-label># Questions</mat-label>
                 <input matInput type="number" min="1" max="100" placeholder="e.g {{model.number_of_questions}}"
                     formControlName="number_of_questions">
-                @if (formGroup.get("number_of_questions")?.hasError('min') 
+                @if (formGroup.get("number_of_questions")?.hasError('min')
                 || formGroup.get("number_of_questions")?.hasError('max')) {
                 <mat-error>Question Number Must be [1-100] </mat-error>
                 }
@@ -85,12 +82,6 @@
     @if (error) {
     <div class="error-message">{{ error }}</div>
     }
-
-
-
-    <!-- @if (loadingLLMAnswer) {
-    <div class="loading-message">Getting response...</div>
-    } -->
 
     @if (errorLLMAnswer) {
     <div class="error-message">Error: {{ errorLLMAnswer | json }}</div>
