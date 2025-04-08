@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Activate_CONFIG_ENDPOINT, CREATE_CONFIG_ENDPOINT, DEFAULT_CONFIG_ENDPOINT, GRAPH_SCHEMA_ENDPOINT, KG_DESCRIPTION_CONFIG_ENDPOINT, KG_EMBEDDINGS_CONFIG_ENDPOINT } from './predefined-variables';
+import {
+  Activate_CONFIG_ENDPOINT,
+  CREATE_CONFIG_ENDPOINT,
+  DEFAULT_CONFIG_ENDPOINT,
+  GRAPH_SCHEMA_ENDPOINT,
+  KG_DESCRIPTION_CONFIG_ENDPOINT,
+  KG_EMBEDDINGS_CONFIG_ENDPOINT
+} from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
 import { catchError, firstValueFrom, Observable, of } from 'rxjs';
@@ -27,7 +34,7 @@ export class ConfigManagerService {
 
   initConfiguration(): void {
     this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
-      this.setDefaultConfig(data);      
+      this.setDefaultConfig(data);
     });
   }
 

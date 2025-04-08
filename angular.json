@@ -19,7 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "outputPath": {
-              "base": "dist/dataset-tester",
+              "base": "dist/dataset-forge",
               "browser": ""
             },
             "index": "src/index.html",
@@ -58,7 +58,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "5MB"
+                  "maximumError": "10MB"
                 },
                 {
                   "type": "anyComponentStyle",

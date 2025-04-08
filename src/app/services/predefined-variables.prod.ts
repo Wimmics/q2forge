@@ -53,6 +53,10 @@ export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
 export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`
 export const GRAPH_SCHEMA_ENDPOINT = `${API_BASE}/scenarios_graph_schema`
 export const DEFAULT_CONFIG_ENDPOINT = `${API_BASE}/default_config`
+export const CREATE_CONFIG_ENDPOINT = `${API_BASE}/config/create`
+export const Activate_CONFIG_ENDPOINT = `${API_BASE}/config/activate`
+export const KG_DESCRIPTION_CONFIG_ENDPOINT = `${API_BASE}/config/kg_descriptions`
+export const KG_EMBEDDINGS_CONFIG_ENDPOINT = `${API_BASE}/config/kg_embeddings`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"
 

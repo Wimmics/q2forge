@@ -37,7 +37,6 @@ import { MarkdownComponent, MarkdownModule } from 'ngx-markdown';
     MatSelectModule,
     MatProgressSpinnerModule,
     MarkdownModule,
-    JsonPipe,
   ],
   templateUrl: './kgconfiguration.component.html',
   styleUrl: './kgconfiguration.component.scss'

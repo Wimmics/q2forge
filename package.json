@@ -1,5 +1,5 @@
 {
-  "name": "gen2kgbot-test-dataset",
+  "name": "dataset-forge",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "dc": "ng build --base-href=/dataset-tester/ --deploy-url=/dataset-tester/ --configuration=production"
+    "dc": "ng build --base-href=/dataset-forge/ --deploy-url=/dataset-forge/ --configuration=production"
   },
   "private": true,
   "dependencies": {

@@ -1,6 +1,27 @@
-# Gen2kgbotTestDataset
+# Dataset Forge
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
+This project provides an end-to-end pipeline to generate a dataset of (question, SPARQL query) pairs for a given Knowledge Graph (KG). The backend can be found in [this repo](https://github.com/Wimmics/gen2kgbot).
+
+
+## Features 
+
+It provides the following feature:
+- KG config creation ([read more](#kg-config-creation)).
+- Competency question generator ([read more](#competency-question-generator)).
+- SPARQL query generator ([read more](#sparql-query-generator)).
+- SPARQL query refinement ([read more](#sparql-query-refinement)).
+
+### KG Config Creation
+...
+
+### Competency Question Generator
+...
+
+### SPARQL Query Generator
+...
+
+### SPARQL Query Refinement
+...
 
 ## Development server
 
@@ -10,50 +31,14 @@ To start a local development server, run:
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
+Once the server is running, open your browser and navigate to `http://localhost:4200/`.
 
 ## Building
 
 To build the project run:
 
 ```bash
-ng build
+npm run dc
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+This will compile your project and store the build artifacts in the `dist/` directory.
