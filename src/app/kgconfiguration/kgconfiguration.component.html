@@ -69,12 +69,27 @@
                         <h3 align="center">Prefixes</h3>
                         @for (prefixCtrl of prefixArray.controls; track $index) {
                         <div class="prefix-container" formGroupName="{{$index}}">
-                            <mat-form-field class="prefix-key">
+                            <!-- <mat-form-field class="prefix-key">
                                 <mat-label>prefix</mat-label>
                                 <input matInput formControlName="key" required>
                                 @if (prefixArray.at($index).get('key')?.hasError('required')) {
                                 <mat-error>This field is <strong>required</strong></mat-error>
                                 }
+                            </mat-form-field> -->
+                            <mat-form-field class="prefix-key">
+                                <mat-label>prefix</mat-label>
+                                <input type="text" matInput formControlName="key" [matAutocomplete]="auto"
+                                    (keydown.enter)="selectPrefix($index)">
+                                @if (prefixArray.at($index).get('key')?.hasError('required')) {
+                                <mat-error>This field is <strong>required</strong></mat-error>
+                                }
+                                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectPrefix($index)">
+                                    @for (option of filteredPrefixOptions[$index] | async; track $index) {
+                                    <mat-option [value]="option.shortName">
+                                        {{ option.shortName }} => {{option.iri }}
+                                    </mat-option>
+                                    }
+                                </mat-autocomplete>
                             </mat-form-field>
                             <mat-form-field class="prefix-value">
                                 <mat-label>value</mat-label>
@@ -91,6 +106,9 @@
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </div>
+                        <!-- <div>
+                            {{filterPrefixes(prefixCtrl.get('key')?.value) |json}}
+                        </div> -->
                         }
 
                         <button mat-raised-button (click)="addPrefix()">
@@ -123,8 +141,8 @@
                         <mat-error>This field is <strong>required</strong></mat-error>
                         }
                         @if (firstFormGroup.get('max_similar_classes')?.hasError('min')) {
-                            <mat-error>The minimum value is <strong>1</strong></mat-error>
-                            }
+                        <mat-error>The minimum value is <strong>1</strong></mat-error>
+                        }
 
                     </mat-form-field>
                     <mat-slide-toggle formControlName="expand_similar_classes">Expand similar classes

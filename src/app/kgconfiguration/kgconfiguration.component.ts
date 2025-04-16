@@ -1,6 +1,6 @@
-import { JsonPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,9 +16,12 @@ import { KGConfiguration } from '../models/kg-configuration';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { DialogService } from '../services/dialog.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs';
+import { catchError, filter, map, Observable } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MarkdownComponent, MarkdownModule } from 'ngx-markdown';
+import { MarkdownModule } from 'ngx-markdown';
+import { KnownPrefixesService } from '../services/known-prefixes.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { Prefix } from '../models/prefix';
 
 @Component({
   selector: 'app-kgconfiguration',
@@ -37,6 +40,8 @@ import { MarkdownComponent, MarkdownModule } from 'ngx-markdown';
     MatSelectModule,
     MatProgressSpinnerModule,
     MarkdownModule,
+    MatAutocompleteModule,
+    AsyncPipe
   ],
   templateUrl: './kgconfiguration.component.html',
   styleUrl: './kgconfiguration.component.scss'
@@ -49,7 +54,7 @@ export class KGConfigurationComponent {
   readonly httpPatternValidator = Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
 
 
-  availableClassoCntextFormats = ["turtle", "tuple"]
+  availableClassoCntextFormats = ["turtle", "tuple", "nl"]
 
   configuration_idsm = signal<KGConfiguration>({
     kg_full_name: "PubChem knowledge graph",
@@ -181,11 +186,12 @@ export class KGConfigurationComponent {
   isEditable = false
 
   constructor(private configManagerService: ConfigManagerService,
-    private dialogService: DialogService) {
+    private dialogService: DialogService,
+    private knownPrefixesService: KnownPrefixesService) {
 
     this.firstFormGroup = this._formBuilder.group({
       kg_full_name: [this.configuration().kg_full_name, Validators.required],
-      kg_short_name: [this.configuration().kg_short_name, [Validators.required,Validators.pattern(/^[a-z0-9_]+$/)]],
+      kg_short_name: [this.configuration().kg_short_name, [Validators.required, Validators.pattern(/^[a-z0-9_]+$/)]],
       kg_description: [this.configuration().kg_description, Validators.required],
       kg_sparql_endpoint_url: [this.configuration().kg_sparql_endpoint_url, [Validators.required, this.httpPatternValidator]],
       ontologies_sparql_endpoint_url: [this.configuration().ontologies_sparql_endpoint_url, [this.httpPatternValidator]],
@@ -211,7 +217,6 @@ export class KGConfigurationComponent {
     });
 
     this.thirdFormGroup.get('kg_short_name')?.disable();
-
   }
 
   isConfigCreated = false;
@@ -374,13 +379,23 @@ export class KGConfigurationComponent {
     }, 100);
   }
 
-  addPrefix() {
+  addPrefix(key: string = '', value: string = '') {
     this.prefixArray.push(this._formBuilder.group(
       {
-        key: this._formBuilder.control('', [Validators.required]),
-        value: this._formBuilder.control('', [Validators.required, this.httpPatternValidator])
+        key: this._formBuilder.control(key, [Validators.required]),
+        value: this._formBuilder.control(value, [Validators.required, this.httpPatternValidator])
       })
     );
+
+    this.filteredPrefixOptions.push(this.prefixArray.at(this.prefixArray.length - 1).valueChanges.pipe(
+      filter(value => value['key'].length > 0),
+      map(value => this._filter(value || ''))
+    ));
+  }
+
+  private _filter(value: any): Prefix[] {
+    let key = (value['key'] == undefined) ? "" : value['key'].toLowerCase();
+    return this.knownPrefixesService.getPrefixes().filter(option => option.shortName.toLowerCase().startsWith(key));
   }
 
   createConfiguration() {
@@ -517,11 +532,7 @@ export class KGConfigurationComponent {
 
     // Iterate over the prefixes object and create FormGroup for each prefix
     Object.entries(this.configuration().prefixes).forEach(([key, value]) => {
-      prefixArray.push(this._formBuilder.group(
-        {
-          key: this._formBuilder.control(key, [Validators.required]),
-          value: this._formBuilder.control(value, [Validators.required, this.httpPatternValidator])
-        }))
+      this.addPrefix(key, value);
     });
   }
   get prefixArray() {
@@ -530,6 +541,34 @@ export class KGConfigurationComponent {
 
   get firstFormValueMarkdown() {
     return "```json \n" + JSON.stringify(this.firstFormGroup.value, null, 2) + "\n```";
+  }
+
+  filteredPrefixOptions: Observable<Prefix[]>[] = [];
+
+  filterPrefixes(value: string) {
+    if (value && value.length != 0) {
+      return this.knownPrefixesService.filterPrefixes(value)
+    }
+    else {
+      return ""
+    }
+  }
+
+  selectPrefix(index: number) {
+    const prefix = this.prefixArray.at(index).get('key')?.value;
+    if (!prefix) {
+      return;
+    }
+
+    const value = this.knownPrefixesService.getPrefixValue(prefix);
+
+    if (value) {
+      this.prefixArray.at(index).get('value')?.setValue(value);
+    }
+
+    console.log(prefix, value);
+
+
   }
 
 }

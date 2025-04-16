@@ -31,6 +31,7 @@ import { DialogService } from '../services/dialog.service';
 import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie } from '../models/cookie-items';
 import { CookieManagerService } from '../services/cookie-manager.service';
+import { TEST_CHAT_MESSAGES } from '../services/testing-variable';
 
 @Component({
   selector: 'app-question-answerer',
@@ -409,7 +410,7 @@ export class QuestionAnswererComponent implements OnInit {
             this.cookieManagerService.addQuestionsToCookies(obj);
             this.setQuestionsFromCookie();
           } else {
-            this.dialogService.notifyUser("Questions upload", `Invalid JSON format}`)
+            this.dialogService.notifyUser("Questions upload", `Invalid JSON format`)
           }
         } catch (error) {
           this.dialogService.notifyUser("Questions upload", `Error in parsing JSON ${error}`)
