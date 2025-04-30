@@ -5,56 +5,13 @@
         <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Create a new Configuration</ng-template>
-                <div>
+                <!-- <div>
                     {{configuration()|json}}
                 </div>
                 <div>
                     <button (click)="printConfig()">print</button>
-                </div>
+                </div> -->
                 <div class="form-group-container">
-                    <div class="query-examples-container" formArrayName="queryExamples">
-                        <h3 align="center">Query Examples</h3>
-                        @for (queryExamplesCtrl of queryExamplesArray.controls; track $index) {
-                        <div class="query-example-container" formGroupName="{{$index}}">
-                            <mat-form-field class="query-example-question">
-                                <mat-label>question</mat-label>
-                                <input matInput formControlName="question" required>
-                                @if (queryExamplesArray.at($index).get('question')?.hasError('required')) {
-                                <mat-error>This field is <strong>required</strong></mat-error>
-                                }
-                            </mat-form-field>
-                            <mat-form-field class="query-example-query">
-                                <mat-label>query</mat-label>
-                                <textarea matInput rows="10" formControlName="query" required></textarea>
-                                @if (queryExamplesArray.at($index).get('query')?.hasError('required')) {
-                                <mat-error>This field is <strong>required</strong></mat-error>
-                                }
-                            </mat-form-field>
-                            <div class="query-example-actions">
-                                <div class="refine-query-container">
-                                    <a mat-fab extended target="_blank" routerLink="/sparql-judge" [queryParams]="{query: queryExamplesArray.at($index).get('query')?.value,
-                                         question: queryExamplesArray.at($index).get('question')?.value}">
-                                        <mat-icon>edit</mat-icon>
-                                        Refine Query
-                                    </a>
-                                </div>
-                                <button mat-mini-fab class="warn-mini-fab-button"
-                                    (click)="deleteQueryExample(queryExamplesCtrl.get('question')?.value,
-                                        queryExamplesCtrl.get('query')?.value)">
-                                    <mat-icon>delete</mat-icon>
-                                </button>
-
-                            </div>
-                        </div>
-                        }
-
-                        <button mat-raised-button (click)="addQueryExample()">
-                            <mat-icon>add</mat-icon>
-                            Add Query Example
-                        </button>
-                    </div>
-
-
                     <mat-form-field>
                         <mat-label>KG full name</mat-label>
                         <input matInput formControlName="kg_full_name" required>
@@ -222,6 +179,48 @@
                                 (matChipInputTokenEnd)="addExcludedClassesNamespaces($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
+
+                    <div class="query-examples-container" formArrayName="queryExamples">
+                        <h3 align="center">Query Examples</h3>
+                        @for (queryExamplesCtrl of queryExamplesArray.controls; track $index) {
+                        <div class="query-example-container" formGroupName="{{$index}}">
+                            <mat-form-field class="query-example-question">
+                                <mat-label>question</mat-label>
+                                <input matInput formControlName="question" required>
+                                @if (queryExamplesArray.at($index).get('question')?.hasError('required')) {
+                                <mat-error>This field is <strong>required</strong></mat-error>
+                                }
+                            </mat-form-field>
+                            <mat-form-field class="query-example-query">
+                                <mat-label>query</mat-label>
+                                <textarea matInput rows="10" formControlName="query" required></textarea>
+                                @if (queryExamplesArray.at($index).get('query')?.hasError('required')) {
+                                <mat-error>This field is <strong>required</strong></mat-error>
+                                }
+                            </mat-form-field>
+                            <div class="query-example-actions">
+                                <div class="refine-query-container">
+                                    <a mat-fab extended target="_blank" routerLink="/sparql-judge" [queryParams]="{query: queryExamplesArray.at($index).get('query')?.value,
+                                         question: queryExamplesArray.at($index).get('question')?.value}">
+                                        <mat-icon>edit</mat-icon>
+                                        Refine Query
+                                    </a>
+                                </div>
+                                <button mat-mini-fab class="warn-mini-fab-button"
+                                    (click)="deleteQueryExample(queryExamplesCtrl.get('question')?.value,
+                                        queryExamplesCtrl.get('query')?.value)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+
+                            </div>
+                        </div>
+                        }
+
+                        <button mat-raised-button (click)="addQueryExample()">
+                            <mat-icon>add</mat-icon>
+                            Add Query Example
+                        </button>
+                    </div>
                 </div>
                 @if (isInConfigCreatedTask) {
                 <mat-spinner></mat-spinner>

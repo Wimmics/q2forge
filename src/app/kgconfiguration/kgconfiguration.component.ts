@@ -119,7 +119,7 @@ export class KGConfigurationComponent {
     queryExamples: []
   })
 
-  configuration_ = signal<KGConfiguration>({
+  configuration = signal<KGConfiguration>({
     kg_full_name: "WheatGenomic Scienctific Literature Knowledge Graph",
     kg_short_name: "d2kab",
     kg_description: "The Wheat Genomics Scientific Literature Knowledge Graph (WheatGenomicsSLKG) is a FAIR knowledge graph that exploits the Semantic Web technologies to describe PubMed scientific articles on wheat genetics and genomics. It represents Named Entities (NE) about genes, phenotypes, taxa and varieties, mentioned in the title and the abstract of the articles, and the relationships between wheat mentions of varieties and phenotypes.",
@@ -164,61 +164,26 @@ export class KGConfigurationComponent {
     excluded_classes_namespaces: [],
     queryExamples: [
       {
-        question: "Retrieve list of graphs",
-        query: `BASE <http://purl.agrold.org/>
-PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX obo:<http://purl.obolibrary.org/obo/>
-PREFIX vocab:<vocabulary/>
-
-SELECT distinct ?graph
-WHERE {
- GRAPH ?graph {
-   ?subject ?predicate ?object.
- }
- filter(REGEX(?graph, "^http://purl.agrold.org"))
-}`
+        question: "Retrieve genes that are mentioned proximal to the a given phenotype (resistance to leaf rust in this example).",
+        query: 'prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \nprefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> \nprefix xsd:     <http://www.w3.org/2001/XMLSchema#> \nprefix schema:  <http://schema.org/> \nprefix owl:     <http://www.w3.org/2002/07/owl#> \nprefix skos:    <http://www.w3.org/2004/02/skos/core#> \nprefix oa:      <http://www.w3.org/ns/oa#> \nprefix ncbi:    <http://identifiers.org/taxonomy/> \nprefix dct:     <http://purl.org/dc/terms/> \nprefix frbr:    <http://purl.org/vocab/frbr/core#> \nprefix fabio:   <http://purl.org/spar/fabio/> \nprefix obo:     <http://purl.obolibrary.org/obo/> \nprefix bibo:    <http://purl.org/ontology/bibo/> \nprefix d2kab:   <http://ns.inria.fr/d2kab/> \nprefix dc:      <http://purl.org/dc/terms/> \nprefix d2kab_bsv:   <http://ontology.inrae.fr/bsv/ontology/>\nprefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>\nprefix dct:     <http://purl.org/dc/terms/> \nprefix taxref: <http://taxref.mnhn.fr/lod/property/>\n\nSELECT ?GeneName (count(distinct ?paper) as ?NbOcc)\nFROM NAMED <http://ns.inria.fr/d2kab/graph/wheatgenomicsslkg>\nFROM NAMED <http://ns.inria.fr/d2kab/ontology/wto/v3>\nWHERE {\n  GRAPH <http://ns.inria.fr/d2kab/graph/wheatgenomicsslkg> { \n     ?a1 a oa:Annotation; \n      oa:hasTarget [ oa:hasSource ?source1 ] ;  \n      oa:hasBody ?WTOtraitURI .\n\n   ?source1 frbr:partOf+ ?paper .\n    \n   ?a a oa:Annotation ; \n      oa:hasTarget [ oa:hasSource ?source ] ;\n      oa:hasBody [ a d2kab:Gene; skos:prefLabel ?GeneName ].\n\n   ?source frbr:partOf+ ?paper.\n\n   ?paper a fabio:ResearchPaper.\n}\n   GRAPH <http://ns.inria.fr/d2kab/ontology/wto/v3> {\n       ?WTOtraitURI skos:prefLabel "resistance to Leaf rust" .\n}\n}\nGROUP BY ?GeneName \nHAVING (count(distinct ?paper) > 1)\nORDER BY DESC(?NbOcc)'
       },
       {
-        question: "Search terms by label",
-        query: `BASE <http://purl.agrold.org/>
-PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX vocab:<vocabulary/>
-
-SELECT DISTINCT ?term_id ?term_name ?graph
-WHERE { 
- GRAPH ?graph { 
-  ?term_id rdfs:label ?term_name . 
- FILTER regex(str(?term_name), 'disease resistance') 
- } 
-}`
+        question: "Retrieve publications in which genes are mentioned proximal to wheat varieties and traits from a specific class, e.g., all wheat traits related to resistance to fungal pathogens.",
+        query: 'prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \nprefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> \nprefix xsd:     <http://www.w3.org/2001/XMLSchema#> \nprefix schema:  <http://schema.org/> \nprefix owl:     <http://www.w3.org/2002/07/owl#> \nprefix skos:    <http://www.w3.org/2004/02/skos/core#> \nprefix oa:      <http://www.w3.org/ns/oa#> \nprefix ncbi:    <http://identifiers.org/taxonomy/> \nprefix dct:     <http://purl.org/dc/terms/> \nprefix frbr:    <http://purl.org/vocab/frbr/core#> \nprefix fabio:   <http://purl.org/spar/fabio/> \nprefix obo:     <http://purl.obolibrary.org/obo/> \nprefix bibo:    <http://purl.org/ontology/bibo/> \nprefix d2kab:   <http://ns.inria.fr/d2kab/> \nprefix dc:      <http://purl.org/dc/terms/> \nprefix d2kab_bsv:   <http://ontology.inrae.fr/bsv/ontology/>\nprefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>\nprefix dct:     <http://purl.org/dc/terms/> \nprefix taxref: <http://taxref.mnhn.fr/lod/property/>\n\nSELECT *\nFROM NAMED <http://ns.inria.fr/d2kab/ontology/wto/v3>\nWHERE {\n  GRAPH <http://ns.inria.fr/d2kab/ontology/wto/v3> {\n    { ?body a ?class ; skos:prefLabel ?WTOtrait.\n      ?class rdfs:subClassOf* <http://opendata.inrae.fr/wto/0000340>.\n    }\n    UNION\n    { ?body rdfs:label ?WTOtrait ;\n        rdfs:subClassOf* <http://opendata.inrae.fr/wto/0000340>.\n    }\n    UNION\n    { ?body skos:prefLabel ?WTOtrait ; skos:broader* ?concept .\n      ?concept a ?class.\n      ?class rdfs:subClassOf* <http://opendata.inrae.fr/wto/0000340>.\n    }\n  }\n}'
       },
       {
-        question: "Get species list with label and uri",
-        query: `BASE <http://purl.agrold.org/>
-PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
-PREFIX taxon:<http://purl.obolibrary.org/obo/NCBITaxon_>
- PREFIX fn:<https://www.w3.org/TR/xpath-functions-31/#>
- PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-PREFIX graph: <ensembl.plants>
- SELECT distinct (str(?label) as ?speciesName) ?uri
- WHERE {
- values (?q){(<http://purl.obolibrary.org/obo/RO_0002162>)}
-graph graph:{
- ?gene ?q ?species .
- BIND(REPLACE(str(?species), "^.*(#|/)", "") AS ?taxonid)
- BIND(URI(CONCAT(str(taxon:),?taxonid)) AS ?uri).
- } optional {
-  ?uri rdfs:label ?label.
- } }
-ORDER BY ASC(?speciesName)`
+        question: 'Retrieve genetic markers mentioned proximal to genes which are in turn mentioned proximal to a wheat phenotype ("resistance to Stripe rust" in this example) considering the same scientific publication.',
+        query: 'prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \nprefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> \nprefix xsd:     <http://www.w3.org/2001/XMLSchema#> \nprefix schema:  <http://schema.org/> \nprefix owl:     <http://www.w3.org/2002/07/owl#> \nprefix skos:    <http://www.w3.org/2004/02/skos/core#> \nprefix oa:      <http://www.w3.org/ns/oa#> \nprefix ncbi:    <http://identifiers.org/taxonomy/> \nprefix dct:     <http://purl.org/dc/terms/> \nprefix frbr:    <http://purl.org/vocab/frbr/core#> \nprefix fabio:   <http://purl.org/spar/fabio/> \nprefix obo:     <http://purl.obolibrary.org/obo/> \nprefix bibo:    <http://purl.org/ontology/bibo/> \nprefix d2kab:   <http://ns.inria.fr/d2kab/> \nprefix dc:      <http://purl.org/dc/terms/> \nprefix d2kab_bsv:   <http://ontology.inrae.fr/bsv/ontology/>\nprefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>\nprefix dct:     <http://purl.org/dc/terms/> \nprefix taxref: <http://taxref.mnhn.fr/lod/property/>\n\nSELECT (GROUP_CONCAT(distinct ?GeneName; SEPARATOR="-") as ?genes) \n(GROUP_CONCAT(distinct ?marker; SEPARATOR="-") as ?markers) \n?paper ?year ?WTOtrait\nFROM NAMED <http://ns.inria.fr/d2kab/graph/wheatgenomicsslkg>\nFROM NAMED <http://ns.inria.fr/d2kab/ontology/wto/v3>\nWHERE {\nVALUES ?WTOtrait { "resistance to Stripe rust" }\nGRAPH <http://ns.inria.fr/d2kab/graph/wheatgenomicsslkg> { \n?a1 a oa:Annotation ;\n    oa:hasTarget [ oa:hasSource ?source1 ];\n    oa:hasBody [ a d2kab:Gene ; skos:prefLabel ?GeneName].\n\n?source1 frbr:partOf+ ?paper .\n\n?a2 a oa:Annotation ;\n    oa:hasTarget [ oa:hasSource ?source2 ] ;\n    oa:hasBody [ a d2kab:Marker ; skos:prefLabel ?marker ]. \n\n?source2 frbr:partOf+ ?paper .\n\n?a3 a oa:Annotation; \n    oa:hasTarget [ oa:hasSource ?source3 ];\n    oa:hasBody ?WTOtraitURI.\n\n?source3 frbr:partOf+ ?paper . \n\n?paper a fabio:ResearchPaper; dct:title ?source3; dct:issued ?year .\nFILTER (?year >= "2010"^^xsd:gYear)\n}\nGRAPH <http://ns.inria.fr/d2kab/ontology/wto/v3> {\n       ?WTOtraitURI skos:prefLabel ?WTOtrait.\n}\n}\nGROUP BY ?paper ?year ?WTOtrait'
+      },
+      {
+        question: 'Retrieves couples of scientific publications such as a first publication mentions a given phenotype and a gene and the second one mentions the same gene name with a genetic marker.',
+        query: 'prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> \nprefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> \nprefix xsd:     <http://www.w3.org/2001/XMLSchema#> \nprefix schema:  <http://schema.org/> \nprefix owl:     <http://www.w3.org/2002/07/owl#> \nprefix skos:    <http://www.w3.org/2004/02/skos/core#> \nprefix oa:      <http://www.w3.org/ns/oa#> \nprefix ncbi:    <http://identifiers.org/taxonomy/> \nprefix dct:     <http://purl.org/dc/terms/> \nprefix frbr:    <http://purl.org/vocab/frbr/core#> \nprefix fabio:   <http://purl.org/spar/fabio/> \nprefix obo:     <http://purl.obolibrary.org/obo/> \nprefix bibo:    <http://purl.org/ontology/bibo/> \nprefix d2kab:   <http://ns.inria.fr/d2kab/> \nprefix dc:      <http://purl.org/dc/terms/> \nprefix d2kab_bsv:   <http://ontology.inrae.fr/bsv/ontology/>\nprefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#>\nprefix dct:     <http://purl.org/dc/terms/> \nprefix taxref: <http://taxref.mnhn.fr/lod/property/>\n\nSELECT distinct ?paper1 ?WTOtrait ?Title1 ?geneName ?paper2 ?Title2 (GROUP_CONCAT(distinct ?marker; SEPARATOR="-") as ?markers) \nFROM <http://ns.inria.fr/d2kab/graph/wheatgenomicsslkg>\nFROM <http://ns.inria.fr/d2kab/ontology/wto/v3>\nWHERE {\n{\n\nSELECT distinct ?geneName ?gene ?paper1 ?Title1 ?WTOtrait WHERE \n{\n    VALUES ?WTOtrait { "resistance to Stripe rust" }\n    ?a1 a oa:Annotation ; \n        oa:hasTarget [ oa:hasSource ?source1 ] ;\n        oa:hasBody ?body .\n\n    GRAPH <http://ns.inria.fr/d2kab/ontology/wto/v3> {\n        ?body skos:prefLabel ?WTOtrait.\n    }\n\n    ?a2 a oa:Annotation ;\n        oa:hasTarget [ oa:hasSource ?source2 ] ;\n        oa:hasBody ?gene .\n        ?gene a d2kab:Gene ; skos:prefLabel ?geneName . \n        ?source1 frbr:partOf+ ?paper1 .\n        ?source2 frbr:partOf+ ?paper1 .\n        ?paper1 a fabio:ResearchPaper ; dct:title ?source1 .\n        ?source1 rdf:value ?Title1.\n}\nLIMIT 20\n}\n?a3 a oa:Annotation ;\n    oa:hasTarget [ oa:hasSource ?source3 ] ;\n    oa:hasBody [a d2kab:Marker ; skos:prefLabel ?marker ] .\n \n?a4 a oa:Annotation ;\n    oa:hasTarget [ oa:hasSource ?source4 ] ;\n    oa:hasBody ?gene .\n \n?source3 frbr:partOf+ ?paper2 .\n?source4 frbr:partOf+ ?paper2 .\n?paper2 a fabio:ResearchPaper ; dct:title ?titleURI .\n?titleURI rdf:value ?Title2.\nFILTER (URI(?paper1) != URI(?paper2))\n}\nGROUP BY ?WTOtrait ?geneName ?paper1 ?Title1 ?paper2 ?Title2\nLIMIT 50'
       }
+
     ]
   })
 
-  configuration = signal<KGConfiguration>({
+  configuration_ = signal<KGConfiguration>({
     kg_full_name: "",
     kg_short_name: "",
     kg_description: "",
@@ -474,6 +439,16 @@ ORDER BY ASC(?speciesName)`
       return acc;
     }, {} as { [key: string]: string });
 
+    // format the queryExamples object
+    this.configuration().queryExamples = this.queryExamplesArray.controls.map(control => {
+      const question = control.get('question')?.value;
+      const query = control.get('query')?.value;
+      return {
+        question: question,
+        query: query
+      } as QueryExample;
+    })
+
     this.configuration().kg_full_name = this.firstFormGroup.value.kg_full_name;
     this.configuration().kg_short_name = this.firstFormGroup.value.kg_short_name;
     this.configuration().kg_description = this.firstFormGroup.value.kg_description;
@@ -486,7 +461,10 @@ ORDER BY ASC(?speciesName)`
     this.configuration().class_context_format = this.firstFormGroup.value.class_context_format;
     this.configuration().excluded_classes_namespaces = this.firstFormGroup.value.excluded_classes_namespaces;
 
+
+
     this.isInConfigCreatedTask = true;
+
     this.configManagerService.createNewConfiguration(this.configuration())
       .subscribe({
         next: value => {
@@ -586,9 +564,6 @@ ORDER BY ASC(?speciesName)`
   }
 
   fillPrefixesFormArray() {
-    // Dynamically create form controls inside the prefixes FormGroup
-    const prefixArray = this.firstFormGroup.get('prefixes') as FormArray;
-
     // Iterate over the prefixes object and create FormGroup for each prefix
     Object.entries(this.configuration().prefixes).forEach(([key, value]) => {
       this.addPrefix(key, value);
@@ -624,8 +599,6 @@ ORDER BY ASC(?speciesName)`
     if (value) {
       this.prefixArray.at(index).get('value')?.setValue(value);
     }
-
-    console.log(prefix, value);
   }
 
 
@@ -638,39 +611,30 @@ ORDER BY ASC(?speciesName)`
   }
 
 
-  deleteQueryExample(question: string, query: string) {
+  deleteQueryExample(questionToDelete: string, queryToDelete: string) {
 
-    // let data2: QueryExample[] = []
-    // let data: string[] = []
-    // this.queryExamplesArray.controls
-    //   .forEach(control => {
-    //     const question: string = control.get('question')?.value || "";
-    //     const query: string = control.get('query')?.value || "";
+    let data: QueryExample[] = []
+    this.queryExamplesArray.controls
+      .forEach(control => {
+        const question: string = control.get('question')?.value || "";
+        const query: string = control.get('query')?.value || "";
 
-    //     console.log(question, query);
+        if (question != questionToDelete || query != queryToDelete) {
+          data.push({
+            question: question,
+            query: query
+          });
+        }
+      })
 
-    //     data.push(`{
-    //       question: ${question},
-    //       query: ${query}
-    //     }`)
 
-    //     data2.push({
-    //       question: question,
-    //       query: query
-    //     });
-    //   })
+    this.queryExamplesArray.clear()
 
-    // console.log(data);
-    // console.log(data2);
-    // // this.configuration().queryExamples = data
-    // console.log(this.configuration().queryExamples);
+    this.configuration().queryExamples = data;
 
-    // this.queryExamplesArray.clear()
-
-    // setTimeout(() => {
-    //   delete this.configuration().queryExamples[index];
-    //   this.fillPrefixesFormArray();
-    // }, 100);
+    setTimeout(() => {
+      this.fillQueryExamplesFormArray();
+    }, 100);
   }
 
   addQueryExample(question: string = '', query: string = '') {
