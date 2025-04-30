@@ -23,6 +23,7 @@ import { KnownPrefixesService } from '../services/known-prefixes.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Prefix } from '../models/prefix';
 import { RouterModule } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-kgconfiguration',
@@ -42,6 +43,7 @@ import { RouterModule } from '@angular/router';
     MatProgressSpinnerModule,
     MarkdownModule,
     MatAutocompleteModule,
+    MatTooltipModule,
     AsyncPipe,
     RouterModule,
     JsonPipe

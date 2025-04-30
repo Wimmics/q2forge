@@ -5,21 +5,15 @@
         <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
             <form [formGroup]="firstFormGroup">
                 <ng-template matStepLabel>Create a new Configuration</ng-template>
-                <!-- <div>
-                    {{configuration()|json}}
-                </div>
-                <div>
-                    <button (click)="printConfig()">print</button>
-                </div> -->
                 <div class="form-group-container">
-                    <mat-form-field>
+                    <mat-form-field matTooltip="KG full name (used in prompts)" matTooltipPosition="above">
                         <mat-label>KG full name</mat-label>
                         <input matInput formControlName="kg_full_name" required>
                         @if (firstFormGroup.get('kg_full_name')?.hasError('required')) {
                         <mat-error>This field is <strong>required</strong></mat-error>
                         }
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="KG short name (used to generate file paths)" matTooltipPosition="above">
                         <mat-label>KG short Name</mat-label>
                         <input matInput formControlName="kg_short_name" required>
                         @if (firstFormGroup.get('kg_short_name')?.hasError('required')) {
@@ -29,14 +23,14 @@
                         <mat-error>Only lowercase letters, numbers and underscores are allowed</mat-error>
                         }
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="KG textual description (used in prompts)" matTooltipPosition="above">
                         <mat-label>KG description</mat-label>
                         <textarea matInput formControlName="kg_description" required rows="3"></textarea>
                         @if (firstFormGroup.get('kg_description')?.hasError('required')) {
                         <mat-error>This field is <strong>required</strong></mat-error>
                         }
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="SPARQL endpoint serving the KG" matTooltipPosition="above">
                         <mat-label>KG SPARQL endpoint URL</mat-label>
                         <input matInput formControlName="kg_sparql_endpoint_url" required>
                         @if (firstFormGroup.get('kg_sparql_endpoint_url')?.hasError('required')) {
@@ -46,14 +40,14 @@
                         <mat-error>Please enter a valid URI</mat-error>
                         }
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="SPARQL endpoint serving the ontologies, if different from the KG SPARQL endpoint (optional)" matTooltipPosition="above">
                         <mat-label>Ontologies SPARQL endpoint URL</mat-label>
                         <input matInput formControlName="ontologies_sparql_endpoint_url">
                         @if (firstFormGroup.get('ontologies_sparql_endpoint_url')?.hasError('pattern')) {
                         <mat-error>Please enter a valid URI</mat-error>
                         }
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="Properties used to extract context for the Qnames in a SPARQL query used in the Judging process" matTooltipPosition="above">
                         <mat-label>Properties QNames info</mat-label>
                         <mat-chip-grid #chipPropertiesGrid aria-label="Enter property">
                             @for (property of configuration().properties_qnames_info; track property) {
@@ -71,7 +65,8 @@
                                 (matChipInputTokenEnd)="addPropertyQName($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
-                    <div class="prefixes-container" formArrayName="prefixes">
+                    <div class="prefixes-container" formArrayName="prefixes" matTooltip="Prefixes and namespaces to be used in the Turtle and SPARQL queries"
+                        matTooltipPosition="above">
                         <h3 align="center">Prefixes</h3>
                         @for (prefixCtrl of prefixArray.controls; track $index) {
                         <div class="prefix-container" formGroupName="{{$index}}">
@@ -122,7 +117,7 @@
                             Add prefix
                         </button>
                     </div>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="Named graphs where to look for ontology definitions (optional)" matTooltipPosition="above">
                         <mat-label>Ontology named graphs</mat-label>
                         <mat-chip-grid #chipOntologyNamedGraphsGrid aria-label="Enter named graph">
                             @for (property of configuration().ontology_named_graphs; track property) {
@@ -140,7 +135,7 @@
                                 (matChipInputTokenEnd)="addOntologyNamedGraphs($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="Max number of classes similar to the user's question (optional)" matTooltipPosition="above">
                         <mat-label>Max similar classes</mat-label>
                         <input matInput formControlName="max_similar_classes" required type="number" min="1">
                         @if (firstFormGroup.get('max_similar_classes')?.hasError('required')) {
@@ -153,7 +148,7 @@
                     </mat-form-field>
                     <mat-slide-toggle formControlName="expand_similar_classes">Expand similar classes
                     </mat-slide-toggle>
-                    <mat-form-field>
+                    <mat-form-field matTooltip='Format of the classes context: one of "turtle", "tuple" or "nl" for natural language (optional)' matTooltipPosition="above">
                         <mat-label>Class context format</mat-label>
                         <mat-select formControlName="class_context_format">
                             @for (format of availableClassoCntextFormats; track format) {
@@ -161,7 +156,7 @@
                             }
                         </mat-select>
                     </mat-form-field>
-                    <mat-form-field>
+                    <mat-form-field matTooltip="Optional list of classes and namespaces to be excluded from the similar classes (optional)" matTooltipPosition="above">
                         <mat-label>Excluded classes namespaces</mat-label>
                         <mat-chip-grid #chipExcludedClassesNamespacesGrid aria-label="Enter namespace">
                             @for (property of configuration().excluded_classes_namespaces; track property) {
@@ -180,7 +175,8 @@
                         </mat-chip-grid>
                     </mat-form-field>
 
-                    <div class="query-examples-container" formArrayName="queryExamples">
+                    <div class="query-examples-container" formArrayName="queryExamples" matTooltip="Query examples to be used in the generation of the query"
+                        matTooltipPosition="above">
                         <h3 align="center">Query Examples</h3>
                         @for (queryExamplesCtrl of queryExamplesArray.controls; track $index) {
                         <div class="query-example-container" formGroupName="{{$index}}">

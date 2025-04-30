@@ -23,6 +23,10 @@ export class AppComponent {
     route: '/',
     icon: 'home'
   }, {
+    name: 'New KG Configuration',
+    route: '/kg-configuration',
+    icon: 'settings'
+  }, {
     name: 'Competency Question Generator',
     route: '/question-generator',
     icon: 'create'
@@ -31,15 +35,9 @@ export class AppComponent {
     route: '/question-answerer',
     icon: 'question_answer'
   }, {
-
     name: 'SPARQL Query Refinement',
     route: '/sparql-judge',
     icon: 'check_circle_outline'
-  }, {
-
-    name: 'New KG Configuration',
-    route: '/kg-configuration',
-    icon: 'settings'
   },
     //  {
     //   name: 'About',
