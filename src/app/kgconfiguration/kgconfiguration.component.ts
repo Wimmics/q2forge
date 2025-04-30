@@ -472,7 +472,7 @@ export class KGConfigurationComponent {
         next: value => {
           this.isInConfigCreatedTask = false;
           this.isConfigCreated = true;
-          this.dialogService.notifyUser("Configuration created successfully!",
+          this.dialogService.notifyUser("Configuration created successfully",
             "Server response: \n ```json\n" + JSON.stringify(value, null, 2) + "\n```"
           );
           this.configuration.set(value);
@@ -508,7 +508,7 @@ export class KGConfigurationComponent {
         next: value => {
           this.isInKGDescriptionsGeneratedTask = false;
           this.isKGDescriptionsGenerated = true;
-          this.dialogService.notifyUser("KG description generation successful!",
+          this.dialogService.notifyUser("KG description generation successful",
             "Server response: \n ```json\n" + JSON.stringify(value, null, 2) + "\n```"
           );
         }
@@ -533,7 +533,7 @@ export class KGConfigurationComponent {
         next: value => {
           this.isConfigActivated = true;
           this.isInConfigActivatedTask = false;
-          this.dialogService.notifyUser("Configuration activated successfully!",
+          this.dialogService.notifyUser("Configuration activated successfully",
             "Server response: \n ```json\n" + JSON.stringify(value, null, 2) + "\n```"
           );
         }
@@ -557,7 +557,7 @@ export class KGConfigurationComponent {
         next: value => {
           this.isKGEmbeddingGenerated = true;
           this.isInKGEmbeddingGeneratedTask = false;
-          this.dialogService.notifyUser("KG embeddings generattion was successful!",
+          this.dialogService.notifyUser("KG embeddings generattion was successful",
             "Server response: \n ```json\n" + JSON.stringify(value, null, 2) + "\n```"
           );
         }
