@@ -11,4 +11,10 @@ export interface KGConfiguration {
     expand_similar_classes: boolean;
     class_context_format: string;
     excluded_classes_namespaces: string[];
+    queryExamples: QueryExample[];
+}
+
+export interface QueryExample {
+    question: string;
+    query: string;
 }

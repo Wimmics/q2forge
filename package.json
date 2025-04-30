@@ -1,5 +1,5 @@
 {
-  "name": "dataset-forge",
+  "name": "q2forge",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "dc": "ng build --base-href=/dataset-forge/ --deploy-url=/dataset-forge/ --configuration=production"
+    "dc": "ng build --base-href=/q2forge/ --deploy-url=/q2forge/ --configuration=production"
   },
   "private": true,
   "dependencies": {

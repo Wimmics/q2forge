@@ -47,7 +47,7 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
 
 const SERVER = "http://gen2kgbot.i3s.unice.fr" // prod
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
-const API_BASE = `${SERVER}/api/dataset_forge`
+const API_BASE = `${SERVER}/api/q2forge`
 export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
 export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`

@@ -27,7 +27,7 @@ export class AppComponent {
     route: '/question-generator',
     icon: 'create'
   }, {
-    name: 'SPARQL Query Generator',
+    name: 'SPARQL Query Generator and Executor',
     route: '/question-answerer',
     icon: 'question_answer'
   }, {

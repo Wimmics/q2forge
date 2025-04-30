@@ -4,6 +4,6 @@
     RewriteCond %{REQUEST_FILENAME} -l [OR]
     RewriteCond %{REQUEST_FILENAME} -d
     RewriteRule ^.*$ - [NC,L]
-    RewriteRule ^(.*) /dataset-forge/index.html [NC,L]
+    RewriteRule ^(.*) /q2forge/index.html [NC,L]
     Options Indexes FollowSymLinks MultiViews
 </IfModule>

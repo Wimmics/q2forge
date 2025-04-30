@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
-import { KGConfiguration } from '../models/kg-configuration';
+import { KGConfiguration, QueryExample } from '../models/kg-configuration';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { DialogService } from '../services/dialog.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -22,6 +22,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { KnownPrefixesService } from '../services/known-prefixes.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Prefix } from '../models/prefix';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-kgconfiguration',
@@ -41,7 +42,9 @@ import { Prefix } from '../models/prefix';
     MatProgressSpinnerModule,
     MarkdownModule,
     MatAutocompleteModule,
-    AsyncPipe
+    AsyncPipe,
+    RouterModule,
+    JsonPipe
   ],
   templateUrl: './kgconfiguration.component.html',
   styleUrl: './kgconfiguration.component.scss'
@@ -113,9 +116,10 @@ export class KGConfigurationComponent {
       "http://data.epo.org/linked-data/def/patent/Publication",
       "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#"
     ],
+    queryExamples: []
   })
 
-  configuration = signal<KGConfiguration>({
+  configuration_ = signal<KGConfiguration>({
     kg_full_name: "WheatGenomic Scienctific Literature Knowledge Graph",
     kg_short_name: "d2kab",
     kg_description: "The Wheat Genomics Scientific Literature Knowledge Graph (WheatGenomicsSLKG) is a FAIR knowledge graph that exploits the Semantic Web technologies to describe PubMed scientific articles on wheat genetics and genomics. It represents Named Entities (NE) about genes, phenotypes, taxa and varieties, mentioned in the title and the abstract of the articles, and the relationships between wheat mentions of varieties and phenotypes.",
@@ -158,9 +162,63 @@ export class KGConfigurationComponent {
     expand_similar_classes: true,
     class_context_format: "turtle",
     excluded_classes_namespaces: [],
+    queryExamples: [
+      {
+        question: "Retrieve list of graphs",
+        query: `BASE <http://purl.agrold.org/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obo:<http://purl.obolibrary.org/obo/>
+PREFIX vocab:<vocabulary/>
+
+SELECT distinct ?graph
+WHERE {
+ GRAPH ?graph {
+   ?subject ?predicate ?object.
+ }
+ filter(REGEX(?graph, "^http://purl.agrold.org"))
+}`
+      },
+      {
+        question: "Search terms by label",
+        query: `BASE <http://purl.agrold.org/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX vocab:<vocabulary/>
+
+SELECT DISTINCT ?term_id ?term_name ?graph
+WHERE { 
+ GRAPH ?graph { 
+  ?term_id rdfs:label ?term_name . 
+ FILTER regex(str(?term_name), 'disease resistance') 
+ } 
+}`
+      },
+      {
+        question: "Get species list with label and uri",
+        query: `BASE <http://purl.agrold.org/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX taxon:<http://purl.obolibrary.org/obo/NCBITaxon_>
+ PREFIX fn:<https://www.w3.org/TR/xpath-functions-31/#>
+ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX graph: <ensembl.plants>
+ SELECT distinct (str(?label) as ?speciesName) ?uri
+ WHERE {
+ values (?q){(<http://purl.obolibrary.org/obo/RO_0002162>)}
+graph graph:{
+ ?gene ?q ?species .
+ BIND(REPLACE(str(?species), "^.*(#|/)", "") AS ?taxonid)
+ BIND(URI(CONCAT(str(taxon:),?taxonid)) AS ?uri).
+ } optional {
+  ?uri rdfs:label ?label.
+ } }
+ORDER BY ASC(?speciesName)`
+      }
+    ]
   })
 
-  configuration_ = signal<KGConfiguration>({
+  configuration = signal<KGConfiguration>({
     kg_full_name: "",
     kg_short_name: "",
     kg_description: "",
@@ -175,6 +233,7 @@ export class KGConfigurationComponent {
     expand_similar_classes: false,
     class_context_format: "turtle",
     excluded_classes_namespaces: [],
+    queryExamples: []
   })
 
   firstFormGroup: FormGroup;
@@ -202,9 +261,11 @@ export class KGConfigurationComponent {
       expand_similar_classes: [this.configuration().expand_similar_classes, Validators.required],
       class_context_format: [this.configuration().class_context_format, Validators.required],
       excluded_classes_namespaces: [this.configuration().excluded_classes_namespaces, []],
+      queryExamples: this._formBuilder.array([]),
     });
 
     this.fillPrefixesFormArray()
+    this.fillQueryExamplesFormArray()
 
     this.secondFormGroup = this._formBuilder.group({
       kg_short_name: [this.configuration().kg_short_name, Validators.required],
@@ -360,8 +421,6 @@ export class KGConfigurationComponent {
   }
 
   deletePrefix(key: string, index: number) {
-
-
     this.configuration().prefixes = this.prefixArray.controls.reduce((acc, control) => {
       const key: string = control.get('key')?.value || "";
       const value: string = control.get('value')?.value || "";
@@ -389,11 +448,11 @@ export class KGConfigurationComponent {
 
     this.filteredPrefixOptions.push(this.prefixArray.at(this.prefixArray.length - 1).valueChanges.pipe(
       filter(value => value['key'].length > 0),
-      map(value => this._filter(value || ''))
+      map(value => this._filterPrefix(value || ''))
     ));
   }
 
-  private _filter(value: any): Prefix[] {
+  private _filterPrefix(value: any): Prefix[] {
     let key = (value['key'] == undefined) ? "" : value['key'].toLowerCase();
     return this.knownPrefixesService.getPrefixes().filter(option => option.shortName.toLowerCase().startsWith(key));
   }
@@ -567,8 +626,76 @@ export class KGConfigurationComponent {
     }
 
     console.log(prefix, value);
+  }
 
+
+  /*
+  >>>>>>>>>>>>>>>>>>>>>> Query Example >>>>>>>>>>>>>>>>>>>>>>
+  */
+
+  get queryExamplesArray() {
+    return this.firstFormGroup.get('queryExamples') as FormArray;
+  }
+
+
+  deleteQueryExample(question: string, query: string) {
+
+    // let data2: QueryExample[] = []
+    // let data: string[] = []
+    // this.queryExamplesArray.controls
+    //   .forEach(control => {
+    //     const question: string = control.get('question')?.value || "";
+    //     const query: string = control.get('query')?.value || "";
+
+    //     console.log(question, query);
+
+    //     data.push(`{
+    //       question: ${question},
+    //       query: ${query}
+    //     }`)
+
+    //     data2.push({
+    //       question: question,
+    //       query: query
+    //     });
+    //   })
+
+    // console.log(data);
+    // console.log(data2);
+    // // this.configuration().queryExamples = data
+    // console.log(this.configuration().queryExamples);
+
+    // this.queryExamplesArray.clear()
+
+    // setTimeout(() => {
+    //   delete this.configuration().queryExamples[index];
+    //   this.fillPrefixesFormArray();
+    // }, 100);
+  }
+
+  addQueryExample(question: string = '', query: string = '') {
+    this.queryExamplesArray.push(this._formBuilder.group(
+      {
+        question: this._formBuilder.control(question, [Validators.required]),
+        query: this._formBuilder.control(query, [Validators.required])
+      })
+    );
+  }
+
+  fillQueryExamplesFormArray() {
+
+    this.configuration().queryExamples.forEach((queryExample: QueryExample) => {
+      this.addQueryExample(queryExample.question, queryExample.query);
+    });
+  }
+
+  printConfig() {
+    console.log(this.configuration());
 
   }
+
+  /*
+  <<<<<<<<<<<<<<<<<<<<<< Query Example <<<<<<<<<<<<<<<<<<<<<<
+  */
 
 }

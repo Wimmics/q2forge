@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "gen2kgbot_dataset_forge": {
+    "q2forge": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -19,7 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "outputPath": {
-              "base": "dist/dataset-forge",
+              "base": "dist/q2forge",
               "browser": ""
             },
             "index": "src/index.html",
@@ -86,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "gen2kgbot_dataset_forge:build:production"
+              "buildTarget": "q2forge:build:production"
             },
             "development": {
-              "buildTarget": "gen2kgbot_dataset_forge:build:development"
+              "buildTarget": "q2forge:build:development"
             }
           },
           "defaultConfiguration": "development"

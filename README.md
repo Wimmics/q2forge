@@ -1,4 +1,4 @@
-# Dataset Forge
+# Q²Forge
 
 This project provides an end-to-end pipeline to generate a dataset of (question, SPARQL query) pairs for a given Knowledge Graph (KG). The backend can be found in [this repo](https://github.com/Wimmics/gen2kgbot).
 

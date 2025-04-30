@@ -51,7 +51,7 @@ export const AVAILABLE_LLM_MODELS: LLMModel[] = [
 
 const SERVER = "http://localhost:8000" // dev
 export const SPARQL_ENDPOINT_URI = `http://localhost:8080/sparql`
-const API_BASE = `${SERVER}/api/dataset_forge`
+const API_BASE = `${SERVER}/api/q2forge`
 export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate-question`
 export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
 export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`
