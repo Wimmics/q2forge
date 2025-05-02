@@ -1,0 +1,97 @@
+{
+    "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+    "type": "SoftwareSourceCode",
+    "author": [
+        {
+            "id": "https://orcid.org/0000-0003-4509-9537",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Université Côte d'Azur"
+            },
+            "email": "yousouf.taghzouti@inria.fr",
+            "familyName": "Taghzouti",
+            "givenName": "Yousouf"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0003-4509-9537",
+            "schema:roleName": "Developper"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-9064-0463",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNRS"
+            },
+            "email": "franck.michel@inria.fr",
+            "familyName": "Michel",
+            "givenName": "Franck"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0001-9064-0463",
+            "schema:roleName": "Developper"
+        },
+        {
+            "id": "https://orcid.org/0000-0002-5293-3916",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNRS"
+            },
+            "email": "tao.jiang@cnrs.fr",
+            "familyName": "Jiang",
+            "givenName": "Tao"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0002-5293-3916",
+            "schema:roleName": "Developper"
+        },
+        {
+            "id": "https://orcid.org/0000-0001-6711-6719",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "CNRS"
+            },
+            "email": "louis-felix.nothias@cnrs.fr",
+            "familyName": "Nothias",
+            "givenName": "Louis-Felix"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0001-6711-6719",
+            "schema:roleName": "Design"
+        },
+        {
+            "id": "https://orcid.org/0000-0003-0543-1232",
+            "type": "Person",
+            "affiliation": {
+                "type": "Organization",
+                "name": "Inria"
+            },
+            "email": "fabien.gandon@inria.fr",
+            "familyName": "Gandon",
+            "givenName": "Fabien"
+        },
+        {
+            "type": "schema:Role",
+            "schema:author": "https://orcid.org/0000-0003-0543-1232",
+            "schema:roleName": "Design"
+        }
+    ],
+    "codeRepository": "https://github.com/Wimmics/q2forge",
+    "datePublished": "2025-05-12",
+    "description": "Gen²KGBot addresses the challenge of generating new competency questions for a KG and corresponding SPARQL queries that reflect those questions. It iteratively validates those queries with human feedback and LLM as a judge.",
+    "identifier": "q2forge",
+    "keywords": [
+        "Knowledge graph",
+        "LLM",
+        "SPARQL"
+    ],
+    "name": "Q²Forge",
+    "version": "1.0"
+}

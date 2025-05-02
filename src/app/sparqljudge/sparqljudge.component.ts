@@ -129,25 +129,6 @@ export class SPARQLJudgeComponent implements AfterViewInit {
     }
   }
 
-  // getQandFQNames() {
-
-  //   let query = this.currentQuery;
-
-  //   if (query && query !== "") {
-  //     try {
-
-  //       this.parsedData = this.sparqlExtractorQNService.parseQuery(query);
-  //       this.dataSource = [];
-  //       for (let qname of this.parsedData.qnames) {
-  //         this.dataSource.push({ uri: qname });
-  //       }
-  //       this.error = "";
-  //     } catch (error) {
-  //       this.error = `${error}`;
-  //     }
-  //   }
-  // }
-
   get currentQuery(): string | undefined {
 
     let activeId = this.yasgui?.persistentConfig.getActiveId();

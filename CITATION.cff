@@ -1,0 +1,44 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: 'Gen²KGBot - Generic Generative Knowledge Graph Robot'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Yousouf
+    family-names: Taghzouti
+    email: yousouf.taghzouti@univ-cotedazur.fr
+    affiliation: 'Univ. Côte d''Azur, Inria, ICN, I3S, France'
+    orcid: 'https://orcid.org/0000-0003-4509-9537'
+    
+  - given-names: Franck
+    family-names: Michel
+    email: franck.michel@inria.fr
+    affiliation: 'Univ. Côte d''Azur, CNRS, Inria'
+    orcid: 'https://orcid.org/0000-0001-9064-0463'
+    
+  - given-names: Tao
+    family-names: Jiang
+    email: tao.jiang@cnrs.fr
+    affiliation: 'Univ. Côte d''Azur, CNRS, ICN, France'
+    orcid: 'https://orcid.org/0000-0002-5293-3916'
+    
+  - given-names: Louis-Felix
+    family-names: Nothias
+    email: louis-felix.nothias@cnrs.fr
+    affiliation: 'Univ. Côte d''Azur, CNRS, ICN, France'
+    orcid: 'https://orcid.org/0000-0001-6711-6719'
+    
+  - given-names: Fabien
+    family-names: Gandon
+    email: fabien.gandon@inria.fr
+    affiliation: 'Inria, Univ. Côte d''Azur, CNRS, I3S, France'
+    orcid: 'https://orcid.org/0000-0003-0543-1232'
+    
+repository-code: 'https://github.com/Wimmics/gen2kgbot'
+license: AGPL-3.0-or-later
+version: 1.0
+date-released: '2025-05-12'
