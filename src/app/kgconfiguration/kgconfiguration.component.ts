@@ -1,4 +1,4 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -46,7 +46,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule,
     AsyncPipe,
     RouterModule,
-    JsonPipe
   ],
   templateUrl: './kgconfiguration.component.html',
   styleUrl: './kgconfiguration.component.scss'
@@ -111,9 +110,6 @@ export class KGConfigurationComponent {
       up: "http://purl.uniprot.org/core/"
     },
     ontology_named_graphs: [],
-    max_similar_classes: 10,
-    expand_similar_classes: false,
-    class_context_format: "turtle",
     excluded_classes_namespaces: [
       "http://data.epo.org/linked-data/def/patent/Publication",
       "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#"
@@ -160,9 +156,6 @@ export class KGConfigurationComponent {
       "http://www.w3.org/2004/02/skos/core",
       "http://www.w3.org/ns/oa#"
     ],
-    max_similar_classes: 10,
-    expand_similar_classes: true,
-    class_context_format: "turtle",
     excluded_classes_namespaces: [],
     queryExamples: [
       {
@@ -196,9 +189,6 @@ export class KGConfigurationComponent {
     },
     ontology_named_graphs: [
     ],
-    max_similar_classes: 10,
-    expand_similar_classes: false,
-    class_context_format: "turtle",
     excluded_classes_namespaces: [],
     queryExamples: []
   })
@@ -224,9 +214,6 @@ export class KGConfigurationComponent {
       properties_qnames_info: [this.configuration().properties_qnames_info, []],
       prefixes: this._formBuilder.array([]),
       ontology_named_graphs: [this.configuration().ontology_named_graphs],
-      max_similar_classes: [this.configuration().max_similar_classes, [Validators.required, Validators.min(1)]],
-      expand_similar_classes: [this.configuration().expand_similar_classes, Validators.required],
-      class_context_format: [this.configuration().class_context_format, Validators.required],
       excluded_classes_namespaces: [this.configuration().excluded_classes_namespaces, []],
       queryExamples: this._formBuilder.array([]),
     });
@@ -458,9 +445,6 @@ export class KGConfigurationComponent {
     this.configuration().ontologies_sparql_endpoint_url = this.firstFormGroup.value.ontologies_sparql_endpoint_url;
     this.configuration().properties_qnames_info = this.firstFormGroup.value.properties_qnames_info;
     this.configuration().ontology_named_graphs = this.firstFormGroup.value.ontology_named_graphs;
-    this.configuration().max_similar_classes = this.firstFormGroup.value.max_similar_classes;
-    this.configuration().expand_similar_classes = this.firstFormGroup.value.expand_similar_classes;
-    this.configuration().class_context_format = this.firstFormGroup.value.class_context_format;
     this.configuration().excluded_classes_namespaces = this.firstFormGroup.value.excluded_classes_namespaces;
 
 

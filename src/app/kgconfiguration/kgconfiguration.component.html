@@ -135,27 +135,6 @@
                                 (matChipInputTokenEnd)="addOntologyNamedGraphs($event)" />
                         </mat-chip-grid>
                     </mat-form-field>
-                    <mat-form-field matTooltip="Max number of classes similar to the user's question (optional)" matTooltipPosition="above">
-                        <mat-label>Max similar classes</mat-label>
-                        <input matInput formControlName="max_similar_classes" required type="number" min="1">
-                        @if (firstFormGroup.get('max_similar_classes')?.hasError('required')) {
-                        <mat-error>This field is <strong>required</strong></mat-error>
-                        }
-                        @if (firstFormGroup.get('max_similar_classes')?.hasError('min')) {
-                        <mat-error>The minimum value is <strong>1</strong></mat-error>
-                        }
-
-                    </mat-form-field>
-                    <mat-slide-toggle formControlName="expand_similar_classes">Expand similar classes
-                    </mat-slide-toggle>
-                    <mat-form-field matTooltip='Format of the classes context: one of "turtle", "tuple" or "nl" for natural language (optional)' matTooltipPosition="above">
-                        <mat-label>Class context format</mat-label>
-                        <mat-select formControlName="class_context_format">
-                            @for (format of availableClassoCntextFormats; track format) {
-                            <mat-option [value]="format">{{format}}</mat-option>
-                            }
-                        </mat-select>
-                    </mat-form-field>
                     <mat-form-field matTooltip="Optional list of classes and namespaces to be excluded from the similar classes (optional)" matTooltipPosition="above">
                         <mat-label>Excluded classes namespaces</mat-label>
                         <mat-chip-grid #chipExcludedClassesNamespacesGrid aria-label="Enter namespace">
