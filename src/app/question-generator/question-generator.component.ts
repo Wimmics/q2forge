@@ -38,24 +38,17 @@ export class QuestionGeneratorComponent {
 
   constructor(private generateQuestionService: GenerateQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
-    private cookieService: CookieService,
     private router: Router,
-    private dialogService: DialogService,
     private cookieManagerService: CookieManagerService,
     private configManagerService: ConfigManagerService,
     private _formBuilder: FormBuilder,
     private location: Location) {
 
-    this.currentConfig = configManagerService.getDefaultConfig()
+    this.currentConfig = this.configManagerService.getDefaultConfig()
       .then((config) => {
-
-        // this.model.endpoint = config.kg_sparql_endpoint_url;
         this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
         this.formGroup.get("kg_description")?.setValue(config.kg_description);
         this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n '));
-        // this.model.kg_description = config.kg_description;
-        // this.model.kg_schema = config.ontology_named_graphs.join(', ');
-
       });
 
     this.formGroup = this._formBuilder.group({
@@ -116,7 +109,7 @@ export class QuestionGeneratorComponent {
   ];
 
   availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
-  selectedLLM = this.availableLLMModels[0];
+  // selectedLLM = this.availableLLMModels[0];
 
   generateQuestionWithLLM() {
     let endpoint = this.formGroup.get("endpoint")?.value;
@@ -124,13 +117,14 @@ export class QuestionGeneratorComponent {
     let kg_schema = this.formGroup.get("kg_schema")?.value;
     let number_of_questions = this.formGroup.get("number_of_questions")?.value;
     let additional_context = this.formGroup.get("additional_context")?.value;
+    let selected_LLM = this.formGroup.get("selected_LLM")?.value;
 
     if (kg_description) {
       this.llmAnswer = '';
       this.competencyQuestions = [];
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
-        this.selectedLLM,
+        selected_LLM,
         number_of_questions,
         kg_description,
         kg_schema,
