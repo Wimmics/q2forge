@@ -2,7 +2,7 @@
 # Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
-title: 'Gen²KGBot - Generic Generative Knowledge Graph Robot'
+title: 'Q²Forge'
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -38,7 +38,7 @@ authors:
     affiliation: 'Inria, Univ. Côte d''Azur, CNRS, I3S, France'
     orcid: 'https://orcid.org/0000-0003-0543-1232'
     
-repository-code: 'https://github.com/Wimmics/gen2kgbot'
+repository-code: 'https://github.com/Wimmics/q2forge'
 license: AGPL-3.0-or-later
 version: 1.0
 date-released: '2025-05-12'
