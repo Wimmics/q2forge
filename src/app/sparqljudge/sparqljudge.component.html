@@ -112,15 +112,15 @@
 
     <div class="query-buttons-container">
         <mat-form-field matTooltip="Model to use in the judging process" matTooltipPosition="above">
-            <mat-label>LLM Model</mat-label>
-            <mat-select [(ngModel)]="selectedLLM">
-                @for (model of availableLLMModels; track model) {
-                <mat-option [value]="model">{{model.modelProvider}}:{{model.modelName}}</mat-option>
+            <mat-label>Model</mat-label>
+            <mat-select [(ngModel)]="model_config_id">
+                @for (model of availableSeq2SeqModels; track model) {
+                <mat-option [value]="model.configName">{{model.configName}}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
         <button mat-raised-button (click)="getLLMasJudgeAnswer()" matTooltip="Start the judging of the query"
-            matTooltipPosition="above">
+            matTooltipPosition="above" [disabled]="!question.value || question.value == ''">
             <mat-icon>gavel</mat-icon>
             Judge Question / Query
         </button>

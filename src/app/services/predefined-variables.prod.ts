@@ -1,5 +1,3 @@
-import { LLMModel } from "../models/llmmodel";
-
 export const DEFAULT_SPARQL_JUDGE_QUERY = `PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
     PREFIX sio: <http://semanticscience.org/resource/>
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
@@ -19,31 +17,6 @@ export const DEFAULT_SPARQL_JUDGE_QUERY = `PREFIX rdf: <http://www.w3.org/1999/0
       }
       ORDER BY DESC(?score)
       LIMIT 5`
-
-export const AVAILABLE_LLM_MODELS: LLMModel[] = [
-  {
-    modelProvider: "Ovh",
-    modelName: "Meta-Llama-3_1-70B-Instruct",
-    baseUri: "https://llama-3-1-70b-instruct.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
-  },
-  {
-    modelProvider: "Ovh",
-    modelName: "DeepSeek-R1-Distill-Llama-70B",
-    baseUri: "https://deepseek-r1-distill-llama-70b.endpoints.kepler.ai.cloud.ovh.net/api/openai_compat/v1",
-  },
-  {
-    modelProvider: "OpenAI",
-    modelName: "o3-mini",
-    apiKey: "default",
-  },
-  {
-    modelProvider: "DeepSeek",
-    modelName: "deepseek-reasoner",
-  },
-  {
-    modelProvider: "DeepSeek",
-    modelName: "deepseek-chat",
-  }];
 
 const SERVER = "http://gen2kgbot.i3s.unice.fr" // prod
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`

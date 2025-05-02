@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { ExtractedData, SPARQLPartInfo } from './../models/extraction';
-// import { JsonPipe } from '@angular/common';
 import { SPARQLQNExtractorService } from './../services/sparqlqnextractor.service';
 import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
 import { LLMJudgeService } from '../services/llmjudge.service';
@@ -17,17 +16,16 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
-import { LLMModel } from '../models/llmmodel';
 import { MarkdownComponent } from 'ngx-markdown';
-import { DEFAULT_SPARQL_JUDGE_QUERY, AVAILABLE_LLM_MODELS, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../services/predefined-variables';
+import { DEFAULT_SPARQL_JUDGE_QUERY, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../services/predefined-variables';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { DataSetCookie, isDataSetCookie } from '../models/cookie-items';
-import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 import { DialogService } from '../services/dialog.service';
 import Yasgui from "@triply/yasgui/";
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Seq2SeqModel } from '../models/seq2seqmodel';
 
 
 @Component({
@@ -102,9 +100,14 @@ export class SPARQLJudgeComponent implements AfterViewInit {
         this.question.setValue(question);
       });
     });
+
+    this.configManagerService.getSeq2SeqModels().then((data) => {
+      this.availableSeq2SeqModels = data;
+      this.model_config_id = this.availableSeq2SeqModels[0].configName;
+    });
   }
 
-  getQNamesContext(){
+  getQNamesContext() {
     let query = this.currentQuery;
 
     if (query && query !== "") {
@@ -117,9 +120,9 @@ export class SPARQLJudgeComponent implements AfterViewInit {
         }
         this.error = "";
 
-        if(this.dataSource.length > 0){
+        if (this.dataSource.length > 0) {
           this.getQandFQNamesInfo();
-        }else{
+        } else {
           this.dialogService.notifyUser('No QNames found', 'The query does not contain any QNames.');
         }
 
@@ -280,8 +283,8 @@ export class SPARQLJudgeComponent implements AfterViewInit {
   }
 
 
-  availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
-  selectedLLM = this.availableLLMModels[0];
+  availableSeq2SeqModels: Seq2SeqModel[] = [];
+  model_config_id = '';
   llmAnswer!: string;
   errorLLMAnswer: string = '';
   getLLMasJudgeAnswer() {
@@ -289,7 +292,7 @@ export class SPARQLJudgeComponent implements AfterViewInit {
     if (this.question.value && query && query !== "") {
       this.llmAnswer = '';
       this.errorLLMAnswer = '';
-      this.llmJudgeService.getLLMAnswer(this.selectedLLM, this.question.value, query, this.dataSource)
+      this.llmJudgeService.getLLMAnswer(this.model_config_id, this.question.value, query, this.dataSource)
         .then(response => {
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
@@ -406,15 +409,15 @@ export class SPARQLJudgeComponent implements AfterViewInit {
     }
 
     let datasetCookie: DataSetCookie;
-    
+
     const datasetItem = {
       question: this.question?.value,
       query: query
     };
-    
+
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
-    
+
     if (this.cookieService.check('dataset')) {
       try {
         let cookie = JSON.parse(this.cookieService.get('dataset'));

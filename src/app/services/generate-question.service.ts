@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { LLMModel } from '../models/llmmodel';
 import { HttpClient } from '@angular/common/http';
 import { GENERATE_QUESTION_ENDPOINT } from './predefined-variables';
 
@@ -11,13 +10,11 @@ export class GenerateQuestionService {
 
   constructor(private http: HttpClient) { }
 
-  getLLMAnswer(selectedLLM: LLMModel, number_of_questions: number, kg_description: string, kg_schema: string, additional_context: string, enforce_structured_output: boolean):
+  getLLMAnswer(selectedModelConfigId: string, number_of_questions: number, kg_description: string, kg_schema: string, additional_context: string, enforce_structured_output: boolean):
     Promise<Response> {
 
     const body = {
-      "model_provider": selectedLLM.modelProvider,
-      "model_name": selectedLLM.modelName,
-      "base_uri": selectedLLM.baseUri,
+      "model_config_id": selectedModelConfigId,
       "number_of_questions": number_of_questions,
       "kg_description": kg_description,
       "kg_schema": kg_schema,

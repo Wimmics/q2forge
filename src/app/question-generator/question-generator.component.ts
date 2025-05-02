@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
@@ -11,20 +11,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MarkdownComponent } from 'ngx-markdown';
-import { ADDITIONAL_CONTEXT, AVAILABLE_LLM_MODELS, DEFAULT_COOKIE_EXPIRATION_DAYS, DEFAULT_JUDGE_QUESTION, KG_DESCRIPTION, KG_SCHEMA, NUMBER_OF_QUESTIONS_TO_GENERATE, SPARQL_ENDPOINT_URI } from '../services/predefined-variables';
-import { LLMModel } from '../models/llmmodel';
 import { GenerateQuestionService } from '../services/generate-question.service';
 import { JsonPipe } from '@angular/common';
 import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
-import { CookieOptions, CookieService } from 'ngx-cookie-service';
-import { isQuestionsCookie, QuestionsCookie } from '../models/cookie-items';
 import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
 import { Router } from '@angular/router';
-import { DialogService } from '../services/dialog.service';
 import { CookieManagerService } from '../services/cookie-manager.service';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { Location } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Seq2SeqModel } from '../models/seq2seqmodel';
 
 @Component({
   selector: 'app-question-generator',
@@ -58,42 +54,31 @@ export class QuestionGeneratorComponent {
       kg_schema: [""],
       additional_context: [""],
       number_of_questions: [5, Validators.required],
-      selected_LLM: [AVAILABLE_LLM_MODELS[0], Validators.required],
+      model_config_id: ["", Validators.required],
+      enforceStructuredOutput: [true],
     })
   }
 
+
+  ngAfterViewInit(): void {
+    this.configManagerService.getSeq2SeqModels().then((data) => {
+      this.availableSeq2SeqModels = data;
+      this.formGroup.get('model_config_id')?.setValue(this.availableSeq2SeqModels[0].configName);
+    });
+  }
 
   currentConfig: any;
 
   formGroup: FormGroup;
 
-  model = {
-    endpoint: SPARQL_ENDPOINT_URI,
-    kg_description: KG_DESCRIPTION,
-    kg_schema: KG_SCHEMA,
-    additional_context: "",
-    number_of_questions: NUMBER_OF_QUESTIONS_TO_GENERATE,
-    selected_LLM: AVAILABLE_LLM_MODELS[0],
-  }
+
+  availableSeq2SeqModels: Seq2SeqModel[] = [];
 
   workflowDone = false;
-
-  // endpoint = new FormControl(this.model.endpoint, [
-  //   Validators.required,
-  //   Validators.pattern(/^(https?):\/\/[^\s/$.?#].[^\s]*$/i)
-  // ]);
-  // kgDescription = new FormControl(this.model.kg_description, [
-  //   Validators.required,
-  // ])
-  // kgSchema = new FormControl(this.model.kg_schema)
-  // additionalContext = new FormControl(this.model.additional_context)
-  // number_of_questions_fc = new FormControl(this.model.number_of_questions, [Validators.required, Validators.min(1), Validators.max(100)]);
-  enforceStructuredOutput = new FormControl(true);
 
   loading = false;
   error = '';
 
-  // loadingLLMAnswer = false;
   errorLLMAnswer = '';
   llmAnswer = '';
   competencyQuestions: CompetencyQuestion[] = [
@@ -109,8 +94,6 @@ export class QuestionGeneratorComponent {
     // }
   ];
 
-  availableLLMModels: LLMModel[] = AVAILABLE_LLM_MODELS;
-  // selectedLLM = this.availableLLMModels[0];
 
   generateQuestionWithLLM() {
     let endpoint = this.formGroup.get("endpoint")?.value;
@@ -118,19 +101,20 @@ export class QuestionGeneratorComponent {
     let kg_schema = this.formGroup.get("kg_schema")?.value;
     let number_of_questions = this.formGroup.get("number_of_questions")?.value;
     let additional_context = this.formGroup.get("additional_context")?.value;
-    let selected_LLM = this.formGroup.get("selected_LLM")?.value;
+    let model_config_id = this.formGroup.get("model_config_id")?.value;
+    let enforceStructuredOutput: boolean = this.formGroup.get('enforceStructuredOutput')?.value
 
     if (kg_description) {
       this.llmAnswer = '';
       this.competencyQuestions = [];
       this.errorLLMAnswer = '';
       this.generateQuestionService.getLLMAnswer(
-        selected_LLM,
+        model_config_id,
         number_of_questions,
         kg_description,
         kg_schema,
         additional_context,
-        this.enforceStructuredOutput.value ? this.enforceStructuredOutput.value : false
+        enforceStructuredOutput
       )
         .then(response => {
           const reader = response.body?.getReader();
