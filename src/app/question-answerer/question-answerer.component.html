@@ -3,7 +3,9 @@
 
     @if (chat_messages.length == 0) {
     <div class="upload-question-container">
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width"
+            matTooltip="Click or drag/drop one or multiple JSON files containing the competency questions"
+            matTooltipPosition="above">
             <mat-label>Or drop the JSON file containing the list of questions</mat-label>
             <ngx-mat-dropzone>
                 <input type="file" fileInput multiple [formControl]="filesCtrl" />
@@ -23,12 +25,14 @@
             }
         </mat-form-field>
         <div class="dataset-buttons">
-            <button mat-raised-button (click)="uploadQuestions()" [disabled]="filesCtrl.errors != null">
+            <button mat-raised-button (click)="uploadQuestions()" [disabled]="filesCtrl.errors != null"
+                matTooltip="Upload the questions from the selected files" matTooltipPosition="above">
                 <mat-icon>upload</mat-icon>
                 Upload questions
             </button>
 
-            <button mat-raised-button extended (click)="checkCurrentQuestions()">
+            <button mat-raised-button extended (click)="checkCurrentQuestions()"
+                matTooltip="Check and manage the current stored competency questions" matTooltipPosition="above">
                 <mat-icon>search</mat-icon>
                 Current Questions
             </button>
@@ -163,7 +167,8 @@
     </div>
 
     <div class=" question-container">
-        <mat-form-field appearance="outline" class="question-input">
+        <mat-form-field appearance="outline" class="question-input" 
+        matTooltip="The question to answer from the current active KG using one of the Gen²KGBot scenarios" matTooltipPosition="above">
             <mat-label>Question to answer</mat-label>
             <input type="text" matInput [formControl]="question_fc" [matAutocomplete]="auto"
                 (keydown.enter)="addCustomQuestion()" placeholder="Ex. {{questionExample}}">
@@ -179,16 +184,17 @@
             </mat-autocomplete>
         </mat-form-field>
 
-        <button mat-mini-fab (click)="setConfiguration()">
+        <button mat-mini-fab (click)="setConfiguration()" matTooltip="Configure the scenario and models to use to answer the question" matTooltipPosition="above">
             <mat-icon>settings</mat-icon>
         </button>
 
         @if(!workflowRunning) {
-        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid">
+        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid"
+            matTooltip="Start the answering workflow" matTooltipPosition="above">
             <mat-icon>send</mat-icon>
         </button>
         }@else {
-        <button mat-mini-fab (click)="stop_wrkflow()" disabled="true">
+        <button mat-mini-fab (click)="stop_wrkflow()" disabled="true" matTooltip="Stop the current answering process" matTooltipPosition="above">
             <mat-icon>stop</mat-icon>
         </button>
         }

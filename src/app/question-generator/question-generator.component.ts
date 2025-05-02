@@ -24,13 +24,14 @@ import { DialogService } from '../services/dialog.service';
 import { CookieManagerService } from '../services/cookie-manager.service';
 import { ConfigManagerService } from '../services/config-manager.service';
 import { Location } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-question-generator',
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
-    JsonPipe
+    JsonPipe, MatTooltipModule
   ], templateUrl: './question-generator.component.html',
   styleUrl: './question-generator.component.scss'
 })
@@ -87,7 +88,7 @@ export class QuestionGeneratorComponent {
   // kgSchema = new FormControl(this.model.kg_schema)
   // additionalContext = new FormControl(this.model.additional_context)
   // number_of_questions_fc = new FormControl(this.model.number_of_questions, [Validators.required, Validators.min(1), Validators.max(100)]);
-  enforceStructuredOutput = new FormControl(false);
+  enforceStructuredOutput = new FormControl(true);
 
   loading = false;
   error = '';

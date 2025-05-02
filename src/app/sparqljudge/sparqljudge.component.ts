@@ -27,6 +27,7 @@ import { DataSetCookie, isDataSetCookie } from '../models/cookie-items';
 import { GenericDialog } from '../dialogs/generic-dialog/generic-dialog';
 import { DialogService } from '../services/dialog.service';
 import Yasgui from "@triply/yasgui/";
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -34,7 +35,7 @@ import Yasgui from "@triply/yasgui/";
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
-    // JsonPipe
+    MatTooltipModule
   ],
   templateUrl: './sparqljudge.component.html',
   styleUrl: './sparqljudge.component.scss'
