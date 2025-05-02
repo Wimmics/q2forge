@@ -11,32 +11,24 @@
         </mat-form-field>
 
         <div #yasgui class="yasgui-container"></div>
+
+
         <div class="query-buttons-container">
-            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset the fields" matTooltipPosition="above">
-                <mat-icon>restore</mat-icon>
-                Reset
-            </button>
-            <button mat-raised-button (click)="addKnownPrefixes()" [disabled]="!currentQuery" 
-            matTooltip="Add known prefixes from the active config" matTooltipPosition="above">
-                <mat-icon>add</mat-icon>
-                Add known Prefixes
-            </button>
-            <button mat-raised-button (click)="getQandFQNames()" [disabled]="!currentQuery || currentQuery == ''"
-             matTooltip="Extract the qualified and fully qualified names from the SPARQL query" matTooltipPosition="above">
-                <mat-icon>search</mat-icon>
-                Get QNames and FQN
-            </button>
-            <button mat-raised-button (click)="addToDataset()" matTooltip="Add the (question, SPARQL query) pair to the current dataset" matTooltipPosition="above"
+            <button mat-raised-button (click)="addToDataset()"
+                matTooltip="Add the (question, SPARQL query) pair to the current dataset" matTooltipPosition="above"
                 [disabled]="!currentQuery || currentQuery == '' || !question.value">
                 <mat-icon>playlist_add</mat-icon>
                 Add to Dataset
             </button>
-            <button mat-raised-button extended (click)="exportDataset()" matTooltip="Open the dataset management dialog to export the dataset" matTooltipPosition="above">
+            <button mat-raised-button extended (click)="exportDataset()"
+                matTooltip="Open the dataset management dialog to export the dataset" matTooltipPosition="above">
                 <mat-icon>import_export</mat-icon>
                 Export Dataset
             </button>
         </div>
-        <mat-form-field class="info-chip-list" matTooltip="Properties used to extract context for the Qnames/FQNames in the SPARQL query" matTooltipPosition="above">
+        <mat-form-field class="info-chip-list"
+            matTooltip="Properties used to extract context for the Qnames/FQNames in the SPARQL query"
+            matTooltipPosition="above">
             <mat-label>Get these proporties</mat-label>
             <mat-chip-grid #chipGrid aria-label="Enter property">
                 @for (property of properties(); track property) {
@@ -55,15 +47,29 @@
         </mat-form-field>
 
         <div class="query-buttons-container">
-            <mat-slide-toggle [formControl]="displayAllInfo" matTooltip="Where or not to display all the properties when they are empty" matTooltipPosition="above">
+            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset the fields"
+                matTooltipPosition="above">
+                <mat-icon>restore</mat-icon>
+                Reset
+            </button>
+            <button mat-raised-button (click)="addKnownPrefixes()" [disabled]="!currentQuery"
+                matTooltip="Add known prefixes from the active config" matTooltipPosition="above">
+                <mat-icon>add</mat-icon>
+                Add known Prefixes
+            </button>
+            <mat-slide-toggle [formControl]="displayAllInfo"
+                matTooltip="Where or not to display all the properties when they are empty" matTooltipPosition="above">
                 displayAllInfo
             </mat-slide-toggle>
-            <button mat-raised-button (click)="getQandFQNamesInfo()" [disabled]="dataSource.length == 0"
-            matTooltip="Get the context of the QNames/FQNames using the indicated properties." matTooltipPosition="above">
+            <button mat-raised-button (click)="getQNamesContext()" [disabled]="!currentQuery || currentQuery == ''"
+                matTooltip="Get the context of the QNames/FQNames from the SPARQL query using the indicated properties"
+                matTooltipPosition="above">
                 <mat-icon>find_in_page</mat-icon>
-                Get QNames Info
+                Get QNames context
             </button>
         </div>
+
+
     </div>
 
     @if (loading) {
@@ -113,7 +119,8 @@
                 }
             </mat-select>
         </mat-form-field>
-        <button mat-raised-button (click)="getLLMasJudgeAnswer()" matTooltip="Start the judging of the query" matTooltipPosition="above">
+        <button mat-raised-button (click)="getLLMasJudgeAnswer()" matTooltip="Start the judging of the query"
+            matTooltipPosition="above">
             <mat-icon>gavel</mat-icon>
             Judge Question / Query
         </button>

@@ -104,9 +104,7 @@ export class SPARQLJudgeComponent implements AfterViewInit {
     });
   }
 
-
-  getQandFQNames() {
-
+  getQNamesContext(){
     let query = this.currentQuery;
 
     if (query && query !== "") {
@@ -118,11 +116,37 @@ export class SPARQLJudgeComponent implements AfterViewInit {
           this.dataSource.push({ uri: qname });
         }
         this.error = "";
+
+        if(this.dataSource.length > 0){
+          this.getQandFQNamesInfo();
+        }else{
+          this.dialogService.notifyUser('No QNames found', 'The query does not contain any QNames.');
+        }
+
       } catch (error) {
         this.error = `${error}`;
       }
     }
   }
+
+  // getQandFQNames() {
+
+  //   let query = this.currentQuery;
+
+  //   if (query && query !== "") {
+  //     try {
+
+  //       this.parsedData = this.sparqlExtractorQNService.parseQuery(query);
+  //       this.dataSource = [];
+  //       for (let qname of this.parsedData.qnames) {
+  //         this.dataSource.push({ uri: qname });
+  //       }
+  //       this.error = "";
+  //     } catch (error) {
+  //       this.error = `${error}`;
+  //     }
+  //   }
+  // }
 
   get currentQuery(): string | undefined {
 
@@ -168,7 +192,7 @@ export class SPARQLJudgeComponent implements AfterViewInit {
     this.currentQuery = Object.entries(knownPrefixes).map(([key, value]) => `PREFIX ${key}: <${value}> \n`).join("") + (query ? query : "");
   }
 
-  getQandFQNamesInfo() {
+  private getQandFQNamesInfo() {
 
     let endpoint = this.currentEndpoint;
 
@@ -203,6 +227,9 @@ export class SPARQLJudgeComponent implements AfterViewInit {
           (error) => {
             this.loading = false;
             this.error = 'Error fetching data from SPARQL endpoint';
+          },
+          () => {
+            this.loading = false;
           }
         );
       }
