@@ -98,6 +98,13 @@ export class SPARQLJudgeComponent implements AfterViewInit {
       this.route.queryParamMap.subscribe(params => {
         const question = params.get('question');
         this.question.setValue(question);
+
+        const query = params.get('query');
+        if (query) {
+          let activeId = this.yasgui?.persistentConfig.getActiveId();
+          this.yasgui?.getTab(activeId)?.setQuery(query);
+        }
+
       });
     });
 
