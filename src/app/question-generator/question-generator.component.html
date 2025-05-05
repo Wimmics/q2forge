@@ -2,18 +2,6 @@
     <div class="page-header">Competency Question Generator</div>
 
     <form class="form" [formGroup]="formGroup">
-        <mat-form-field class="full-width" matTooltip="The URI of the endpoint where to extract the KG schema"
-            matTooltipPosition="above">
-            <mat-label>Context Endpoint URI</mat-label>
-            <input matInput formControlName="endpoint">
-            @if (formGroup.get("endpoint")?.hasError('pattern')) {
-            <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
-            }
-            @if (formGroup.get("endpoint")?.hasError('required')) {
-            <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
-            }
-        </mat-form-field>
-
         <mat-form-field class="full-width" matTooltip="KG textual description (used in prompts)"
             matTooltipPosition="above">
             <mat-label>KG Description</mat-label>
@@ -34,7 +22,17 @@
             <textarea rows="10" matInput formControlName="additional_context"></textarea>
         </mat-form-field>
 
-
+        <mat-form-field class="full-width" matTooltip="The URI of the endpoint where to extract the KG schema"
+            matTooltipPosition="above">
+            <mat-label>Context Endpoint URI</mat-label>
+            <input matInput formControlName="endpoint">
+            @if (formGroup.get("endpoint")?.hasError('pattern')) {
+            <mat-error>Please enter a valid Context Endpoint URI address</mat-error>
+            }
+            @if (formGroup.get("endpoint")?.hasError('required')) {
+            <mat-error>Context Endpoint URI is <strong>required</strong></mat-error>
+            }
+        </mat-form-field>
 
 
         <div class="form-actions">
@@ -74,11 +72,12 @@
                 <mat-icon>create</mat-icon>
                 Generate Questions
             </button>
-            <button mat-raised-button (click)="sampleSchema()"
-                matTooltip="Start the process of learning the KG schema from the indicated endpoint URI  and fill the KG schema field with the result"
-                matTooltipPosition="above">
+            <button mat-raised-button (click)="extractKGSchema()"
+                matTooltip="Start the process of extracting the KG schema from the indicated endpoint URI. This will use the void.ttl file to extract the used ontologies and descriptions."
+                matTooltipPosition="above"
+                [disabled]="!formGroup.get('endpoint')?.valid || !formGroup.get('endpoint')?.value">
                 <mat-icon>space_bar</mat-icon>
-                Sample Schema
+                Extract KG Schema
             </button>
             <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset all the fields"
                 matTooltipPosition="above">

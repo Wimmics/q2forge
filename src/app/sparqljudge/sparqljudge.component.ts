@@ -143,8 +143,6 @@ export class SPARQLJudgeComponent implements AfterViewInit {
 
     let activeId = this.yasgui?.persistentConfig.getActiveId();
 
-    // console.log(this.yasgui);
-
     if (activeId) {
       return this.yasgui?.persistentConfig.getTab(activeId).yasqe.value;
     }

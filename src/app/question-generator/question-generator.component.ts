@@ -21,6 +21,8 @@ import { ConfigManagerService } from '../services/config-manager.service';
 import { Location } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
+import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
+import { DialogService } from '../services/dialog.service';
 
 @Component({
   selector: 'app-question-generator',
@@ -39,7 +41,9 @@ export class QuestionGeneratorComponent {
     private cookieManagerService: CookieManagerService,
     private configManagerService: ConfigManagerService,
     private _formBuilder: FormBuilder,
-    private location: Location) {
+    private location: Location,
+    private dialogService: DialogService,
+    private additionalSPARQLInfoService: AdditionalSPARQLInfoService) {
 
     this.currentConfig = this.configManagerService.getDefaultConfig()
       .then((config) => {
@@ -49,7 +53,7 @@ export class QuestionGeneratorComponent {
       });
 
     this.formGroup = this._formBuilder.group({
-      endpoint: ["", Validators.required],
+      endpoint: ["", Validators.pattern('https?://.+')],
       kg_description: ["", Validators.required],
       kg_schema: [""],
       additional_context: [""],
@@ -221,8 +225,38 @@ export class QuestionGeneratorComponent {
     return Object.keys(obj);
   }
 
-  sampleSchema() {
+  extractKGSchema() {
+    this.additionalSPARQLInfoService.getKGVocabularies(this.formGroup.get("endpoint")?.value).subscribe({
+      next: (response: any) => {
+        if (response.results.bindings.length > 0) {
+          let vocabularies = response.results.bindings.map((binding: any) => {
+            return binding.vocabulary.value;
+          });
+          this.formGroup.get("kg_schema")?.setValue(vocabularies.join('\n'));
+        } else {
+          this.dialogService.notifyUser("Error", "No data found for the KG vocabularies");
+        }
+      },
+      error: (error: any) => {
+        this.dialogService.notifyUser("Error", "Error while fetching the KG schema: " + error.message);
+      }
+    })
 
+    this.additionalSPARQLInfoService.getKGDescriptions(this.formGroup.get("endpoint")?.value).subscribe({
+      next: (response: any) => {
+        if (response.results.bindings.length > 0) {
+          let descriptions = response.results.bindings.map((binding: any) => {
+            return binding.dataset.value + " => " + binding.description.value;
+          });
+          this.formGroup.get("kg_description")?.setValue(descriptions.join('\n'));
+        } else {
+          this.dialogService.notifyUser("Error", "No data found for the KG descriptions");
+        }
+      },
+      error: (error: any) => {
+        this.dialogService.notifyUser("Error", "Error while fetching the KG descriptions: " + error.message);
+      }
+    })
   }
 
   reset() {

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { KG_DESCRIPTION_QUERY_EXTRACTION, KG_VOCABULARIES_QUERY_EXTRACTION } from './predefined-variables';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +30,7 @@ export class AdditionalSPARQLInfoService {
     }
 
     sparqlQuery += `}`;
-    
+
     const headers = new HttpHeaders({
       'Accept': 'application/sparql-results+json', // Set the response format to JSON
     });
@@ -41,4 +42,34 @@ export class AdditionalSPARQLInfoService {
 
     return this.http.get<any>(sparqlEndpoint, { headers, params });
   }
+
+
+  getKGVocabularies(sparqlEndpoint: string): Observable<any> {
+    let sparqlQuery: string = KG_VOCABULARIES_QUERY_EXTRACTION;
+    const headers = new HttpHeaders({
+      'Accept': 'application/sparql-results+json', // Set the response format to JSON
+    });
+
+    const params = {
+      query: sparqlQuery,
+      format: 'application/json',
+    };
+
+    return this.http.get<any>(sparqlEndpoint, { headers, params });
+  }
+
+  getKGDescriptions(sparqlEndpoint: string): Observable<any> {
+    let sparqlQuery: string = KG_DESCRIPTION_QUERY_EXTRACTION;
+    const headers = new HttpHeaders({
+      'Accept': 'application/sparql-results+json', // Set the response format to JSON
+    });
+
+    const params = {
+      query: sparqlQuery,
+      format: 'application/json',
+    };
+
+    return this.http.get<any>(sparqlEndpoint, { headers, params });
+  }
+
 }
