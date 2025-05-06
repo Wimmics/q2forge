@@ -25,15 +25,15 @@ import { AdditionalSPARQLInfoService } from '../../services/additional-sparqlinf
 import { DialogService } from '../../services/dialog.service';
 
 @Component({
-  selector: 'app-question-generator',
+  selector: 'app-competency-question-generation',
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
     JsonPipe, MatTooltipModule
-  ], templateUrl: './question-generator.component.html',
-  styleUrl: './question-generator.component.scss'
+  ], templateUrl: './competency-question-generation.component.html',
+  styleUrl: './competency-question-generation.component.scss'
 })
-export class QuestionGeneratorComponent {
+export class CompetencyQuestionGeneratorComponent {
 
   constructor(private generateQuestionService: GenerateQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
@@ -302,7 +302,7 @@ export class QuestionGeneratorComponent {
 
   addQuestionsToCookies() {
     this.cookieManagerService.addQuestionsToCookies(this.competencyQuestions);
-    let url = this.router.createUrlTree(['question-answerer']).toString();
+    let url = this.router.createUrlTree(['sparql-query-generator']).toString();
     url = this.location.prepareExternalUrl(url); // adds base href
     window.open(url, '_blank');
   }

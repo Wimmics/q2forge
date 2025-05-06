@@ -44,7 +44,7 @@
             "scripts": [
               "node_modules/clipboard/dist/clipboard.min.js",
               "node_modules/prismjs/prism.js",
-              "src/app/highlight-prism/prism-sparql.js",
+              "src/app/utils/highlight-prism/prism-sparql.js",
               "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.js",
               "node_modules/prismjs/components/prism-turtle.js",
               "node_modules/prismjs/components/prism-json.js",

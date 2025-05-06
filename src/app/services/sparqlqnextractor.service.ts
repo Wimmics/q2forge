@@ -12,11 +12,6 @@ export class SPARQLQNExtractorService {
 
   constructor() { }
 
-  /**
-   * Extracts QNames and URIs from a SPARQL query.
-   * @param query The input SPARQL query string.
-   * @returns An object containing prefixes, QNames, and URIs.
-   */
   parseQuery(query: string): ExtractedData {
     try {
       const parsedQuery = this.parser.parse(query) as any;

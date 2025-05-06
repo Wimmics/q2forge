@@ -29,16 +29,16 @@ import { Seq2SeqModel } from '../../models/seq2seqmodel';
 
 
 @Component({
-  selector: 'app-sparqljudge',
+  selector: 'app-sparql-query-refinement',
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
     MatTooltipModule
   ],
-  templateUrl: './sparqljudge.component.html',
-  styleUrl: './sparqljudge.component.scss'
+  templateUrl: './sparql-query-refinement.component.html',
+  styleUrl: './sparql-query-refinement.component.scss'
 })
-export class SPARQLJudgeComponent implements AfterViewInit {
+export class SPARQLQueryRefinementComponent implements AfterViewInit {
 
   constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService,

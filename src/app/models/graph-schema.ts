@@ -1,4 +1,4 @@
 export interface GraphSchema{
-    scenario_id: number;
+    scenario_id: string;
     graph_schema?: string;
 }

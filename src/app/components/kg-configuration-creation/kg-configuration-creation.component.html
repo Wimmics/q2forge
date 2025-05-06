@@ -175,7 +175,7 @@
                             </mat-form-field>
                             <div class="query-example-actions">
                                 <div class="refine-query-container">
-                                    <a mat-fab extended target="_blank" routerLink="/sparql-judge" [queryParams]="{query: queryExamplesArray.at($index).get('query')?.value,
+                                    <a mat-fab extended target="_blank" routerLink="/sparql-query-refinement" [queryParams]="{query: queryExamplesArray.at($index).get('query')?.value,
                                          question: queryExamplesArray.at($index).get('question')?.value}">
                                         <mat-icon>edit</mat-icon>
                                         Refine Query

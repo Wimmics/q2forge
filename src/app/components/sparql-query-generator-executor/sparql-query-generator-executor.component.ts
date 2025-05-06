@@ -33,17 +33,17 @@ import { isQuestionsCookie } from '../../models/cookie-items';
 import { CookieManagerService } from '../../services/cookie-manager.service';
 
 @Component({
-  selector: 'app-question-answerer',
+  selector: 'app-sparql-query-generator-executor',
   imports: [
     MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent,
     FormsModule, JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe,
     MatDropzone, MatChipRow, ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule,
     MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule
   ],
-  templateUrl: './question-answerer.component.html',
-  styleUrl: './question-answerer.component.scss'
+  templateUrl: './sparql-query-generator-executor.component.html',
+  styleUrl: './sparql-query-generator-executor.component.scss'
 })
-export class QuestionAnswererComponent implements OnInit {
+export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
 
   model = {
     question: ""
@@ -293,7 +293,7 @@ export class QuestionAnswererComponent implements OnInit {
   readonly questionAnswererConfigDialog = inject(MatDialog);
 
   currentConfig: QuestionAnswererConfig = {
-    scenario_id: 7,
+    scenario_id: "7",
     text_embedding_model: "nomic-embed-text_faiss@local",
     ask_question_model: "llama-3_3-70B@ovh",
     validate_question_model: "llama-3_3-70B@ovh",
@@ -318,7 +318,7 @@ export class QuestionAnswererComponent implements OnInit {
 
   fixMermaidGraphTextBug() {
     let old_scenario_id = this.currentConfig.scenario_id;
-    this.currentConfig.scenario_id = 2;
+    this.currentConfig.scenario_id = "2";
     setTimeout(() => { this.currentConfig.scenario_id = old_scenario_id; }, 5);
   }
 

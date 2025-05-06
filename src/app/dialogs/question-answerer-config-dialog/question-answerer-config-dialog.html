@@ -34,7 +34,7 @@
     </div>
 
 
-    @if ([1].includes(config.scenario_id)) {
+    @if (["1"].includes(config.scenario_id)) {
     <h3>Seq2Seq Model to use in the <i>Ask Question</i> Node</h3>
 
     <div class="config-item-container">
@@ -54,7 +54,7 @@
     </div>
     }
 
-    @if (![1].includes(config.scenario_id)) {
+    @if (!["1"].includes(config.scenario_id)) {
     <h3>Seq2Seq Model to use in the <i>Generate Query</i> Node</h3>
 
     <div class="config-item-container">
@@ -74,7 +74,7 @@
     </div>
     }
 
-    @if ([7].includes(config.scenario_id)) {
+    @if (["7"].includes(config.scenario_id)) {
     <h3>Seq2Seq Model to use in the <i>Judge Query</i> Node</h3>
 
     <div class="config-item-container">
@@ -94,7 +94,7 @@
     </div>
     }
 
-    @if ([7].includes(config.scenario_id)) {
+    @if (["7"].includes(config.scenario_id)) {
     <h3>Seq2Seq Model to use in the <i>Judge Regenerate Query</i> Node</h3>
 
     <div class="config-item-container">
@@ -114,7 +114,7 @@
     </div>
     }
 
-    @if (![1].includes(config.scenario_id)) {
+    @if (!["1"].includes(config.scenario_id)) {
     <h3>Seq2Seq Model to use in the <i>Interpret CSV Query Results</i> Node</h3>
 
     <div class="config-item-container">
@@ -134,7 +134,7 @@
     </div>
     }
 
-    @if (![1,2].includes(config.scenario_id)) {
+    @if (!["1","2"].includes(config.scenario_id)) {
     <h3>Embedding Model to use</h3>
 
     <div class="config-item-container">
@@ -159,8 +159,8 @@
     <mat-dialog-content class="dialog-content">
       <div
         [ngStyle]="{'transform': 'scale(' + scale + ') translateY(' + translate + 'px) translateX(' + translate + 'px)'}">
-        @if(graphSchemas[config.scenario_id-1]) {
-        <markdown mermaid [data]="graphSchemas[config.scenario_id-1].graph_schema"> </markdown>
+        @if(graphSchemas[+config.scenario_id-1]) {
+        <markdown mermaid [data]="graphSchemas[+config.scenario_id-1].graph_schema"> </markdown>
         }
       </div>
     </mat-dialog-content>

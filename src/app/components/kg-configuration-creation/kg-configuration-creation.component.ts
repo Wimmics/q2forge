@@ -26,7 +26,7 @@ import { RouterModule } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-kgconfiguration',
+  selector: 'app-kg-configuration-creation',
   imports: [
     MatDialogModule,
     MatButtonModule,
@@ -47,10 +47,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     AsyncPipe,
     RouterModule,
   ],
-  templateUrl: './kgconfiguration.component.html',
-  styleUrl: './kgconfiguration.component.scss'
+  templateUrl: './kg-configuration-creation.component.html',
+  styleUrl: './kg-configuration-creation.component.scss'
 })
-export class KGConfigurationComponent {
+export class KGConfigurationCreationComponent {
 
   private _formBuilder = inject(FormBuilder);
   readonly separatorKeysCodes = [ENTER, COMMA] as const;

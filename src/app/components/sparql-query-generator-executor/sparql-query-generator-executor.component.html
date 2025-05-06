@@ -135,7 +135,7 @@
             @if (item.queryToRefine) {
             <mat-action-row>
                 <div class="refine-query-container">
-                    <a mat-fab extended target="_blank" routerLink="/sparql-judge"
+                    <a mat-fab extended target="_blank" routerLink="/sparql-query-refinement"
                         [queryParams]="{query: item.queryToRefine, question: item.questionOfTheQueryToRefine}">
                         <mat-icon>edit</mat-icon>
                         Refine Query

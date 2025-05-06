@@ -135,7 +135,7 @@ export class ConfigManagerService {
     });
   }
 
-  getScenarioSchema(scenario_id: number): Promise<GraphSchema> {
+  getScenarioSchema(scenario_id: string): Promise<GraphSchema> {
     return new Promise((resolve) => {
       if (this.scenariosSchema.length > 0) {
         resolve(this.scenariosSchema.filter((schema) => schema.scenario_id === scenario_id)[0]);

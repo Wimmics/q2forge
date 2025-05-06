@@ -1,6 +1,6 @@
 export interface QuestionAnswererConfig {
     [key: string]: any;
-    scenario_id: number;
+    scenario_id: string;
     validate_question_model: string;
     ask_question_model?: string;
     generate_query_model?: string;
