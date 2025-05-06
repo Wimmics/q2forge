@@ -12,7 +12,7 @@
             <h3>Scenario 1: Basic Question Answering</h3>
             <p>In this scenario, the LLM answers the question directly without querying the knowledge graph.</p>
             @if (scenariosSchema[0]) {
-            <markdown mermaid [data]="scenariosSchema[0].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[0].graph_schema"> </markdown>
             }
         </div>
 
@@ -20,7 +20,7 @@
             <h3>Scenario 2: Generating SPARQL Query Without Context</h3>
             <p>The model generates a SPARQL query based on the question alone.</p>
             @if (scenariosSchema[1]) {
-            <markdown mermaid [data]="scenariosSchema[1].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[1].graph_schema"> </markdown>
             }
         </div>
 
@@ -28,7 +28,7 @@
             <h3>Scenario 3: SPARQL Query with Class Context</h3>
             <p>The model generates a SPARQL query using related classes as context.</p>
             @if (scenariosSchema[2]) {
-            <markdown mermaid [data]="scenariosSchema[2].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[2].graph_schema"> </markdown>
             }
         </div>
 
@@ -36,7 +36,7 @@
             <h3>Scenario 4: Adding Properties Context</h3>
             <p>In this scenario, the model incorporates property descriptions into the context.</p>
             @if (scenariosSchema[3]) {
-            <markdown mermaid [data]="scenariosSchema[3].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[3].graph_schema"> </markdown>
             }
         </div>
 
@@ -44,7 +44,7 @@
             <h3>Scenario 5: Adding Retry Mechanism</h3>
             <p>If the generated query is invalid, the model retries by modifying the query.</p>
             @if (scenariosSchema[4]) {
-            <markdown mermaid [data]="scenariosSchema[4].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[4].graph_schema"> </markdown>
             }
         </div>
 
@@ -52,7 +52,7 @@
             <h3>Scenario 6: Adding Example Queries for Context</h3>
             <p>Example SPARQL queries related to the question are provided to improve accuracy.</p>
             @if (scenariosSchema[5]) {
-            <markdown mermaid [data]="scenariosSchema[5].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[5].graph_schema"> </markdown>
             }
         </div>
 
@@ -60,7 +60,7 @@
             <h3>Scenario 7: Adding SPARQL judge capabilities</h3>
             <p>SPARQL Judge is used after verifying the correct syntax of the generated SPARQL query to improve accuracy.</p>
             @if (scenariosSchema[6]) {
-            <markdown mermaid [data]="scenariosSchema[6].schema"> </markdown>
+            <markdown mermaid [data]="scenariosSchema[6].graph_schema"> </markdown>
             }
         </div>
 

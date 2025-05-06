@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
   Activate_CONFIG_ENDPOINT,
   CREATE_CONFIG_ENDPOINT,
@@ -10,7 +10,7 @@ import {
 } from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { catchError, firstValueFrom, Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { GraphSchema } from '../models/graph-schema';
 import { KGConfiguration } from '../models/kg-configuration';
 
@@ -52,7 +52,7 @@ export class ConfigManagerService {
   }
 
   setDefaultConfig(value: string) {
-    this.currentConfig = JSON.parse(value);
+    this.currentConfig = value;
 
     if (this.resolveSeq2SeqModelsFn) {
       this.resolveSeq2SeqModelsFn(this.transformSeq2SeqModels());

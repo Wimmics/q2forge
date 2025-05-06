@@ -160,7 +160,7 @@
       <div
         [ngStyle]="{'transform': 'scale(' + scale + ') translateY(' + translate + 'px) translateX(' + translate + 'px)'}">
         @if(graphSchemas[config.scenario_id-1]) {
-        <markdown mermaid [data]="graphSchemas[config.scenario_id-1].schema"> </markdown>
+        <markdown mermaid [data]="graphSchemas[config.scenario_id-1].graph_schema"> </markdown>
         }
       </div>
     </mat-dialog-content>
