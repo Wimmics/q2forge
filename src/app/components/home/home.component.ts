@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { GraphSchema } from '../models/graph-schema';
-import { ConfigManagerService } from '../services/config-manager.service';
+import { GraphSchema } from '../../models/graph-schema';
+import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({

@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
-import { SPARQLJudgeComponent } from './sparqljudge/sparqljudge.component';
-import { QuestionGeneratorComponent } from './question-generator/question-generator.component';
-import { QuestionAnswererComponent } from './question-answerer/question-answerer.component';
-import { HomeComponent } from './home/home.component';
-import { KGConfigurationComponent } from './kgconfiguration/kgconfiguration.component';
+import { SPARQLJudgeComponent } from './components/sparqljudge/sparqljudge.component';
+import { QuestionGeneratorComponent } from './components/question-generator/question-generator.component';
+import { QuestionAnswererComponent } from './components/question-answerer/question-answerer.component';
+import { HomeComponent } from './components/home/home.component';
+import { KGConfigurationComponent } from './components/kgconfiguration/kgconfiguration.component';
 
 export const routes: Routes = [
     { path: 'question-generator', component: QuestionGeneratorComponent },

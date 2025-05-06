@@ -11,18 +11,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableModule } from '@angular/material/table';
 import { MarkdownComponent } from 'ngx-markdown';
-import { GenerateQuestionService } from '../services/generate-question.service';
+import { GenerateQuestionService } from '../../services/generate-question.service';
 import { JsonPipe } from '@angular/common';
-import { ExtractCodeBlocksService } from '../services/extract-code-blocks.service';
-import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../models/competency-question';
+import { ExtractCodeBlocksService } from '../../services/extract-code-blocks.service';
+import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../../models/competency-question';
 import { Router } from '@angular/router';
-import { CookieManagerService } from '../services/cookie-manager.service';
-import { ConfigManagerService } from '../services/config-manager.service';
+import { CookieManagerService } from '../../services/cookie-manager.service';
+import { ConfigManagerService } from '../../services/config-manager.service';
 import { Location } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Seq2SeqModel } from '../models/seq2seqmodel';
-import { AdditionalSPARQLInfoService } from '../services/additional-sparqlinfo.service';
-import { DialogService } from '../services/dialog.service';
+import { Seq2SeqModel } from '../../models/seq2seqmodel';
+import { AdditionalSPARQLInfoService } from '../../services/additional-sparqlinfo.service';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-question-generator',
