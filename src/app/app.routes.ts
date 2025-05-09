@@ -4,6 +4,7 @@ import { CompetencyQuestionGeneratorComponent } from './components/competency-qu
 import { SPARQLQueryGeneratorExecutorComponent } from './components/sparql-query-generator-executor/sparql-query-generator-executor.component';
 import { HomeComponent } from './components/home/home.component';
 import { KGConfigurationCreationComponent } from './components/kg-configuration-creation/kg-configuration-creation.component';
+import { DocumentationComponent } from './components/documentation/documentation.component';
 
 export const routes: Routes = [
     { path: 'competency-question-generator', component: CompetencyQuestionGeneratorComponent },
@@ -11,4 +12,6 @@ export const routes: Routes = [
     { path: 'sparql-query-refinement', component: SPARQLQueryRefinementComponent },
     { path: 'kg-configuration-creation', component: KGConfigurationCreationComponent },
     { path: '', component: HomeComponent },
+    { path: 'api/docs', component: DocumentationComponent },
+    { path: '**', redirectTo: '', pathMatch: 'full' }, // Redirect to home for any unknown routes
 ];
