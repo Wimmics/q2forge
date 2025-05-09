@@ -4,10 +4,11 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FlipCardComponent } from "../flip-card/flip-card.component";
 
 @Component({
   selector: 'app-home',
-  imports: [MarkdownComponent, MatProgressSpinner],
+  imports: [MarkdownComponent, MatProgressSpinner, FlipCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

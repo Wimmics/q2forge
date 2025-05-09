@@ -1,0 +1,16 @@
+<div class="flip-card" (mouseenter)="flipCard()" (mouseleave)="flipCard()" (click)="flipCard()">
+    <div class="flip-card-inner" [class.flipped]="isFlipped">
+        <div class="flip-card-front">
+            <mat-icon>{{icon}}</mat-icon>
+            <p>{{ description }}</p>
+        </div>
+        <div class="flip-card-back">
+            <a class="link-item" target="_blank" routerLink="{{tryLink}}"> <mat-icon>launch</mat-icon>
+                Try it out
+            </a>
+            <a class="link-item" target="_blank" href="{{readMoreLink}}"> <mat-icon>playlist_add</mat-icon>
+                Read more
+            </a>
+        </div>
+    </div>
+</div>

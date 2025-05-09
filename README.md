@@ -13,7 +13,7 @@ It provides the following feature:
 
 The following diagram shows the pipeline and how Q²Forge integrates with other systems
 
-![Q²Forge pipeline](./doc/images/1-pipeline-white.png)
+![Q²Forge pipeline](/public/images/1-pipeline.png)
 
 
 

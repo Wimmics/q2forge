@@ -3,10 +3,37 @@
         What is Q²Forge ?
     </div>
 
+
     <div class="content-container">
+        <div class="description">
+            <p>
+                <b>Q²Forge</b> provides an end-to-end pipeline to generate a dataset of (question, SPARQL query) pairs
+                for a given Knowledge Graph (KG). The backend (Gen²KGBot) can be found at <a
+                    href="https://github.com/Wimmics/gen2kgbot">this repo</a>. The following diagram shows the pipeline
+                and how Q²Forge integrates with other systems.
+            </p>
+            <img width="100%" src="/images/1-pipeline.png" alt="Q²Forge pipeline">
+        </div>
+        <div>
+            <h2>Features</h2>
+            <div class="feature-container">
+                <app-flip-card description="KG Configuration and Pre-processing" icon="settings"
+                    tryLink="kg-configuration-creation"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/kg-creation.md"></app-flip-card>
+                <app-flip-card description="Competency Question Generator" icon="create"
+                    tryLink="competency-question-generator"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/competency-question-generation.md"></app-flip-card>
+                <app-flip-card description="SPARQL Query Generator" icon="question_answer"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/sparql-query-generation.md"
+                    tryLink="sparql-query-generator"></app-flip-card>
+                <app-flip-card description="SPARQL Query Refinement" icon="check_circle_outline"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/sparql-query-refinement.md"
+                    tryLink="sparql-query-refinement"></app-flip-card>
+            </div>
+        </div>
         @if (scenariosSchema) {
 
-        <h2>Scenarios</h2>
+        <h2>Available Scenarios</h2>
 
         <div id="scenario_1" class="scenario">
             <h3>Scenario 1: Basic Question Answering</h3>
@@ -58,7 +85,8 @@
 
         <div id="scenario_7" class="scenario">
             <h3>Scenario 7: Adding SPARQL judge capabilities</h3>
-            <p>SPARQL Judge is used after verifying the correct syntax of the generated SPARQL query to improve accuracy.</p>
+            <p>SPARQL Judge is used after verifying the correct syntax of the generated SPARQL query to improve
+                accuracy.</p>
             @if (scenariosSchema[6]) {
             <markdown mermaid [data]="scenariosSchema[6].graph_schema"> </markdown>
             }
