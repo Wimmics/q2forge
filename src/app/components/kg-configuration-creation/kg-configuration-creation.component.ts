@@ -117,7 +117,7 @@ export class KGConfigurationCreationComponent {
     queryExamples: []
   })
 
-  configuration = signal<KGConfiguration>({
+  configuration_ = signal<KGConfiguration>({
     kg_full_name: "WheatGenomic Scienctific Literature Knowledge Graph",
     kg_short_name: "d2kab",
     kg_description: "The Wheat Genomics Scientific Literature Knowledge Graph (WheatGenomicsSLKG) is a FAIR knowledge graph that exploits the Semantic Web technologies to describe PubMed scientific articles on wheat genetics and genomics. It represents Named Entities (NE) about genes, phenotypes, taxa and varieties, mentioned in the title and the abstract of the articles, and the relationships between wheat mentions of varieties and phenotypes.",
@@ -178,7 +178,7 @@ export class KGConfigurationCreationComponent {
     ]
   })
 
-  configuration_ = signal<KGConfiguration>({
+  configuration = signal<KGConfiguration>({
     kg_full_name: "",
     kg_short_name: "",
     kg_description: "",

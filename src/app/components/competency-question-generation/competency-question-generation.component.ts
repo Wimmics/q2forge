@@ -49,7 +49,7 @@ export class CompetencyQuestionGeneratorComponent {
       .then((config) => {
         this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
         this.formGroup.get("kg_description")?.setValue(config.kg_description);
-        this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n '));
+        this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n'));
       });
 
     this.formGroup = this._formBuilder.group({

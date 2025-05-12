@@ -85,7 +85,7 @@
     ],
     "codeRepository": "https://github.com/Wimmics/q2forge",
     "datePublished": "2025-05-12",
-    "description": "Gen²KGBot addresses the challenge of generating new competency questions for a KG and corresponding SPARQL queries that reflect those questions. It iteratively validates those queries with human feedback and LLM as a judge.",
+    "description": "Q²Forge addresses the challenge of generating new competency questions for a KG and corresponding SPARQL queries that reflect those questions. It iteratively validates those queries with human feedback and LLM as a judge.",
     "identifier": "q2forge",
     "keywords": [
         "Knowledge graph",
@@ -93,5 +93,5 @@
         "SPARQL"
     ],
     "name": "Q²Forge",
-    "version": "1.0.0"
+    "version": "1.0"
 }
