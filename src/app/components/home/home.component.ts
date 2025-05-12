@@ -5,6 +5,7 @@ import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FlipCardComponent } from "../flip-card/flip-card.component";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -15,8 +16,12 @@ import { FlipCardComponent } from "../flip-card/flip-card.component";
 export class HomeComponent implements OnInit {
 
   scenariosSchema: GraphSchema[] | undefined;
+  safeDemoVideoURL?: SafeResourceUrl;
+  private demoVideoURL: string = 'https://www.youtube.com/embed/jwlaz6c8tYo';
 
-  constructor(private configManagerService: ConfigManagerService, private activatedRoute: ActivatedRoute, private router: Router) { }
+  constructor(private configManagerService: ConfigManagerService, private activatedRoute: ActivatedRoute,
+     private router: Router,private _sanitizer: DomSanitizer) { }
+
 
 
   ngOnInit(): void {
@@ -27,6 +32,8 @@ export class HomeComponent implements OnInit {
           this.scrollToFragment(fragment);
       });
     });
+
+    this.safeDemoVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.demoVideoURL);
   }
 
   scrollToFragment(fragment: string) {

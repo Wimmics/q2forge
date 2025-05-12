@@ -16,6 +16,10 @@ The following diagram shows the pipeline and how Q²Forge integrates with other 
 ![Q²Forge pipeline](/public/images/1-pipeline.png)
 
 
+## Demo video ⏯️
+
+[![Q²Forge demo video](/public/images/q2forge_thumbnail.png)](https://youtu.be/jwlaz6c8tYo)
+
 
 ## Run locally
 
