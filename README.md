@@ -69,7 +69,7 @@ Yousouf TAGHZOUTI, Franck MICHEL, Tao JIANG, Louis-Félix NOTHIAS, Fabien GANDON
     author = {TAGHZOUTI, Yousouf and MICHEL, Franck and JIANG, Tao and NOTHIAS, Louis-Félix , and GANDON Fabien},
     title = {{Q²Forge}},
     url = {https://github.com/Wimmics/q2forge},
-    version = {1.0.0},
+    version = {1.0},
     year = {2025}
 }
 </details>
