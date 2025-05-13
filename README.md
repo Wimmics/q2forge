@@ -18,7 +18,14 @@ The following diagram shows the pipeline and how Q²Forge integrates with other 
 
 ## Demo video ⏯️
 
-[![Q²Forge demo video](/public/images/q2forge_thumbnail.png)](https://youtu.be/jwlaz6c8tYo)
+### Teaser
+
+[![Q²Forge teaser video](/public/images/teaser_q2forge_thumbnail.png)](https://youtu.be/E9rgCZzWH4k)
+
+
+### Full tutorial
+
+[![Q²Forge full video](/public/images/q2forge_thumbnail.png)](https://youtu.be/I3w-jmZRJII)
 
 
 ## Run locally

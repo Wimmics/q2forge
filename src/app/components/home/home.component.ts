@@ -16,8 +16,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class HomeComponent implements OnInit {
 
   scenariosSchema: GraphSchema[] | undefined;
-  safeDemoVideoURL?: SafeResourceUrl;
-  private demoVideoURL: string = 'https://www.youtube.com/embed/jwlaz6c8tYo';
+  safeFullVideoURL?: SafeResourceUrl;
+  private fullVideoURL: string = 'https://www.youtube.com/embed/I3w-jmZRJII';
+
+  safeTeaserVideoURL?: SafeResourceUrl;
+  private teaserVideoURL: string = 'https://www.youtube.com/embed/E9rgCZzWH4k';
 
   constructor(private configManagerService: ConfigManagerService, private activatedRoute: ActivatedRoute,
      private router: Router,private _sanitizer: DomSanitizer) { }
@@ -33,7 +36,9 @@ export class HomeComponent implements OnInit {
       });
     });
 
-    this.safeDemoVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.demoVideoURL);
+    this.safeTeaserVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.teaserVideoURL);
+
+    this.safeFullVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.fullVideoURL);
   }
 
   scrollToFragment(fragment: string) {
