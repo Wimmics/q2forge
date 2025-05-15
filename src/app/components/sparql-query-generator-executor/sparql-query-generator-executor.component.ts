@@ -69,6 +69,10 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     private cookieManagerService: CookieManagerService) {
   }
 
+  showActivateConfigDialog() {
+    this.dialogService.activateConfig()
+  }
+
   ask_question() {
     if (this.question_fc.value && this.currentConfig) {
       this.workflowRunning = true;
