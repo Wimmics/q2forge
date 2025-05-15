@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   Activate_CONFIG_ENDPOINT,
+  AVAILABLE_CONFIG_ENDPOINT,
   CREATE_CONFIG_ENDPOINT,
   DEFAULT_CONFIG_ENDPOINT,
   GRAPH_SCHEMA_ENDPOINT,
@@ -10,7 +11,7 @@ import {
 } from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { Observable } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { GraphSchema } from '../models/graph-schema';
 import { KGConfiguration } from '../models/kg-configuration';
 
@@ -157,6 +158,15 @@ export class ConfigManagerService {
   }
 
   activateConfiguration(kg_short_name: string): Observable<any> {
+
+    if (this.currentConfig.kg_short_name === kg_short_name) {
+      return throwError(() => new HttpErrorResponse({
+        error: "Configuration already active",
+        status: 400,
+        statusText: "Duplicate configuration"
+      }))
+    }
+
     const config = {
       "kg_short_name": kg_short_name
     };
@@ -183,6 +193,10 @@ export class ConfigManagerService {
 
     return this.http.post(KG_EMBEDDINGS_CONFIG_ENDPOINT, config)
 
+  }
+
+  getAvailableConfigurations(): Observable<string[]> {
+    return this.http.get(AVAILABLE_CONFIG_ENDPOINT) as Observable<string[]>;
   }
 
 }

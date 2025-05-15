@@ -1,0 +1,31 @@
+<h2 mat-dialog-title>
+    Activate a Configuration
+</h2>
+<mat-dialog-content>
+    <form>
+        <mat-form-field matTooltip="The config short name to be activated" matTooltipPosition="above"  class="config-list">
+            <mat-label>KG short Name</mat-label>
+            <mat-select [formControl]="selectedConfig">
+                @for (item of availableConfigs; track item) {
+                <mat-option [value]="item">{{item}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        @if (activatingConfig) {
+        <mat-spinner></mat-spinner>
+        }
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions class="actions-container">
+    <button mat-raised-button (click)="activateConfiguration()">
+        Activate configuration
+        <mat-icon matSuffix>create</mat-icon>
+    </button>
+    <button mat-raised-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+        Close
+    </button>
+</mat-dialog-actions>

@@ -30,6 +30,8 @@ export const CREATE_CONFIG_ENDPOINT = `${API_BASE}/config/create`
 export const Activate_CONFIG_ENDPOINT = `${API_BASE}/config/activate`
 export const KG_DESCRIPTION_CONFIG_ENDPOINT = `${API_BASE}/config/kg_descriptions`
 export const KG_EMBEDDINGS_CONFIG_ENDPOINT = `${API_BASE}/config/kg_embeddings`
+export const AVAILABLE_CONFIG_ENDPOINT = `${API_BASE}/config/available`
+
 export const DOCUMENTATION_URI = `${API_BASE}/docs`
 
 export const DEFAULT_JUDGE_QUESTION = "Which five diseases are most commonly mentioned in association with a classic anti-inflammatory compound?"

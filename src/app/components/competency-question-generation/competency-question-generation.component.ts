@@ -99,6 +99,9 @@ export class CompetencyQuestionGeneratorComponent {
   ];
 
 
+  showActivateConfigDialog() {
+    this.dialogService.activateConfig()
+  }
   generateQuestionWithLLM() {
     let endpoint = this.formGroup.get("endpoint")?.value;
     let kg_description = this.formGroup.get("kg_description")?.value;
