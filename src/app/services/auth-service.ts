@@ -121,7 +121,7 @@ export class AuthService {
                 this.access_token = localStorageData.access_token;
                 this.isAuthenticated = true;
                 this.authenticatedSub.next(true);
-                this.logoutTimer.setTimeout(expiresIn / 1000);
+                this.logoutTimer = setTimeout(() => { this.logout() }, expiresIn);
             }
         }
     }

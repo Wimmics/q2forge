@@ -3,6 +3,7 @@ export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
 export const API_BASE = `${SERVER}/api/q2forge`
 export const LOGIN_ENDPOINT = `${API_BASE}/login`
 export const SIGN_UP_ENDPOINT = `${API_BASE}/sign-up`
+export const USER_DATA_ENDPOINT = `${API_BASE}/me`
 export const GENERATE_QUESTION_ENDPOINT = `${API_BASE}/generate_questions`
 export const JUDGE_QUERY_ENDPOINT = `${API_BASE}/judge_query`
 export const ANSWER_QUESTION_ENDPOINT = `${API_BASE}/answer_question`
