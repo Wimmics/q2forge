@@ -74,7 +74,7 @@ export class AuthService {
                 }
             },
             error: (error: any) => {
-                this.dialogService.notifyUser("Error", "Error while login: " + error.message);
+                this.dialogService.notifyUser("Error", "Error while login: " + error.error.detail);
             }
         });
     }
