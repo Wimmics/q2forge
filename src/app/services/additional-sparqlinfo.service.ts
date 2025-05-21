@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { KG_DESCRIPTION_QUERY_EXTRACTION, KG_VOCABULARIES_QUERY_EXTRACTION } from './predefined-variables';
+import { KG_VOCABULARIES_QUERY_EXTRACTION, KG_DESCRIPTION_QUERY_EXTRACTION } from './predefined-variables-commun';
 
 @Injectable({
   providedIn: 'root'

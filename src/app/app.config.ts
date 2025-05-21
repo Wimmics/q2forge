@@ -3,16 +3,18 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { HttpClient, provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { CLIPBOARD_OPTIONS, ClipboardButtonComponent, MARKED_EXTENSIONS, MARKED_OPTIONS, MERMAID_OPTIONS, provideMarkdown } from 'ngx-markdown';
+import { authInterceptor } from './services/auth-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes,
       withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' })
-    ), provideAnimationsAsync(),
-    provideHttpClient(),
+    ),
+    provideAnimationsAsync(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideMarkdown({
       loader: HttpClient,
       clipboardOptions: {

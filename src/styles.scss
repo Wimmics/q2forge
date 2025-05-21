@@ -68,7 +68,7 @@ h1 {
     background-color: rgb(228, 31, 31);
 }
 
-.form-errors-container{
+.form-errors-container {
     margin: 0 auto;
     width: 80%;
     color: rgb(110, 0, 0);
@@ -79,6 +79,31 @@ h1 {
     box-shadow: 2px 5px 5px 5px rgba(126, 2, 2, 0.5);
 }
 
-.fa-icon-link{
+.fa-icon-link {
     color: #000000;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+}
+
+.link-item {
+    text-decoration: none;
+    color: #7986cb;
+    background-color: #ffffff;
+    border-radius: 4px;
+    font-size: 14px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.link-item:hover {
+    background-color: #000000;
+    color: white;
 }

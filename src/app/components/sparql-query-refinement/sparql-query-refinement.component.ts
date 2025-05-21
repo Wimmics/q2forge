@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MarkdownComponent } from 'ngx-markdown';
-import { DEFAULT_SPARQL_JUDGE_QUERY, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../../services/predefined-variables';
+import { SPARQL_ENDPOINT_URI } from '../../services/predefined-variables';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
@@ -26,6 +26,7 @@ import { DialogService } from '../../services/dialog.service';
 import Yasgui from "@triply/yasgui/";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Seq2SeqModel } from '../../models/seq2seqmodel';
+import { DEFAULT_JUDGE_QUESTION, DEFAULT_SPARQL_JUDGE_QUERY, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../../services/predefined-variables-commun';
 
 
 @Component({

@@ -6,7 +6,22 @@
       <h1 class="app-name">Q²Forge</h1>
     </div>
 
-    <div>
+    <div class="toolbar-right">
+      @if(userAuthenticated){
+      <button mat-raised-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Log out
+      </button>
+      }@else {
+      <a mat-raised-button routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Log in
+      </a>
+      <a mat-raised-button routerLink="/sign-up">
+        <mat-icon>launch</mat-icon>
+        Sign Up
+      </a>
+      }
       <a href="https://github.com/Wimmics/q2forge" class="fa-icon-link" target="_blank">
         <fa-icon [icon]="faSquareGithub" size="2xl"> </fa-icon>
       </a>
@@ -17,9 +32,11 @@
     <mat-sidenav class="sidenav" [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'"
       [fixedInViewport]="isMobile()" fixedTopGap="56">
       <mat-nav-list>
-        @for (nav of navItem; track nav) {
+        @for (nav of navItems; track nav) {
+        @if (!nav.requireUserAuthenticated || userAuthenticated) {
         <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}"> <mat-icon>{{nav.icon}}</mat-icon>
           {{nav.name}}</a>
+        }
         }
       </mat-nav-list>
     </mat-sidenav>

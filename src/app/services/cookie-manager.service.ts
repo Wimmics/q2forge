@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { DEFAULT_CONFIG_ENDPOINT, DEFAULT_COOKIE_EXPIRATION_DAYS, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
-import { Seq2SeqModel } from '../models/seq2seqmodel';
-import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { firstValueFrom, Observable, of } from 'rxjs';
-import { GraphSchema } from '../models/graph-schema';
 import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie, QuestionsCookie } from '../models/cookie-items';
 import { DialogService } from './dialog.service';
 import { CompetencyQuestion } from '../models/competency-question';
+import { DEFAULT_COOKIE_EXPIRATION_DAYS } from './predefined-variables-commun';
 
 
 @Injectable({

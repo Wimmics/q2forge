@@ -16,7 +16,6 @@ import { MatDropzone } from '@ngx-dropzone/material';
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../../models/question-answerer-config';
-import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables';
 import { toStringMarkdown } from '../../models/judge-state';
 import { map, Observable, startWith } from 'rxjs';
 import { MatChipRow } from '@angular/material/chips';
@@ -31,6 +30,7 @@ import { DialogService } from '../../services/dialog.service';
 import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie } from '../../models/cookie-items';
 import { CookieManagerService } from '../../services/cookie-manager.service';
+import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-commun';
 
 @Component({
   selector: 'app-sparql-query-generator-executor',
