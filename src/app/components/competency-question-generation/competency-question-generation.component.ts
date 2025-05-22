@@ -45,11 +45,16 @@ export class CompetencyQuestionGeneratorComponent {
     private dialogService: DialogService,
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService) {
 
-    this.currentConfig = this.configManagerService.getDefaultConfig()
-      .then((config) => {
-        this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
-        this.formGroup.get("kg_description")?.setValue(config.kg_description);
-        this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n'));
+    this.currentConfig = this.configManagerService.getActiveConfiguration()
+      .subscribe({
+        next: (config: any) => {
+          this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
+          this.formGroup.get("kg_description")?.setValue(config.kg_description);
+          this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n'));
+        },
+        error: (error: any) => {
+          this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+        }
       });
 
     this.formGroup = this._formBuilder.group({

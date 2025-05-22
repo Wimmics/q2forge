@@ -4,7 +4,7 @@ import {
   Activate_CONFIG_ENDPOINT,
   AVAILABLE_CONFIG_ENDPOINT,
   CREATE_CONFIG_ENDPOINT,
-  DEFAULT_CONFIG_ENDPOINT,
+  ACTIVE_CONFIG_ENDPOINT,
   GRAPH_SCHEMA_ENDPOINT,
   KG_DESCRIPTION_CONFIG_ENDPOINT,
   KG_EMBEDDINGS_CONFIG_ENDPOINT
@@ -30,27 +30,31 @@ export class ConfigManagerService {
   resolveAvailableScenariosFn: ((value: any) => void) | null = null;
 
   constructor(private http: HttpClient) {
-    this.initConfiguration();
+    // this.initConfiguration();
   }
 
-  initConfiguration(): void {
-    this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
-      this.setDefaultConfig(data);
-    });
+  // initConfiguration(): void {
+  //   this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
+  //     this.setDefaultConfig(data);
+  //   });
+  // }
+
+  getActiveConfiguration(): Observable<KGConfiguration> {
+    return this.http.get<KGConfiguration>(ACTIVE_CONFIG_ENDPOINT)
   }
 
-  getDefaultConfig(): Promise<KGConfiguration> {
-    return new Promise((resolve) => {
-      if (this.currentConfig) {
-        resolve(this.currentConfig);
-      } else {
-        this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
-          this.setDefaultConfig(data);
-          resolve(this.currentConfig);
-        });
-      }
-    });
-  }
+  // getDefaultConfig(): Promise<KGConfiguration> {
+  //   return new Promise((resolve) => {
+  //     if (this.currentConfig) {
+  //       resolve(this.currentConfig);
+  //     } else {
+  //       this.http.get(DEFAULT_CONFIG_ENDPOINT).subscribe((data: any) => {
+  //         this.setDefaultConfig(data);
+  //         resolve(this.currentConfig);
+  //       });
+  //     }
+  //   });
+  // }
 
   setDefaultConfig(value: string) {
     this.currentConfig = value;
