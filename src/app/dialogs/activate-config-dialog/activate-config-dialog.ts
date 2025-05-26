@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { catchError } from 'rxjs';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { DialogService } from '../../services/dialog.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -44,7 +43,7 @@ export class ActivateConfigDialog implements OnInit {
         }
       });
   }
-  
+
   activateConfiguration() {
     this.activatingConfig = true;
     this.configManagerService.activateConfiguration(this.selectedConfig.value)

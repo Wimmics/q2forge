@@ -80,9 +80,6 @@ export class CompetencyQuestionGeneratorComponent {
           this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
           this.formGroup.get('model_config_id')?.setValue(this.availableSeq2SeqModels[0].configName);
         }
-      },
-      error: (error: any) => {
-        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
       }
     });
 

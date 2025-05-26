@@ -59,9 +59,6 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
         if (config.text_embedding_models) {
           this.availableEmbeddingModels = this.configManagerService.transformTextEmbeddingModels(config.text_embedding_models);
         }
-      },
-      error: (error: any) => {
-        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
       }
     });
 

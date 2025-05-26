@@ -120,9 +120,6 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
           this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
           this.model_config_id = this.availableSeq2SeqModels[0].configName;
         }
-      },
-      error: (error: any) => {
-        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
       }
     });
     this.configManagerService.getActiveConfiguration();

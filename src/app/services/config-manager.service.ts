@@ -14,6 +14,7 @@ import { TextEmbeddingModel } from '../models/text-embedding-model';
 import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import { GraphSchema } from '../models/graph-schema';
 import { KGConfiguration } from '../models/kg-configuration';
+import { DialogService } from './dialog.service';
 
 
 @Injectable({
@@ -29,7 +30,7 @@ export class ConfigManagerService {
 
   private scenariosSchema: GraphSchema[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private dialogService: DialogService) {
   }
 
   getCurrentActiveConfigurationSub(): Observable<KGConfiguration> {
@@ -49,6 +50,11 @@ export class ConfigManagerService {
         this.currentActiveConfigurationSub.next(config);
       },
       error: (error: any) => {
+        if (error.error.detail === "No active configuration found") {
+          this.dialogService.notifyUser("No active configuration", "No active configuration found. Please activate a configuration to prefill the fields.");
+        } else {
+          this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+        }
         this.currentActiveConfigurationSub.error(error);
       },
     });
@@ -123,7 +129,7 @@ export class ConfigManagerService {
 
   }
 
-  activateConfiguration(kg_short_name: string): Observable<any> {
+  activateConfiguration(kg_short_name: string): Observable<KGConfiguration> {
 
     if (this.currentActiveConfiguration?.kg_short_name === kg_short_name) {
       return throwError(() => new HttpErrorResponse({
@@ -137,11 +143,19 @@ export class ConfigManagerService {
       "kg_short_name": kg_short_name
     };
 
-    return this.http.post(ACTIVATE_CONFIG_ENDPOINT, config)
+
+    let postObservable = this.http.post<KGConfiguration>(ACTIVATE_CONFIG_ENDPOINT, config)
+
+    postObservable.subscribe({
+      next: (config: KGConfiguration) => {
+        this.currentActiveConfiguration = config;
+        this.currentActiveConfigurationSub.next(config);
+      },
+    });
+
+    return postObservable;
 
   }
-
-
 
   generateKGDescriptions(kg_short_name: string): Observable<any> {
     const config = {
