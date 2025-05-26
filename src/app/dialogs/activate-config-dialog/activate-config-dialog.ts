@@ -32,22 +32,19 @@ export class ActivateConfigDialog implements OnInit {
 
   ngOnInit() { 
     this.configManagerService.getAvailableConfigurations()
-      .pipe(
-        catchError((error: HttpErrorResponse) => {
-          this.dialogService.notifyUser("Configuration retrieval error",
-            "Server response: \n ```json\n" + JSON.stringify(error, null, 2) + "\n```"
-          );
-          throw error; // Rethrow the error to propagate it further
-        })
-      )
       .subscribe({
         next: value => {
           this.availableConfigs = value;
           this.selectedConfig.setValue(this.availableConfigs[0]);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.dialogService.notifyUser("Configuration retrieval error",
+            "Server response: \n ```json\n" + JSON.stringify(error, null, 2) + "\n```"
+          );
         }
       });
-
   }
+  
   activateConfiguration() {
     this.activatingConfig = true;
     this.configManagerService.activateConfiguration(this.selectedConfig.value)

@@ -11,7 +11,7 @@ import {
 } from './predefined-variables';
 import { Seq2SeqModel } from '../models/seq2seqmodel';
 import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { Observable,Subject, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
 import { GraphSchema } from '../models/graph-schema';
 import { KGConfiguration } from '../models/kg-configuration';
 
@@ -23,6 +23,10 @@ export class ConfigManagerService {
 
   private currentActiveConfigurationSub: Subject<KGConfiguration> = new Subject<KGConfiguration>();
   private currentActiveConfiguration?: KGConfiguration;
+
+  private availableConfigurationsSub: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  private availableConfigurations?: string[];
+
   private scenariosSchema: GraphSchema[] = [];
 
   constructor(private http: HttpClient) {
@@ -157,8 +161,22 @@ export class ConfigManagerService {
 
   }
 
-  getAvailableConfigurations(): Observable<string[]> {
-    return this.http.get(AVAILABLE_CONFIG_ENDPOINT) as Observable<string[]>;
+  getAvailableConfigurations(): BehaviorSubject<string[]> {
+    if (this.availableConfigurations) {
+      return this.availableConfigurationsSub;
+    }
+
+    this.http.get<string[]>(AVAILABLE_CONFIG_ENDPOINT).subscribe({
+      next: (configs: string[]) => {
+        this.availableConfigurations = configs;
+        this.availableConfigurationsSub.next(configs);
+      },
+      error: (error: any) => {
+        this.availableConfigurationsSub.error(error);
+      }
+    });
+
+    return this.availableConfigurationsSub;
   }
 
 }
