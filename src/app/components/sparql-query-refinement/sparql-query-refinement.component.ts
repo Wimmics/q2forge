@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,6 +27,8 @@ import Yasgui from "@triply/yasgui/";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Seq2SeqModel } from '../../models/seq2seqmodel';
 import { DEFAULT_JUDGE_QUESTION, DEFAULT_SPARQL_JUDGE_QUERY, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../../services/predefined-variables-commun';
+import { KGConfiguration } from '../../models/kg-configuration';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -39,16 +41,7 @@ import { DEFAULT_JUDGE_QUESTION, DEFAULT_SPARQL_JUDGE_QUERY, DEFAULT_COOKIE_EXPI
   templateUrl: './sparql-query-refinement.component.html',
   styleUrl: './sparql-query-refinement.component.scss'
 })
-export class SPARQLQueryRefinementComponent implements AfterViewInit {
-
-  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
-    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
-    private llmJudgeService: LLMJudgeService,
-    private configManagerService: ConfigManagerService,
-    private route: ActivatedRoute,
-    private cookieService: CookieService,
-    private dialogService: DialogService) { }
-
+export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['uri', 'info'];
   dataSource: SPARQLPartInfo[] = [];
@@ -72,6 +65,15 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
 
   yasgui?: Yasgui;
 
+  currentActiveConfigurationSub?: Subscription;
+
+  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
+    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
+    private llmJudgeService: LLMJudgeService,
+    private configManagerService: ConfigManagerService,
+    private route: ActivatedRoute,
+    private cookieService: CookieService,
+    private dialogService: DialogService) { }
 
   ngAfterViewInit(): void {
 
@@ -109,12 +111,28 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
       });
     });
 
-    this.configManagerService.getSeq2SeqModels().then((data) => {
-      this.availableSeq2SeqModels = data;
-      this.model_config_id = this.availableSeq2SeqModels[0].configName;
-    });
   }
 
+  ngOnInit(): void {
+    this.currentActiveConfigurationSub = this.configManagerService.getCurrentActiveConfigurationSub().subscribe({
+      next: (config: KGConfiguration) => {
+        if (config.seq2seq_models) {
+          this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
+          this.model_config_id = this.availableSeq2SeqModels[0].configName;
+        }
+      },
+      error: (error: any) => {
+        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+      }
+    });
+    this.configManagerService.getActiveConfiguration();
+  }
+
+  ngOnDestroy(): void {
+    if (this.currentActiveConfigurationSub) {
+      this.currentActiveConfigurationSub.unsubscribe();
+    }
+  }
   getQNamesContext() {
     let query = this.currentQuery;
 

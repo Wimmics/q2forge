@@ -14,6 +14,9 @@ import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CommonModule } from '@angular/common';
+import { KGConfiguration } from '../../models/kg-configuration';
+import { Subscription } from 'rxjs';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-question-answerer-config-dialog',
@@ -25,28 +28,15 @@ import { CommonModule } from '@angular/common';
 export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   config = inject<QuestionAnswererConfig>(MAT_DIALOG_DATA);
-
   availableSeq2SeqModels: Seq2SeqModel[] = [];
-
   availableEmbeddingModels: TextEmbeddingModel[] = [];
-
   graphSchemas: GraphSchema[] = [];
-
   scale: number = 1; // Default zoom level
   translate: number = 0; // Default vertical translation
-  zoomIn() {
-    this.scale += 0.1; // Increase zoom level
-    this.translate += 50; // Increase vertical translation
-  }
+  currentActiveConfigurationSub?: Subscription
 
-  zoomOut() {
-    if (this.scale > 0.5) {
-      this.scale -= 0.1; // Decrease zoom level
-      this.translate -= 50; // Decrease vertical translation
-    }
-  }
-
-  constructor(private configManagerService: ConfigManagerService, private dialogRef: MatDialogRef<QuestionAnswererConfigDialog>) { }
+  constructor(private configManagerService: ConfigManagerService, private dialogRef: MatDialogRef<QuestionAnswererConfigDialog>,
+    private dialogService: DialogService) { }
 
   ngAfterViewInit(): void {
     this.init_scenario_schemas();
@@ -61,15 +51,28 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   init_available_models() {
 
-    this.configManagerService.getSeq2SeqModels().then((data) => {
-      this.availableSeq2SeqModels = data;
+    this.currentActiveConfigurationSub = this.configManagerService.getCurrentActiveConfigurationSub().subscribe({
+      next: (config: KGConfiguration) => {
+        if (config.seq2seq_models) {
+          this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
+        }
+        if (config.text_embedding_models) {
+          this.availableEmbeddingModels = this.configManagerService.transformTextEmbeddingModels(config.text_embedding_models);
+        }
+      },
+      error: (error: any) => {
+        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+      }
     });
 
-    this.configManagerService.getTextEmbeddingModels().then((data) => {
-      this.availableEmbeddingModels = data;
-    });
+    this.configManagerService.getActiveConfiguration();
   }
 
+  ngOnDestroy() {
+    if (this.currentActiveConfigurationSub) {
+      this.currentActiveConfigurationSub.unsubscribe();
+    }
+  }
 
   readonly scenarioSchemaDialog = inject(MatDialog);
 
@@ -95,4 +98,15 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
     return '';
   }
 
+  zoomIn() {
+    this.scale += 0.1; // Increase zoom level
+    this.translate += 50; // Increase vertical translation
+  }
+
+  zoomOut() {
+    if (this.scale > 0.5) {
+      this.scale -= 0.1; // Decrease zoom level
+      this.translate -= 50; // Decrease vertical translation
+    }
+  }
 }

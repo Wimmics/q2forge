@@ -23,6 +23,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Seq2SeqModel } from '../../models/seq2seqmodel';
 import { AdditionalSPARQLInfoService } from '../../services/additional-sparqlinfo.service';
 import { DialogService } from '../../services/dialog.service';
+import { KGConfiguration } from '../../models/kg-configuration';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-competency-question-generation',
@@ -35,6 +37,17 @@ import { DialogService } from '../../services/dialog.service';
 })
 export class CompetencyQuestionGeneratorComponent {
 
+  currentActiveConfigurationSub?: Subscription;
+  formGroup: FormGroup;
+  availableSeq2SeqModels: Seq2SeqModel[] = [];
+  workflowDone = false;
+  loading = false;
+  error = '';
+  errorLLMAnswer = '';
+  llmAnswer = '';
+  competencyQuestions: CompetencyQuestion[] = [];
+
+
   constructor(private generateQuestionService: GenerateQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private router: Router,
@@ -44,18 +57,6 @@ export class CompetencyQuestionGeneratorComponent {
     private location: Location,
     private dialogService: DialogService,
     private additionalSPARQLInfoService: AdditionalSPARQLInfoService) {
-
-    this.currentConfig = this.configManagerService.getActiveConfiguration()
-      .subscribe({
-        next: (config: any) => {
-          this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
-          this.formGroup.get("kg_description")?.setValue(config.kg_description);
-          this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n'));
-        },
-        error: (error: any) => {
-          this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
-        }
-      });
 
     this.formGroup = this._formBuilder.group({
       endpoint: ["", Validators.pattern('https?://.+')],
@@ -68,45 +69,37 @@ export class CompetencyQuestionGeneratorComponent {
     })
   }
 
+  ngOnInit(): void {
 
-  ngAfterViewInit(): void {
-    this.configManagerService.getSeq2SeqModels().then((data) => {
-      this.availableSeq2SeqModels = data;
-      this.formGroup.get('model_config_id')?.setValue(this.availableSeq2SeqModels[0].configName);
+    this.currentActiveConfigurationSub = this.configManagerService.getCurrentActiveConfigurationSub().subscribe({
+      next: (config: KGConfiguration) => {
+        this.formGroup.get("endpoint")?.setValue(config.kg_sparql_endpoint_url);
+        this.formGroup.get("kg_description")?.setValue(config.kg_description);
+        this.formGroup.get("kg_schema")?.setValue(config.ontology_named_graphs?.join('\n'));
+        if (config.seq2seq_models) {
+          this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
+          this.formGroup.get('model_config_id')?.setValue(this.availableSeq2SeqModels[0].configName);
+        }
+      },
+      error: (error: any) => {
+        this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+      }
     });
+
+    this.configManagerService.getActiveConfiguration();
   }
 
-  currentConfig: any;
 
-  formGroup: FormGroup;
-
-
-  availableSeq2SeqModels: Seq2SeqModel[] = [];
-
-  workflowDone = false;
-
-  loading = false;
-  error = '';
-
-  errorLLMAnswer = '';
-  llmAnswer = '';
-  competencyQuestions: CompetencyQuestion[] = [
-    // {
-    //   "question": "What are the specific structural similarities between compounds classified under the CHEMINF ontology that exhibit biological activity in BioAssay experiments, categorized by disease associations in the Human Disease Ontology (DO)?",
-    //   "complexity": "Advanced",
-    //   "tags": ["compound", "bioassay", "ontology", "structure", "inference"]
-    // },
-    // {
-    //   "question": "What are the most common cell lines used in BioAssay experiments for compounds classified as anti-cancer agents under the ChEBI Ontology, according to the PubChemRDF data?",
-    //   "complexity": "Intermediate",
-    //   "tags": ["bioassay", "cell line", "ChEBI", "compound", "classification"]
-    // }
-  ];
-
+  ngOnDestroy() {
+    if (this.currentActiveConfigurationSub) {
+      this.currentActiveConfigurationSub.unsubscribe();
+    }
+  }
 
   showActivateConfigDialog() {
     this.dialogService.activateConfig()
   }
+
   generateQuestionWithLLM() {
     let endpoint = this.formGroup.get("endpoint")?.value;
     let kg_description = this.formGroup.get("kg_description")?.value;
@@ -268,17 +261,9 @@ export class CompetencyQuestionGeneratorComponent {
   }
 
   reset() {
-    // this.dataSource = [];
-    // this.query.setValue(this.model.query);
     this.formGroup.reset();
-    // this.endpoint.setValue(this.model.endpoint);
-    // this.kgDescription.setValue(this.model.kg_description);
-    // this.kgSchema.setValue(this.model.kg_schema);
-    // this.additionalContext.setValue(this.model.additional_context);
     this.loading = false;
     this.error = '';
-    // this.properties.set([...this.defaultProperties]);
-    // this.loadingLLMAnswer = false;
     this.llmAnswer = '';
     this.competencyQuestions = [];
     this.workflowDone = false;

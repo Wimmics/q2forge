@@ -8,7 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MediaMatcher } from '@angular/cdk/layout';
 import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGithubSquare, faSquareGithub } from '@fortawesome/free-brands-svg-icons';
-import { AuthService } from './services/auth-service';
+import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 
 @Component({
