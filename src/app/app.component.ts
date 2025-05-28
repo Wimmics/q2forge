@@ -6,10 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { FaIconLibrary, FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faGithubSquare, faSquareGithub } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faSquareGithub } from '@fortawesome/free-brands-svg-icons';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
+import { FetchAuthInterceptorService } from './utils/interceptors/fetch-auth-interceptor';
 
 @Component({
   selector: 'app-root',
@@ -63,7 +64,7 @@ export class AppComponent implements OnInit {
   private authenticationSub?: Subscription;
   userAuthenticated: boolean = false;
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private fetchAuthInterceptorService: FetchAuthInterceptorService) {
     const media = inject(MediaMatcher);
     this._mobileQuery = media.matchMedia('(max-width: 600px)');
     this.isMobile.set(this._mobileQuery.matches);
@@ -72,6 +73,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.fetchAuthInterceptorService.init();
+
     this.authenticationSub = this.authService.getAuthenticatedSub().subscribe((status) => {
       this.userAuthenticated = status;
     });

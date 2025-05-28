@@ -297,14 +297,14 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   readonly questionAnswererConfigDialog = inject(MatDialog);
 
   currentConfig: QuestionAnswererConfig = {
-    scenario_id: "7",
+    scenario_id: "1",
     text_embedding_model: "nomic-embed-text_faiss@local",
-    ask_question_model: "llama-3_3-70B@ovh",
-    validate_question_model: "llama-3_3-70B@ovh",
-    generate_query_model: "llama-3_3-70B@ovh",
-    judge_query_model: "llama-3_3-70B@ovh",
-    judge_regenerate_query_model: "llama-3_3-70B@ovh",
-    interpret_results_model: "llama-3_3-70B@ovh"
+    ask_question_model: "gemma-3_4b@local",
+    validate_question_model: "gemma-3_4b@local",
+    generate_query_model: "gemma-3_4b@local",
+    judge_query_model: "gemma-3_4b@local",
+    judge_regenerate_query_model: "gemma-3_4b@local",
+    interpret_results_model: "gemma-3_4b@local"
   };
 
   setConfiguration() {

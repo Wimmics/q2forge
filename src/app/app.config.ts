@@ -4,7 +4,7 @@ import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { CLIPBOARD_OPTIONS, ClipboardButtonComponent, MERMAID_OPTIONS, provideMarkdown } from 'ngx-markdown';
-import { authInterceptor } from './services/auth-interceptor';
+import { authInterceptor } from './utils/interceptors/auth-interceptor';
 
 
 export const appConfig: ApplicationConfig = {
