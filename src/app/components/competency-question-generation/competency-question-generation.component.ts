@@ -25,13 +25,15 @@ import { AdditionalSPARQLInfoService } from '../../services/additional-sparqlinf
 import { DialogService } from '../../services/dialog.service';
 import { KGConfiguration } from '../../models/kg-configuration';
 import { Subscription } from 'rxjs';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-competency-question-generation',
   imports: [
     FormsModule, MatFormFieldModule, MatInputModule, ReactiveFormsModule, MatButtonModule, MatTableModule, MatFormFieldModule,
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
-    JsonPipe, MatTooltipModule
+    JsonPipe, MatTooltipModule, FontAwesomeModule
   ], templateUrl: './competency-question-generation.component.html',
   styleUrl: './competency-question-generation.component.scss'
 })
@@ -46,7 +48,7 @@ export class CompetencyQuestionGeneratorComponent {
   errorLLMAnswer = '';
   llmAnswer = '';
   competencyQuestions: CompetencyQuestion[] = [];
-
+  faLightbulb = faLightbulb
 
   constructor(private generateQuestionService: GenerateQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,

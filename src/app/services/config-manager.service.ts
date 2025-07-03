@@ -50,11 +50,11 @@ export class ConfigManagerService {
         this.currentActiveConfigurationSub.next(config);
       },
       error: (error: any) => {
-        if (error.error.detail === "No active configuration found") {
-          this.dialogService.notifyUser("No active configuration", "No active configuration found. Please activate a configuration to prefill the fields.");
-        } else {
-          this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
-        }
+        // if (error.error.detail === "No active configuration found") {
+        //   this.dialogService.notifyUser("No active configuration", "No active configuration found. Please activate a configuration to prefill the fields.");
+        // } else {
+        //   this.dialogService.notifyUser("Error", "Error while fetching the active configuration: " + error.error.detail);
+        // }
         this.currentActiveConfigurationSub.error(error);
       },
     });

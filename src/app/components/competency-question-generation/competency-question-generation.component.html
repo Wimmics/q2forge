@@ -3,12 +3,19 @@
 
     <div class="activate-config-container">
         <button mat-raised-button (click)="showActivateConfigDialog()"
-            matTooltip="Activate the configuration of a KG to use in this task from the preconfigured ones."
+            matTooltip="Select the configuration of a KG to use in this task from the preconfigured ones."
             matTooltipPosition="above">
-            <mat-icon>check_circle</mat-icon>
-            Activate Another Configuration
+            <mat-icon>edit</mat-icon>
+            Choose an Existing Configuration
         </button>
+
+        @if (!formGroup.get("kg_description")?.value) {
+            <fa-icon class="bulb-icon" [icon]="faLightbulb"
+            matTooltip="Choose the configuration of a KG to use in this task from the preconfigured ones."
+            matTooltipPosition="above"></fa-icon>
+        }
     </div>
+
 
     <form class="form" [formGroup]="formGroup">
         <mat-form-field class="full-width" matTooltip="KG textual description (used in prompts)"
