@@ -20,7 +20,6 @@ import { MarkdownComponent } from 'ngx-markdown';
 import { SPARQL_ENDPOINT_URI } from '../../services/predefined-variables';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { DataSetCookie, isDataSetCookie } from '../../models/cookie-items';
 import { DialogService } from '../../services/dialog.service';
 import Yasgui from "@triply/yasgui/";
@@ -72,7 +71,6 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
     private llmJudgeService: LLMJudgeService,
     private configManagerService: ConfigManagerService,
     private route: ActivatedRoute,
-    private cookieService: CookieService,
     private dialogService: DialogService) { }
 
   ngAfterViewInit(): void {
@@ -439,9 +437,10 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
 
-    if (this.cookieService.check('dataset')) {
+    let datasetString = localStorage.getItem('dataset')
+    if (datasetString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('dataset'));
+        let cookie = JSON.parse(datasetString);
         if (isDataSetCookie(cookie)) {
           if (!cookie.dataset.some(item => item.query === datasetItem.query && item.question === datasetItem.question)) {
             cookie.dataset.push(datasetItem);
@@ -452,14 +451,14 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
             return;
           }
         } else {
-          this.cookieService.delete('dataset');
+          localStorage.removeItem('dataset');
           datasetCookie = {
             dataset: [datasetItem],
             expirationDate: expirationDate.toISOString()
           };
         }
       } catch (e) {
-        this.cookieService.delete('dataset');
+        localStorage.removeItem('dataset');
 
         datasetCookie = {
           dataset: [datasetItem],
@@ -473,7 +472,7 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
       };
     }
 
-    this.cookieService.set('dataset', JSON.stringify(datasetCookie), { expires: 7 });
+    localStorage.setItem('dataset', JSON.stringify(datasetCookie));
     this.exportDataset();
   }
 }

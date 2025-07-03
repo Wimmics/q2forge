@@ -27,9 +27,8 @@ import { isCompetencyQuestion, isCompetencyQuestionArray } from '../../models/co
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtractCodeBlocksService } from '../../services/extract-code-blocks.service';
 import { DialogService } from '../../services/dialog.service';
-import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie } from '../../models/cookie-items';
-import { CookieManagerService } from '../../services/cookie-manager.service';
+import { LocalStorageManagerService } from '../../services/localstorage-manager.service';
 import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-commun';
 
 @Component({
@@ -65,8 +64,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private dialogService: DialogService,
-    private cookieService: CookieService,
-    private cookieManagerService: CookieManagerService) {
+    private localStorageManagerService: LocalStorageManagerService) {
   }
 
   showActivateConfigDialog() {
@@ -342,16 +340,17 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
 
     this.uploaded_questions = []
 
-    if (this.cookieService.check('questions')) {
+    let questionsString = localStorage.getItem('questions')
+    if (questionsString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('questions'));
+        let cookie = JSON.parse(questionsString);
         if (isQuestionsCookie(cookie)) {
           this.uploaded_questions.push(...cookie.questions.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
         } else {
-          this.cookieService.delete('questions');
+          localStorage.removeItem('questions');
         }
       } catch (e) {
-        this.cookieService.delete('questions');
+        localStorage.removeItem('questions');
       }
     }
   }
@@ -405,12 +404,12 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
           let obj = JSON.parse(text)
           if (isCompetencyQuestion(obj) && !this.uploaded_questions.includes(obj.question)) {
             updated = true
-            this.cookieManagerService.addQuestionsToCookies([obj]);
+            this.localStorageManagerService.addQuestionsToLocalStorage([obj]);
             this.setQuestionsFromCookie();
           }
           else if (isCompetencyQuestionArray(obj)) {
             updated = true
-            this.cookieManagerService.addQuestionsToCookies(obj);
+            this.localStorageManagerService.addQuestionsToLocalStorage(obj);
             this.setQuestionsFromCookie();
           } else {
             this.dialogService.notifyUser("Questions upload", `Invalid JSON format`)

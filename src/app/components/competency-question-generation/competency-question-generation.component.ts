@@ -16,7 +16,7 @@ import { JsonPipe } from '@angular/common';
 import { ExtractCodeBlocksService } from '../../services/extract-code-blocks.service';
 import { CompetencyQuestion, isCompetencyQuestion, isCompetencyQuestionArray } from '../../models/competency-question';
 import { Router } from '@angular/router';
-import { CookieManagerService } from '../../services/cookie-manager.service';
+import { LocalStorageManagerService } from '../../services/localstorage-manager.service';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { Location } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -53,7 +53,7 @@ export class CompetencyQuestionGeneratorComponent {
   constructor(private generateQuestionService: GenerateQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private router: Router,
-    private cookieManagerService: CookieManagerService,
+    private localStorageManagerService: LocalStorageManagerService,
     private configManagerService: ConfigManagerService,
     private _formBuilder: FormBuilder,
     private location: Location,
@@ -293,7 +293,7 @@ export class CompetencyQuestionGeneratorComponent {
   }
 
   addQuestionsToCookies() {
-    this.cookieManagerService.addQuestionsToCookies(this.competencyQuestions);
+    this.localStorageManagerService.addQuestionsToLocalStorage(this.competencyQuestions);
     let url = this.router.createUrlTree(['sparql-query-generator']).toString();
     url = this.location.prepareExternalUrl(url); // adds base href
     window.open(url, '_blank');

@@ -6,7 +6,7 @@
             matTooltip="Select the configuration of a KG to use in this task from the preconfigured ones."
             matTooltipPosition="above">
             <mat-icon>edit</mat-icon>
-            Choose an Existing Configuration
+            Use an Existing Configuration
         </button>
 
         @if (!formGroup.get("kg_description")?.value) {
@@ -84,7 +84,9 @@
             </mat-slide-toggle>
 
             <button mat-raised-button (click)="generateQuestionWithLLM()" matTooltip="Start the generation process"
-                matTooltipPosition="above">
+                matTooltipPosition="above"
+                [disabled]="!formGroup.valid"
+                >
                 <mat-icon>create</mat-icon>
                 Generate Questions
             </button>

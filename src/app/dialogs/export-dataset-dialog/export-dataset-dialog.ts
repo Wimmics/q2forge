@@ -8,7 +8,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CommonModule } from '@angular/common';
-import { CookieService } from 'ngx-cookie-service';
 import { DataSetCookie, DataSetItem, isDataSetCookie } from '../../models/cookie-items';
 import { ExportedFormat } from '../../models/exported-format';
 import { MatTableModule } from '@angular/material/table';
@@ -22,7 +21,7 @@ import { MatTableModule } from '@angular/material/table';
 })
 export class ExportDatasetDialog implements OnInit {
 
-  constructor(private cookieService: CookieService) { }
+  constructor() { }
 
   availableFormats: ExportedFormat[] = [
     { name: 'CSV', extension: 'csv' },
@@ -41,17 +40,19 @@ export class ExportDatasetDialog implements OnInit {
   displayedColumns: string[] = ['question', 'query', 'actions'];
 
   ngOnInit() {
-    // Check if the cookie exists and is valid
-    if (this.cookieService.check('dataset')) {
+    
+    let datasetString = localStorage.getItem('dataset');
+
+    if (datasetString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('dataset'));
+        let cookie = JSON.parse(datasetString);
         if (isDataSetCookie(cookie)) {
           this.datasetCookie = cookie;
         } else {
-          this.cookieService.delete('dataset');
+          localStorage.removeItem('dataset');
         }
       } catch (e) {
-        this.cookieService.delete('dataset');
+        localStorage.removeItem('dataset');
       }
     }
 
@@ -89,7 +90,6 @@ export class ExportDatasetDialog implements OnInit {
 
   removeDatasetItem(item: DataSetItem) {
     this.datasetCookie.dataset.splice(this.datasetCookie.dataset.indexOf(item), 1);
-    this.cookieService.set('dataset', JSON.stringify(this.datasetCookie), new Date(this.datasetCookie.expirationDate));
-    this.datasetCookie = JSON.parse(this.cookieService.get('dataset'));
+    localStorage.setItem('dataset', JSON.stringify(this.datasetCookie));
   }
 }
