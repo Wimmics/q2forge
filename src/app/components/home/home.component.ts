@@ -23,13 +23,18 @@ export class HomeComponent implements OnInit {
   private teaserVideoURL: string = 'https://www.youtube.com/embed/E9rgCZzWH4k';
 
   constructor(private configManagerService: ConfigManagerService, private activatedRoute: ActivatedRoute,
-     private router: Router,private _sanitizer: DomSanitizer) { }
+    private router: Router, private _sanitizer: DomSanitizer) { }
 
 
 
   ngOnInit(): void {
     this.configManagerService.getScenariosSchema().then(response => {
       this.scenariosSchema = response;
+
+
+      // Sort ascending by id
+      this.scenariosSchema.sort((a, b) => parseInt(a.scenario_id) - parseInt(b.scenario_id));
+
       this.activatedRoute.fragment.subscribe(fragment => {
         if (fragment)
           this.scrollToFragment(fragment);
