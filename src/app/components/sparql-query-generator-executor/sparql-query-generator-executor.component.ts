@@ -11,7 +11,7 @@ import { ChatMessage } from '../../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDropzone } from '@ngx-dropzone/material';
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
@@ -30,6 +30,8 @@ import { DialogService } from '../../services/dialog.service';
 import { isQuestionsCookie } from '../../models/cookie-items';
 import { LocalStorageManagerService } from '../../services/localstorage-manager.service';
 import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-commun';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user-data';
 
 @Component({
   selector: 'app-sparql-query-generator-executor',
@@ -64,6 +66,8 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private dialogService: DialogService,
+    private route: ActivatedRoute,
+    private userService: UserService,
     private localStorageManagerService: LocalStorageManagerService) {
   }
 
@@ -334,6 +338,20 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     );
 
     this.setQuestionsFromCookie();
+
+    this.route.queryParamMap.subscribe(params => {
+      const chatId = params.get('chat_id');
+      if (chatId) {
+        this.userService.getUserDataSub().subscribe((user: User) => {
+          this.chat_messages = user.sparql_chats?.find((chat) => chat._id === chatId)?.messages || [];
+        });
+        
+        this.userService.getUserData();
+      } else {
+        this.chat_messages = [];
+      }
+
+    });
   }
 
   setQuestionsFromCookie() {

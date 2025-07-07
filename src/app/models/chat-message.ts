@@ -5,3 +5,9 @@ export interface ChatMessage {
     queryToRefine?: string;
     questionOfTheQueryToRefine?: string;
 }
+
+export interface SPARQLChatMessages{
+    _id: string;
+    messages: ChatMessage[];
+    createdAt: Date;
+}

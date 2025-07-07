@@ -11,6 +11,10 @@ import { faSquareGithub } from '@fortawesome/free-brands-svg-icons';
 import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 import { FetchAuthInterceptorService } from './utils/interceptors/fetch-auth-interceptor';
+import { trigger, state, style, transition, animate } from '@angular/animations';
+import { ChatMessage } from './models/chat-message';
+import { User } from './models/user-data';
+import { UserService } from './services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +22,16 @@ import { FetchAuthInterceptorService } from './utils/interceptors/fetch-auth-int
     , FontAwesomeModule
   ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
+  animations: [
+    trigger('indicatorRotate', [
+      state('collapsed', style({ transform: 'rotate(0deg)' })),
+      state('expanded', style({ transform: 'rotate(180deg)' })),
+      transition('expanded <=> collapsed',
+        animate('225ms cubic-bezier(0.4,0.0,0.2,1)')
+      ),
+    ])
+  ]
 })
 export class AppComponent implements OnInit {
   protected readonly navItems = [{
@@ -27,22 +40,22 @@ export class AppComponent implements OnInit {
     icon: 'home',
     requireUserAuthenticated: false
   }, {
-    name: 'KG Configuration Creation',
+    name: 'Configuration Creation',
     route: '/kg-configuration-creation',
     icon: 'settings',
     requireUserAuthenticated: true
   }, {
-    name: 'Competency Question Generator',
+    name: 'CQ Generator',
     route: '/competency-question-generator',
     icon: 'create',
     requireUserAuthenticated: true
   }, {
-    name: 'SPARQL Query Generator and Executor',
+    name: 'SPARQL Generator',
     route: '/sparql-query-generator',
     icon: 'question_answer',
     requireUserAuthenticated: true
   }, {
-    name: 'SPARQL Query Refinement',
+    name: 'SPARQL Refinement',
     route: '/sparql-query-refinement',
     icon: 'check_circle_outline',
     requireUserAuthenticated: true
@@ -64,7 +77,13 @@ export class AppComponent implements OnInit {
   private authenticationSub?: Subscription;
   userAuthenticated: boolean = false;
 
-  constructor(private authService: AuthService, private fetchAuthInterceptorService: FetchAuthInterceptorService) {
+  queryGeneratorExpanded: boolean = true;
+
+  userData = signal<User>({ username: '', disabled: false, active_config_id: '', sparql_chats: [] });
+
+  constructor(private authService: AuthService, private fetchAuthInterceptorService: FetchAuthInterceptorService,
+    private userService: UserService
+  ) {
     const media = inject(MediaMatcher);
     this._mobileQuery = media.matchMedia('(max-width: 600px)');
     this.isMobile.set(this._mobileQuery.matches);
@@ -78,6 +97,13 @@ export class AppComponent implements OnInit {
 
     this.authenticationSub = this.authService.getAuthenticatedSub().subscribe((status) => {
       this.userAuthenticated = status;
+
+      if (status) {
+        this.userService.getUserDataSub().subscribe((user: User) => {
+          this.userData.set(user);
+        });
+        this.userService.getUserData();
+      }
     });
     this.authService.authenticateFromLocalStorage();
   }
