@@ -14,4 +14,5 @@ export const ACTIVATE_CONFIG_ENDPOINT = `${API_BASE}/config/activate`
 export const KG_DESCRIPTION_CONFIG_ENDPOINT = `${API_BASE}/config/kg_descriptions`
 export const KG_EMBEDDINGS_CONFIG_ENDPOINT = `${API_BASE}/config/kg_embeddings`
 export const AVAILABLE_CONFIG_ENDPOINT = `${API_BASE}/config/available`
+export const UPDATE_SPARQL_CHATS_ENDPOINT = `${API_BASE}/user/sparql_chats`
 export const DOCUMENTATION_URI = `${API_BASE}/docs`

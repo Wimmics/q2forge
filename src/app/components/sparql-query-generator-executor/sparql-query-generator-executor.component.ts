@@ -7,7 +7,7 @@ import { AnswerQuestionService } from '../../services/answer-question.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MarkdownComponent } from 'ngx-markdown';
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { ChatMessage } from '../../models/chat-message';
+import { ChatMessage, SPARQLChatMessages } from '../../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -58,6 +58,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   errorLLMAnswer = '';
 
   chat_messages: ChatMessage[] = [];
+  chat_id: string = ''
 
   expandAllMessages = true;
 
@@ -77,6 +78,9 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
 
   ask_question() {
     if (this.question_fc.value && this.currentConfig) {
+
+      this.chat_id = crypto.randomUUID()
+
       this.workflowRunning = true;
       this.errorLLMAnswer = '';
       this.chat_messages.push(
@@ -106,6 +110,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
                 "eventType": "end_of_conversation"
               });
               this.checkLlmMessagesWithSPARQLCodeBlock();
+              this.updateUserSPARQLChats();
               return;
             }
 
@@ -228,6 +233,13 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
         });
     }
   }
+  updateUserSPARQLChats() {
+    this.userService.updateSPARQLChats(this.chat_id,this.chat_messages).subscribe({
+      error: (error: any) => {
+        this.dialogService.notifyUser("SPARQL Chat", "Error in updating the chat: " + error?.error?.detail);
+      }
+    });
+  }
 
   extractDataFromStreamPart(data: any, node: string): string {
 
@@ -342,10 +354,11 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       const chatId = params.get('chat_id');
       if (chatId) {
+        this.chat_id = chatId
         this.userService.getUserDataSub().subscribe((user: User) => {
           this.chat_messages = user.sparql_chats?.find((chat) => chat._id === chatId)?.messages || [];
         });
-        
+
         this.userService.getUserData();
       } else {
         this.chat_messages = [];
