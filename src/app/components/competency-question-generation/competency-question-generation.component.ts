@@ -121,6 +121,13 @@ export class CompetencyQuestionGeneratorComponent {
         enforceStructuredOutput
       )
         .then(response => {
+          if (response.status === 403) {
+            this.dialogService.notifyUser('403 Forbidden', "You don't have the quota to do this operation");
+          }
+          else if (!response.ok) {
+            this.dialogService.notifyUser('Error', "An error occurred while generating the questions: " + response.statusText);
+          }
+
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let buffer = ''; // Accumulate stream chunks

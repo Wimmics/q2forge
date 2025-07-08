@@ -313,6 +313,14 @@ export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
       this.errorLLMAnswer = '';
       this.llmJudgeService.getLLMAnswer(this.model_config_id, this.question.value, query, this.dataSource)
         .then(response => {
+
+          if (response.status === 403) {
+            this.dialogService.notifyUser('403 Forbidden', "You don't have the quota to do this operation");
+          }
+          else if (!response.ok) {
+            this.dialogService.notifyUser('Error', "An error occurred while judging the answer: " + response.statusText);
+          }
+
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let buffer = ''; // Accumulate stream chunks

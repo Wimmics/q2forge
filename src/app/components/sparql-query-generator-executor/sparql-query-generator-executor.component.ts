@@ -96,6 +96,13 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
         this.currentConfig,
         this.question_fc.value!,
       ).then(response => {
+        if (response.status === 403) {
+          this.dialogService.notifyUser('403 Forbidden', "You don't have the quota to do this operation");
+        }
+        else if (!response.ok) {
+          this.dialogService.notifyUser('Error', "An error occurred while answering the questions: " + response.statusText);
+        }
+
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let buffer = ''; // Accumulate stream chunks
@@ -236,7 +243,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     }
   }
   updateUserSPARQLChats() {
-    this.userService.addASPARQLChat(this.chat_id,this.chat_messages).subscribe({
+    this.userService.addASPARQLChat(this.chat_id, this.chat_messages).subscribe({
       error: (error: any) => {
         this.dialogService.notifyUser("SPARQL Chat", "Error in updating the chat: " + error?.error?.detail);
       }
@@ -371,10 +378,11 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     this.userService.getUserDataSub().subscribe((user: User) => {
       if (user.active_config_id) {
         this.activeConfig.set(true)
-      }else{
+      } else {
         this.activeConfig.set(false)
       }
     });
+    this.userService.getUserData()
 
   }
 
