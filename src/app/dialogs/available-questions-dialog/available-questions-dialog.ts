@@ -37,10 +37,10 @@ export class AvailableQuestionsDialog implements OnInit {
     expirationDate: ""
   }
 
-  displayedColumns: string[] = ['question','complexity','tags', 'actions'];
+  displayedColumns: string[] = ['question', 'complexity', 'tags', 'actions'];
 
   ngOnInit() {
-    
+
     let questionsString = localStorage.getItem('questions');
 
     if (questionsString) {
@@ -88,8 +88,11 @@ export class AvailableQuestionsDialog implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  removeQuestion(item: CompetencyQuestion) {
-    this.questionsCookie.questions.splice(this.questionsCookie.questions.indexOf(item), 1);
+  removeQuestion(competencyQuestion: CompetencyQuestion) {
+    this.questionsCookie.questions = this.questionsCookie.questions.filter(
+      (item) => competencyQuestion.question !== item.question
+    );
     localStorage.setItem('questions', JSON.stringify(this.questionsCookie));
+
   }
 }

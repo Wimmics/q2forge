@@ -88,8 +88,11 @@ export class ExportDatasetDialog implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  removeDatasetItem(item: DataSetItem) {
-    this.datasetCookie.dataset.splice(this.datasetCookie.dataset.indexOf(item), 1);
+  removeDatasetItem(datasetItem: DataSetItem) {
+    this.datasetCookie.dataset = this.datasetCookie.dataset.filter(
+      (item) => datasetItem.question !== item.question || datasetItem.query !== item.query
+    );
+
     localStorage.setItem('dataset', JSON.stringify(this.datasetCookie));
   }
 }
