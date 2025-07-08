@@ -198,7 +198,7 @@
         </button>
 
         @if(!workflowRunning) {
-        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid"
+        <button mat-mini-fab (click)="ask_question()" [disabled]="!this.currentConfig || question_fc.invalid || !activeConfig()"
             matTooltip="Start the answering workflow" matTooltipPosition="above">
             <mat-icon>send</mat-icon>
         </button>

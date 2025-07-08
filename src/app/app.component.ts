@@ -12,9 +12,10 @@ import { AuthService } from './services/auth.service';
 import { Subscription } from 'rxjs';
 import { FetchAuthInterceptorService } from './utils/interceptors/fetch-auth-interceptor';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { ChatMessage } from './models/chat-message';
+import { ChatMessage, SPARQLChatMessages } from './models/chat-message';
 import { User } from './models/user-data';
 import { UserService } from './services/user.service';
+import { DialogService } from './services/dialog.service';
 
 @Component({
   selector: 'app-root',
@@ -82,7 +83,7 @@ export class AppComponent implements OnInit {
   userData = signal<User>({ username: '', disabled: false, active_config_id: '', sparql_chats: [] });
 
   constructor(private authService: AuthService, private fetchAuthInterceptorService: FetchAuthInterceptorService,
-    private userService: UserService
+    private userService: UserService, private dialogService: DialogService
   ) {
     const media = inject(MediaMatcher);
     this._mobileQuery = media.matchMedia('(max-width: 600px)');
@@ -115,5 +116,15 @@ export class AppComponent implements OnInit {
 
   logout() {
     this.authService.logout();
+  }
+
+  removeChatItem(chat: SPARQLChatMessages) {
+    console.log('Removing chat with ID:', chat._id);
+    
+    this.userService.deleteASPARQLChat(chat).subscribe({
+      error: (error: any) => {
+        this.dialogService.notifyUser("SPARQL Chat", "Error deleting the chat: " + error?.error?.detail);
+      }
+    });
   }
 }

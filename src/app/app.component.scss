@@ -64,7 +64,20 @@ h1.example-app-name {
     border-radius: 16px;
 }
 
+.sparql-generator-click-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 32px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 85%;
+}
+
 .sparql-generator-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-left: 32px;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -76,14 +89,16 @@ h1.example-app-name {
     border-radius: 8px;
 }
 
-.sparql-generator-click-item {
-    margin-left: 32px;
-    margin-top: 8px;
-    margin-bottom: 8px;
-    width: 85%;
-    border: rgb(0, 39, 167) 2px solid;
-    border-radius: 8px;
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
+
+
+.warn-mini-fab-button {
+    display: none;
+    color: rgb(240, 233, 233);
+    background-color: rgb(228, 31, 31);
+    margin-right: 8px;
+}
+
+
+.sparql-generator-item:hover .warn-mini-fab-button {
+  display: inline-block;
 }

@@ -56,10 +56,14 @@
           <mat-divider></mat-divider>
 
           @for (chat of userData().sparql_chats; track chat) {
-          <a class="sparql-generator-item" mat-list-item routerLink="/sparql-query-generator"
-            [queryParams]="{chat_id: chat._id}">
-            {{chat.messages[0].content}}
-          </a>
+          <div class="sparql-generator-item" routerLink="/sparql-query-generator" [queryParams]="{chat_id: chat._id}">
+            <a mat-list-item>
+              {{chat.messages[0].content}}
+            </a>
+            <button mat-mini-fab class="warn-mini-fab-button" (click)="removeChatItem(chat)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
           }
         </div>
         }}

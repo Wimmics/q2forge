@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -63,6 +63,8 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   expandAllMessages = true;
 
   questionExample = DEFAULT_ANSWER_QUESTION;
+
+  activeConfig = signal(false)
 
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
@@ -234,7 +236,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     }
   }
   updateUserSPARQLChats() {
-    this.userService.updateSPARQLChats(this.chat_id,this.chat_messages).subscribe({
+    this.userService.addASPARQLChat(this.chat_id,this.chat_messages).subscribe({
       error: (error: any) => {
         this.dialogService.notifyUser("SPARQL Chat", "Error in updating the chat: " + error?.error?.detail);
       }
@@ -365,6 +367,15 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
       }
 
     });
+
+    this.userService.getUserDataSub().subscribe((user: User) => {
+      if (user.active_config_id) {
+        this.activeConfig.set(true)
+      }else{
+        this.activeConfig.set(false)
+      }
+    });
+
   }
 
   setQuestionsFromCookie() {
