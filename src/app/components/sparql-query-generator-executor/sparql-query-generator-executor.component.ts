@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,7 +44,7 @@ import { User } from '../../models/user-data';
   templateUrl: './sparql-query-generator-executor.component.html',
   styleUrl: './sparql-query-generator-executor.component.scss'
 })
-export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
+export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewInit {
 
   model = {
     question: ""
@@ -74,6 +74,9 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     private localStorageManagerService: LocalStorageManagerService) {
   }
 
+  ngAfterViewInit(): void {
+    this.dialogService.notifyUser("Warning", "The chat will be stored in your user history that you can access and delete at any time. Please do not use any sensitive data in the chat.");
+  }
   showActivateConfigDialog() {
     this.dialogService.activateConfig()
   }
@@ -95,9 +98,10 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
       this.answerQuestionService.answer_question(
         this.currentConfig,
         this.question_fc.value!,
-      ).then(response => {
+      ).then(async response => {
         if (response.status === 403) {
-          this.dialogService.notifyUser('403 Forbidden', "You don't have the quota to do this operation");
+          const errorBody = await response.json();
+          this.dialogService.notifyUser('403 Forbidden', errorBody.detail);
         }
         else if (!response.ok) {
           this.dialogService.notifyUser('Error', "An error occurred while answering the questions: " + response.statusText);

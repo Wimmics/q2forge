@@ -120,9 +120,10 @@ export class CompetencyQuestionGeneratorComponent {
         additional_context,
         enforceStructuredOutput
       )
-        .then(response => {
+        .then(async response => {
           if (response.status === 403) {
-            this.dialogService.notifyUser('403 Forbidden', "You don't have the quota to do this operation");
+            const errorBody = await response.json();
+            this.dialogService.notifyUser('403 Forbidden', errorBody.detail);
           }
           else if (!response.ok) {
             this.dialogService.notifyUser('Error', "An error occurred while generating the questions: " + response.statusText);

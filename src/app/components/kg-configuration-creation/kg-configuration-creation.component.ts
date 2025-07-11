@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -50,7 +50,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './kg-configuration-creation.component.html',
   styleUrl: './kg-configuration-creation.component.scss'
 })
-export class KGConfigurationCreationComponent {
+export class KGConfigurationCreationComponent implements AfterViewInit {
 
   private _formBuilder = inject(FormBuilder);
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
@@ -232,6 +232,10 @@ export class KGConfigurationCreationComponent {
     });
 
     this.thirdFormGroup.get('kg_short_name')?.disable();
+  }
+
+  ngAfterViewInit(): void {
+    this.dialogService.notifyUser("Warning","By creating a new KG configuration, you accept that the configuration will be stored on the server and will be used by other users. Please do not use any sensitive data in the configuration.")
   }
 
   isConfigCreated = false;
