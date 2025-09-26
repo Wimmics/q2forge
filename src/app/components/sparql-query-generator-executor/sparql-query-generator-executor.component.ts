@@ -7,7 +7,7 @@ import { AnswerQuestionService } from '../../services/answer-question.service';
 import { MatSelectModule } from '@angular/material/select';
 import { MarkdownComponent } from 'ngx-markdown';
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { ChatMessage, SPARQLChatMessages } from '../../models/chat-message';
+import { ChatMessage } from '../../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -32,6 +32,7 @@ import { LocalStorageManagerService } from '../../services/localstorage-manager.
 import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-commun';
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user-data';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-sparql-query-generator-executor',
@@ -84,7 +85,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
   ask_question() {
     if (this.question_fc.value && this.currentConfig) {
 
-      this.chat_id = crypto.randomUUID()
+      this.chat_id = uuidv4()
 
       this.workflowRunning = true;
       this.errorLLMAnswer = '';
@@ -326,12 +327,12 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
   currentConfig: QuestionAnswererConfig = {
     scenario_id: "1",
     text_embedding_model: "nomic-embed-text_faiss@local",
-    ask_question_model: "gemma-3_4b@local",
-    validate_question_model: "gemma-3_4b@local",
-    generate_query_model: "gemma-3_4b@local",
-    judge_query_model: "gemma-3_4b@local",
-    judge_regenerate_query_model: "gemma-3_4b@local",
-    interpret_results_model: "gemma-3_4b@local"
+    ask_question_model: "deepseek-chat@deepseek",
+    validate_question_model: "deepseek-chat@deepseek",
+    generate_query_model: "deepseek-chat@deepseek",
+    judge_query_model: "deepseek-chat@deepseek",
+    judge_regenerate_query_model: "deepseek-chat@deepseek",
+    interpret_results_model: "deepseek-chat@deepseek"
   };
 
   setConfiguration() {
@@ -370,6 +371,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
         this.chat_id = chatId
         this.userService.getUserDataSub().subscribe((user: User) => {
           this.chat_messages = user.sparql_chats?.find((chat) => chat._id === chatId)?.messages || [];
+          this.checkLlmMessagesWithSPARQLCodeBlock();
         });
 
         this.userService.getUserData();
@@ -497,3 +499,4 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
     this.dialogService.checkCurrentQuestions();
   }
 }
+
