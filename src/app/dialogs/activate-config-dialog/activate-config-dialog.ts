@@ -29,7 +29,7 @@ export class ActivateConfigDialog implements OnInit {
     private dialogService: DialogService,
     public dialogRef: MatDialogRef<ActivateConfigDialog>) { }
 
-  ngOnInit() { 
+  ngOnInit() {
     this.configManagerService.getAvailableConfigurations()
       .subscribe({
         next: value => {
@@ -57,9 +57,15 @@ export class ActivateConfigDialog implements OnInit {
         },
         error: (error: HttpErrorResponse) => {
           this.activatingConfig = false;
-          this.dialogService.notifyUser("Configuration activation error",
-            "Server response: \n ```json\n" + JSON.stringify(error, null, 2) + "\n```"
-          );
+
+          if (error.status === 400 && error.statusText === 'Already active configuration') {
+            this.dialogRef.close(false);
+          } else {
+            this.dialogService.notifyUser("Configuration activation error",
+              "Server response: \n ```json\n" + JSON.stringify(error, null, 2) + "\n```"
+            );
+          }
+
         }
       });
   }

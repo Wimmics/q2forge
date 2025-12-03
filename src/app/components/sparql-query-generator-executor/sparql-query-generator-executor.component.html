@@ -46,6 +46,12 @@
             <mat-icon>edit</mat-icon>
             Use an Existing Configuration
         </button>
+
+        @if (!activeConfig()) {
+            <fa-icon class="bulb-icon" [icon]="faLightbulb"
+            matTooltip="Choose the configuration of a KG to use in this task from the preconfigured ones."
+            matTooltipPosition="above"></fa-icon>
+        }
     </div>
     }
 
@@ -193,7 +199,8 @@
             </mat-autocomplete>
         </mat-form-field>
 
-        <button mat-mini-fab (click)="setConfiguration()" matTooltip="Configure the scenario and models to use to answer the question" matTooltipPosition="above">
+        <button mat-mini-fab (click)="setConfiguration()" matTooltip="Configure the scenario and models to use to answer the question" matTooltipPosition="above"
+        [disabled]="!activeConfig()">
             <mat-icon>settings</mat-icon>
         </button>
 

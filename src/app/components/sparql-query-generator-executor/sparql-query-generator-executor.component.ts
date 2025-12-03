@@ -33,6 +33,9 @@ import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-com
 import { UserService } from '../../services/user.service';
 import { User } from '../../models/user-data';
 import { v4 as uuidv4 } from 'uuid';
+import { ConfigManagerService } from '../../services/config-manager.service';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-sparql-query-generator-executor',
@@ -40,7 +43,7 @@ import { v4 as uuidv4 } from 'uuid';
     MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent,
     FormsModule, JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe,
     MatDropzone, MatChipRow, ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule,
-    MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule
+    MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule, FontAwesomeModule
   ],
   templateUrl: './sparql-query-generator-executor.component.html',
   styleUrl: './sparql-query-generator-executor.component.scss'
@@ -66,12 +69,14 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
   questionExample = DEFAULT_ANSWER_QUESTION;
 
   activeConfig = signal(false)
+  faLightbulb = faLightbulb
 
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private dialogService: DialogService,
     private route: ActivatedRoute,
     private userService: UserService,
+    private configManagerService: ConfigManagerService,
     private localStorageManagerService: LocalStorageManagerService) {
   }
 
@@ -390,6 +395,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
     });
     this.userService.getUserData()
 
+    this.configManagerService.getActiveConfiguration();
   }
 
   setQuestionsFromCookie() {

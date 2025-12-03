@@ -135,7 +135,7 @@ export class ConfigManagerService {
       return throwError(() => new HttpErrorResponse({
         error: "Configuration already active",
         status: 400,
-        statusText: "Duplicate configuration"
+        statusText: "Already active configuration"
       }))
     }
 
