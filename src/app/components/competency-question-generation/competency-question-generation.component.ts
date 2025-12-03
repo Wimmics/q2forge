@@ -273,6 +273,9 @@ export class CompetencyQuestionGeneratorComponent {
     
     this.configManagerService.getActiveConfiguration();
 
+    this.formGroup.get("number_of_questions")?.setValue(5);
+    this.formGroup.get("enforceStructuredOutput")?.setValue(true);
+
     this.loading = false;
     this.error = '';
     this.llmAnswer = '';
