@@ -91,13 +91,13 @@
                 Generate Questions
             </button>
             <button mat-raised-button (click)="extractKGSchema()"
-                matTooltip="Start the process of extracting the KG schema from the indicated endpoint URI. This will use the void.ttl file to extract the used ontologies and descriptions."
+                matTooltip="Extract the used vocabularies and KG description from the indicated endpoint URI"
                 matTooltipPosition="above"
                 [disabled]="!formGroup.get('endpoint')?.valid || !formGroup.get('endpoint')?.value">
                 <mat-icon>space_bar</mat-icon>
-                Extract KG Schema
+                Extract Used Vocabularies
             </button>
-            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset all the fields"
+            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset all the fields. Set them to the current used configuration values. If there are no used configuration, set them to empty"
                 matTooltipPosition="above">
                 <mat-icon>restore</mat-icon>
                 Reset

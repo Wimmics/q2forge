@@ -242,7 +242,7 @@ export class CompetencyQuestionGeneratorComponent {
           });
           this.formGroup.get("kg_schema")?.setValue(vocabularies.join('\n'));
         } else {
-          this.dialogService.notifyUser("Error", "No data found for the KG vocabularies");
+          this.dialogService.notifyUser("Warning", "No data found for the KG vocabularies");
         }
       },
       error: (error: any) => {
@@ -254,11 +254,11 @@ export class CompetencyQuestionGeneratorComponent {
       next: (response: any) => {
         if (response.results.bindings.length > 0) {
           let descriptions = response.results.bindings.map((binding: any) => {
-            return binding.dataset.value + " => " + binding.description.value;
+            return binding.description.value;
           });
           this.formGroup.get("kg_description")?.setValue(descriptions.join('\n'));
         } else {
-          this.dialogService.notifyUser("Error", "No data found for the KG descriptions");
+          this.dialogService.notifyUser("Warning", "No data found for the KG descriptions");
         }
       },
       error: (error: any) => {
@@ -268,7 +268,11 @@ export class CompetencyQuestionGeneratorComponent {
   }
 
   reset() {
+  
     this.formGroup.reset();
+    
+    this.configManagerService.getActiveConfiguration();
+
     this.loading = false;
     this.error = '';
     this.llmAnswer = '';

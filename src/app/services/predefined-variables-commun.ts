@@ -25,23 +25,23 @@ export const DEFAULT_ANSWER_QUESTION = "What protein targets does donepezil (CHE
 export const DEFAULT_COOKIE_EXPIRATION_DAYS = 7
 
 export const KG_VOCABULARIES_QUERY_EXTRACTION = `
-PREFIX dcterm: <http://purl.org/dc/terms/>
 PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 
-select * where {
-?x a void:Dataset.
-?x void:vocabulary ?y.
+select ?vocabulary where {
+?x a void:Dataset;
+  void:vocabulary ?vocabulary.
 }
 `
 
 export const KG_DESCRIPTION_QUERY_EXTRACTION = `
-PREFIX dcterm: <http://purl.org/dc/terms/>
-PREFIX void: <http://rdfs.org/ns/void#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX void: <http://rdfs.org/ns/void#>
 
-select * where {
-?x a void:Dataset.
-?x void:vocabulary ?y.
+SELECT ?description
+WHERE {
+  ?x a void:Dataset ;
+     dcterms:description ?description .
 }
 `

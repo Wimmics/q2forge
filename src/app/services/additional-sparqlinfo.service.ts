@@ -52,7 +52,7 @@ export class AdditionalSPARQLInfoService {
 
     const params = {
       query: sparqlQuery,
-      format: 'application/json',
+      // format: 'application/json',
     };
 
     return this.http.get<any>(sparqlEndpoint, { headers, params });
@@ -66,7 +66,7 @@ export class AdditionalSPARQLInfoService {
 
     const params = {
       query: sparqlQuery,
-      format: 'application/json',
+      // format: 'application/json',
     };
 
     return this.http.get<any>(sparqlEndpoint, { headers, params });

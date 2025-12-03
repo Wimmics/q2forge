@@ -1,6 +1,6 @@
 const SERVER = "https://gen2kgbot.i3s.unice.fr"
 export const SPARQL_ENDPOINT_URI = `${SERVER}/corese`
-export const API_BASE = `${SERVER}/api/q2forge_dev`
+export const API_BASE = `${SERVER}/api/q2forge`
 export const LOGIN_ENDPOINT = `${API_BASE}/token`
 export const SIGN_UP_ENDPOINT = `${API_BASE}/sign-up`
 export const USER_DATA_ENDPOINT = `${API_BASE}/me`

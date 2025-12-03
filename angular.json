@@ -19,7 +19,7 @@
           "options": {
             "browser": "src/main.ts",
             "outputPath": {
-              "base": "dist/q2forge_dev",
+              "base": "dist/q2forge",
               "browser": ""
             },
             "index": "src/index.html",

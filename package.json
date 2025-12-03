@@ -1,13 +1,13 @@
 {
   "name": "q2forge",
-  "version": "1.0",
+  "version": "2.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "dc": "ng build --base-href=/q2forge_dev/ --deploy-url=/q2forge_dev/ --configuration=production"
+    "dc": "ng build --base-href=/q2forge/ --deploy-url=/q2forge/ --configuration=production"
   },
   "private": true,
   "dependencies": {
