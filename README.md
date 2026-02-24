@@ -27,6 +27,10 @@ The following diagram shows the pipeline and how Q²Forge integrates with other 
 
 [![Q²Forge full video](/public/images/q2forge_thumbnail.png)](https://youtu.be/I3w-jmZRJII)
 
+### Conference Presentation (K-CAP 2025)
+
+[![Q²Forge K-CAP Presentation](/public/images/q2forge_kcap_presentation.png)](https://youtu.be/RZbSCbMr1es)
+
 
 ## Run locally
 
@@ -67,16 +71,23 @@ See the [LICENSE file](./LICENSE).
 
 ## Cite this work
 
-Yousouf TAGHZOUTI, Franck MICHEL, Tao JIANG, Louis-Félix NOTHIAS, Fabien GANDON (2025). **Q²Forge**. <https://github.com/Wimmics/q2forge> 
+Yousouf Taghzouti, Franck Michel, Tao Jiang, Louis Felix Nothias, and Fabien Gandon. 2025. Q²Forge: Minting Competency Questions and SPARQL Queries for Question-Answering Over Knowledge Graphs. In Proceedings of the 13th Knowledge Capture Conference 2025 (K-CAP '25). Association for Computing Machinery, New York, NY, USA, 74–81. https://doi.org/10.1145/3731443.3771350
 
 
 <details>
 <summary>See BibTex</summary>
-@software{taghzouti_q2forge:2025,
-    author = {TAGHZOUTI, Yousouf and MICHEL, Franck and JIANG, Tao and NOTHIAS, Louis-Félix , and GANDON Fabien},
-    title = {{Q²Forge}},
-    url = {https://github.com/Wimmics/q2forge},
-    version = {1.0},
-    year = {2025}
+@inproceedings{10.1145/3731443.3771350,
+author = {Taghzouti, Yousouf and Michel, Franck and Jiang, Tao and Nothias, Louis Felix and Gandon, Fabien},
+title = {Q²Forge: Minting Competency Questions and SPARQL Queries for Question-Answering Over Knowledge Graphs},
+year = {2025},
+isbn = {9798400718670},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+url = {https://doi.org/10.1145/3731443.3771350},
+doi = {10.1145/3731443.3771350},
+booktitle = {Proceedings of the 13th Knowledge Capture Conference 2025},
+pages = {74–81},
+numpages = {8},
+series = {K-CAP '25}
 }
 </details>

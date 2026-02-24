@@ -16,6 +16,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 export class HomeComponent implements OnInit {
 
   scenariosSchema: GraphSchema[] | undefined;
+
+  safeKCAPVideoURL?: SafeResourceUrl;
+  private KCAPVideoURL: string = 'https://www.youtube.com/embed/RZbSCbMr1es';
+
   safeFullVideoURL?: SafeResourceUrl;
   private fullVideoURL: string = 'https://www.youtube.com/embed/I3w-jmZRJII';
 
@@ -44,6 +48,7 @@ export class HomeComponent implements OnInit {
     this.safeTeaserVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.teaserVideoURL);
 
     this.safeFullVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.fullVideoURL);
+    this.safeKCAPVideoURL = this._sanitizer.bypassSecurityTrustResourceUrl(this.KCAPVideoURL);
   }
 
   scrollToFragment(fragment: string) {
