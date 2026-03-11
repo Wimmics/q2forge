@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,12 +11,11 @@ import { ChatMessage } from '../../models/chat-message';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatDropzone } from '@ngx-dropzone/material';
 import { MatDialog } from '@angular/material/dialog';
 import { QuestionAnswererConfigDialog } from '../../dialogs/question-answerer-config-dialog/question-answerer-config-dialog';
 import { QuestionAnswererConfig } from '../../models/question-answerer-config';
-import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables';
 import { toStringMarkdown } from '../../models/judge-state';
 import { map, Observable, startWith } from 'rxjs';
 import { MatChipRow } from '@angular/material/chips';
@@ -28,9 +27,15 @@ import { isCompetencyQuestion, isCompetencyQuestionArray } from '../../models/co
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ExtractCodeBlocksService } from '../../services/extract-code-blocks.service';
 import { DialogService } from '../../services/dialog.service';
-import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie } from '../../models/cookie-items';
-import { CookieManagerService } from '../../services/cookie-manager.service';
+import { LocalStorageManagerService } from '../../services/localstorage-manager.service';
+import { DEFAULT_ANSWER_QUESTION } from '../../services/predefined-variables-commun';
+import { UserService } from '../../services/user.service';
+import { User } from '../../models/user-data';
+import { v4 as uuidv4 } from 'uuid';
+import { ConfigManagerService } from '../../services/config-manager.service';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-sparql-query-generator-executor',
@@ -38,12 +43,12 @@ import { CookieManagerService } from '../../services/cookie-manager.service';
     MatInputModule, MatIconModule, ReactiveFormsModule, MatButtonModule, MatSelectModule, MarkdownComponent,
     FormsModule, JsonPipe, MatTooltipModule, MatExpansionModule, RouterModule, MatAutocompleteModule, AsyncPipe,
     MatDropzone, MatChipRow, ReactiveFormsModule, MatSlideToggleModule, MatFormFieldModule, MatInputModule,
-    MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule
+    MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule, FontAwesomeModule
   ],
   templateUrl: './sparql-query-generator-executor.component.html',
   styleUrl: './sparql-query-generator-executor.component.scss'
 })
-export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
+export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewInit {
 
   model = {
     question: ""
@@ -57,20 +62,36 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   errorLLMAnswer = '';
 
   chat_messages: ChatMessage[] = [];
+  chat_id: string = ''
 
   expandAllMessages = true;
 
   questionExample = DEFAULT_ANSWER_QUESTION;
 
+  activeConfig = signal(false)
+  faLightbulb = faLightbulb
+
   constructor(private answerQuestionService: AnswerQuestionService,
     private extractCodeBlocksService: ExtractCodeBlocksService,
     private dialogService: DialogService,
-    private cookieService: CookieService,
-    private cookieManagerService: CookieManagerService) {
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private configManagerService: ConfigManagerService,
+    private localStorageManagerService: LocalStorageManagerService) {
+  }
+
+  ngAfterViewInit(): void {
+    this.dialogService.notifyUser("Warning", "The chat will be stored in your user history that you can access and delete at any time. Please do not use any sensitive data in the chat.");
+  }
+  showActivateConfigDialog() {
+    this.dialogService.activateConfig()
   }
 
   ask_question() {
     if (this.question_fc.value && this.currentConfig) {
+
+      this.chat_id = uuidv4()
+
       this.workflowRunning = true;
       this.errorLLMAnswer = '';
       this.chat_messages.push(
@@ -83,7 +104,15 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
       this.answerQuestionService.answer_question(
         this.currentConfig,
         this.question_fc.value!,
-      ).then(response => {
+      ).then(async response => {
+        if (response.status === 403) {
+          const errorBody = await response.json();
+          this.dialogService.notifyUser('403 Forbidden', errorBody.detail);
+        }
+        else if (!response.ok) {
+          this.dialogService.notifyUser('Error', "An error occurred while answering the questions: " + response.statusText);
+        }
+
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
         let buffer = ''; // Accumulate stream chunks
@@ -100,6 +129,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
                 "eventType": "end_of_conversation"
               });
               this.checkLlmMessagesWithSPARQLCodeBlock();
+              this.updateUserSPARQLChats();
               return;
             }
 
@@ -222,6 +252,13 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
         });
     }
   }
+  updateUserSPARQLChats() {
+    this.userService.addASPARQLChat(this.chat_id, this.chat_messages).subscribe({
+      error: (error: any) => {
+        this.dialogService.notifyUser("SPARQL Chat", "Error in updating the chat: " + error?.error?.detail);
+      }
+    });
+  }
 
   extractDataFromStreamPart(data: any, node: string): string {
 
@@ -293,14 +330,14 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
   readonly questionAnswererConfigDialog = inject(MatDialog);
 
   currentConfig: QuestionAnswererConfig = {
-    scenario_id: "7",
+    scenario_id: "1",
     text_embedding_model: "nomic-embed-text_faiss@local",
-    ask_question_model: "llama-3_3-70B@ovh",
-    validate_question_model: "llama-3_3-70B@ovh",
-    generate_query_model: "llama-3_3-70B@ovh",
-    judge_query_model: "llama-3_3-70B@ovh",
-    judge_regenerate_query_model: "llama-3_3-70B@ovh",
-    interpret_results_model: "llama-3_3-70B@ovh"
+    ask_question_model: "deepseek-chat@deepseek",
+    validate_question_model: "deepseek-chat@deepseek",
+    generate_query_model: "deepseek-chat@deepseek",
+    judge_query_model: "deepseek-chat@deepseek",
+    judge_regenerate_query_model: "deepseek-chat@deepseek",
+    interpret_results_model: "deepseek-chat@deepseek"
   };
 
   setConfiguration() {
@@ -332,22 +369,50 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     );
 
     this.setQuestionsFromCookie();
+
+    this.route.queryParamMap.subscribe(params => {
+      const chatId = params.get('chat_id');
+      if (chatId) {
+        this.chat_id = chatId
+        this.userService.getUserDataSub().subscribe((user: User) => {
+          this.chat_messages = user.sparql_chats?.find((chat) => chat._id === chatId)?.messages || [];
+          this.checkLlmMessagesWithSPARQLCodeBlock();
+        });
+
+        this.userService.getUserData();
+      } else {
+        this.chat_messages = [];
+      }
+
+    });
+
+    this.userService.getUserDataSub().subscribe((user: User) => {
+      if (user.active_config_id) {
+        this.activeConfig.set(true)
+      } else {
+        this.activeConfig.set(false)
+      }
+    });
+    this.userService.getUserData()
+
+    this.configManagerService.getActiveConfiguration();
   }
 
   setQuestionsFromCookie() {
 
     this.uploaded_questions = []
 
-    if (this.cookieService.check('questions')) {
+    let questionsString = localStorage.getItem('questions')
+    if (questionsString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('questions'));
+        let cookie = JSON.parse(questionsString);
         if (isQuestionsCookie(cookie)) {
           this.uploaded_questions.push(...cookie.questions.map((q) => q.question).filter((q) => !this.uploaded_questions.includes(q)))
         } else {
-          this.cookieService.delete('questions');
+          localStorage.removeItem('questions');
         }
       } catch (e) {
-        this.cookieService.delete('questions');
+        localStorage.removeItem('questions');
       }
     }
   }
@@ -401,12 +466,12 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
           let obj = JSON.parse(text)
           if (isCompetencyQuestion(obj) && !this.uploaded_questions.includes(obj.question)) {
             updated = true
-            this.cookieManagerService.addQuestionsToCookies([obj]);
+            this.localStorageManagerService.addQuestionsToLocalStorage([obj]);
             this.setQuestionsFromCookie();
           }
           else if (isCompetencyQuestionArray(obj)) {
             updated = true
-            this.cookieManagerService.addQuestionsToCookies(obj);
+            this.localStorageManagerService.addQuestionsToLocalStorage(obj);
             this.setQuestionsFromCookie();
           } else {
             this.dialogService.notifyUser("Questions upload", `Invalid JSON format`)
@@ -440,3 +505,4 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit {
     this.dialogService.checkCurrentQuestions();
   }
 }
+

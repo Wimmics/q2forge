@@ -41,23 +41,43 @@ table {
     width: 75%
 }
 
-.endpoint_div{
+.endpoint_div {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 10px;
 }
 
-.form-actions {
-    display: flex;
-    justify-content: center;
-    align-items: baseline;
-    gap: 10px;
-}
-
-.download-buttons{
+.download-buttons {
     display: flex;
     justify-content: center;
     gap: 10px;
     margin: 8px;
 }
+
+.activate-config-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 16px;
+}
+
+.bulb-icon {
+    margin-left: 16px;
+    font-size: 32px;
+    // animation: fontPulse 1s ease-in-out infinite alternate;
+    border: 2px solid;
+    border-radius: 8px;
+    padding: 8px;
+    // cursor: pointer;
+}
+
+// @keyframes fontPulse {
+//   from {
+//     color: #3b79ff;
+//   }
+//   to {
+//     color: #000000;
+//   }
+// }

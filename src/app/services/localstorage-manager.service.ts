@@ -1,35 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { DEFAULT_CONFIG_ENDPOINT, DEFAULT_COOKIE_EXPIRATION_DAYS, GRAPH_SCHEMA_ENDPOINT } from './predefined-variables';
-import { Seq2SeqModel } from '../models/seq2seqmodel';
-import { TextEmbeddingModel } from '../models/text-embedding-model';
-import { firstValueFrom, Observable, of } from 'rxjs';
-import { GraphSchema } from '../models/graph-schema';
-import { CookieService } from 'ngx-cookie-service';
 import { isQuestionsCookie, QuestionsCookie } from '../models/cookie-items';
 import { DialogService } from './dialog.service';
 import { CompetencyQuestion } from '../models/competency-question';
+import { DEFAULT_COOKIE_EXPIRATION_DAYS } from './predefined-variables-commun';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class CookieManagerService {
+export class LocalStorageManagerService {
 
-  constructor(private cookieService: CookieService, private dialogService: DialogService) {
+  constructor(private dialogService: DialogService) {
 
   }
-
-  addQuestionsToCookies(competencyQuestions: CompetencyQuestion[]) {
+  addQuestionsToLocalStorage(competencyQuestions: CompetencyQuestion[]) {
 
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
 
     let questionCookie: QuestionsCookie;
 
-    if (this.cookieService.check('questions')) {
+    
+    let questionCookieString = localStorage.getItem('questions');
+    if (questionCookieString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('questions'));
+        let cookie = JSON.parse(questionCookieString);
 
         if (isQuestionsCookie(cookie)) {
           competencyQuestions.forEach(question => {
@@ -43,14 +38,14 @@ export class CookieManagerService {
           cookie.expirationDate = expirationDate.toISOString();
           questionCookie = cookie;
         } else {
-          this.cookieService.delete('questions');
+          localStorage.removeItem('questions');
           questionCookie = {
             questions: competencyQuestions,
             expirationDate: expirationDate.toISOString()
           };
         }
       } catch (e) {
-        this.cookieService.delete('questions');
+        localStorage.removeItem('questions');
 
         questionCookie = {
           questions: competencyQuestions,
@@ -64,7 +59,7 @@ export class CookieManagerService {
       };
     }
 
-    this.cookieService.set('questions', JSON.stringify(questionCookie), { expires: 7 });
+    localStorage.setItem('questions', JSON.stringify(questionCookie));
 
   }
 }

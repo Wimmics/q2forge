@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { KG_DESCRIPTION_QUERY_EXTRACTION, KG_VOCABULARIES_QUERY_EXTRACTION } from './predefined-variables';
+import { KG_VOCABULARIES_QUERY_EXTRACTION, KG_DESCRIPTION_QUERY_EXTRACTION } from './predefined-variables-commun';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +52,7 @@ export class AdditionalSPARQLInfoService {
 
     const params = {
       query: sparqlQuery,
-      format: 'application/json',
+      // format: 'application/json',
     };
 
     return this.http.get<any>(sparqlEndpoint, { headers, params });
@@ -66,7 +66,7 @@ export class AdditionalSPARQLInfoService {
 
     const params = {
       query: sparqlQuery,
-      format: 'application/json',
+      // format: 'application/json',
     };
 
     return this.http.get<any>(sparqlEndpoint, { headers, params });

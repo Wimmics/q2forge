@@ -15,7 +15,7 @@
     .container {
         width: 100%;
     }
-    
+
 }
 
 .toolbar {
@@ -27,6 +27,12 @@
 .toolbar-left {
     display: flex;
     align-items: center;
+}
+
+.toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 h1.example-app-name {
@@ -55,4 +61,44 @@ h1.example-app-name {
     border: 1px dashed black;
     margin: 8px;
     width: 95%;
+    border-radius: 16px;
+}
+
+.sparql-generator-click-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 32px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 85%;
+}
+
+.sparql-generator-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 32px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 85%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: rgb(110, 110, 110) 2px solid;
+    border-radius: 8px;
+}
+
+
+
+.warn-mini-fab-button {
+    display: none;
+    color: rgb(240, 233, 233);
+    background-color: rgb(228, 31, 31);
+    margin-right: 8px;
+}
+
+
+.sparql-generator-item:hover .warn-mini-fab-button {
+  display: inline-block;
 }

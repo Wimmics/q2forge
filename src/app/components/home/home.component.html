@@ -18,15 +18,15 @@
             <div class="feature-container">
                 <app-flip-card description="KG Configuration and Pre-processing" icon="settings"
                     tryLink="kg-configuration-creation"
-                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/kg-creation.md"></app-flip-card>
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/master/doc/kg-creation.md"></app-flip-card>
                 <app-flip-card description="Competency Question Generator" icon="create"
                     tryLink="competency-question-generator"
-                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/competency-question-generation.md"></app-flip-card>
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/master/doc/competency-question-generation.md"></app-flip-card>
                 <app-flip-card description="SPARQL Query Generator" icon="question_answer"
-                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/sparql-query-generation.md"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/master/doc/sparql-query-generation.md"
                     tryLink="sparql-query-generator"></app-flip-card>
                 <app-flip-card description="SPARQL Query Refinement" icon="check_circle_outline"
-                    readMoreLink="https://github.com/Wimmics/q2forge/blob/main/doc/sparql-query-refinement.md"
+                    readMoreLink="https://github.com/Wimmics/q2forge/blob/master/doc/sparql-query-refinement.md"
                     tryLink="sparql-query-refinement"></app-flip-card>
             </div>
         </div>
@@ -39,6 +39,34 @@
 
             <h4>Q²Forge Full Tutorial</h4>
             <iframe class="video-player" [src]="safeFullVideoURL" frameborder="0" allowfullscreen></iframe>
+
+            <h4>Conference Presentation (K-CAP 2025)</h4>
+            <iframe class="video-player" [src]="safeKCAPVideoURL" frameborder="0" allowfullscreen></iframe>
+        </div>
+
+        <div>
+            <h2>Papers</h2>
+            <ul>
+                <li>
+                    <i>Yousouf Taghzouti, Franck Michel, Tao Jiang, Louis-Félix Nothias, Fabien Gandon</i>. <b>Q²Forge:
+                        Minting Competency Questions and SPARQL Queries for Question-Answering Over Knowledge
+                        Graphs.</b> K-CAP '25 - Knowledge Capture Conference 2025, Dec 2025, Dayton, OH, United States.
+                    <a target="_blank" href="https://dx.doi.org/10.1145/3731443.3771350">[Paper]</a>
+                </li>
+                <li>
+                    <i>Yousouf Taghzouti, Franck Michel, Tao Jiang, Louis-Felix Nothias, Fabien Gandon</i>. <b>User
+                        Interface and Agent Interface for Online Generation of Knowledge Graph’s Competency Questions
+                        and Question-Query Training Sets</b>. RAGE-KG 2025: The Second International Workshop on
+                    Retrieval-Augmented Generation Enabled by Knowledge Graphs, co-located with ISWC 2025, Nov 2025,
+                    Nara, Japan. pp.153-159. <a target="_blank" href="https://hal.science/hal-05289962v1">[Paper]</a>
+                </li>
+                <li>
+                    <i>Yousouf Taghzouti, Franck Michel, Tao Jiang, Louis-Felix Nothias, Fabien Gandon</i>. <b>Building
+                        Questions and Queries Datasets for Knowledge Graphs: a Demo of Q²Forge</b> . ISWC 2025 - 24th
+                    International Semantic Web Conference, Nov 2025, Nara, Japan. pp.408-413. <a target="_blank"
+                        href="https://hal.science/hal-05289986v1">[Paper]</a>
+                </li>
+            </ul>
         </div>
 
 
@@ -46,63 +74,60 @@
 
         <h2>Available Scenarios</h2>
 
+        @for (item of scenariosSchema; track $index) {
+        @if (item.scenario_id=="1") {
         <div id="scenario_1" class="scenario">
             <h3>Scenario 1: Basic Question Answering</h3>
             <p>In this scenario, the LLM answers the question directly without querying the knowledge graph.</p>
-            @if (scenariosSchema[0]) {
-            <markdown mermaid [data]="scenariosSchema[0].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
+        }
 
+        @if (item.scenario_id=="2") {
         <div id="scenario_2" class="scenario">
             <h3>Scenario 2: Generating SPARQL Query Without Context</h3>
             <p>The model generates a SPARQL query based on the question alone.</p>
-            @if (scenariosSchema[1]) {
-            <markdown mermaid [data]="scenariosSchema[1].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
-
+        }
+        @if (item.scenario_id=="3") {
         <div id="scenario_3" class="scenario">
             <h3>Scenario 3: SPARQL Query with Class Context</h3>
             <p>The model generates a SPARQL query using related classes as context.</p>
-            @if (scenariosSchema[2]) {
-            <markdown mermaid [data]="scenariosSchema[2].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
+        }
+        @if (item.scenario_id=="4") {
 
         <div id="scenario_4" class="scenario">
             <h3>Scenario 4: Adding Properties Context</h3>
             <p>In this scenario, the model incorporates property descriptions into the context.</p>
-            @if (scenariosSchema[3]) {
-            <markdown mermaid [data]="scenariosSchema[3].graph_schema"> </markdown>
-            }
-        </div>
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
+        </div>}
 
+        @if (item.scenario_id=="5") {
         <div id="scenario_5" class="scenario">
             <h3>Scenario 5: Adding Retry Mechanism</h3>
             <p>If the generated query is invalid, the model retries by modifying the query.</p>
-            @if (scenariosSchema[4]) {
-            <markdown mermaid [data]="scenariosSchema[4].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
-
+        }
+        @if (item.scenario_id=="6") {
         <div id="scenario_6" class="scenario">
             <h3>Scenario 6: Adding Example Queries for Context</h3>
             <p>Example SPARQL queries related to the question are provided to improve accuracy.</p>
-            @if (scenariosSchema[5]) {
-            <markdown mermaid [data]="scenariosSchema[5].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
-
+        }
+        @if (item.scenario_id=="7") {
         <div id="scenario_7" class="scenario">
             <h3>Scenario 7: Adding SPARQL judge capabilities</h3>
             <p>SPARQL Judge is used after verifying the correct syntax of the generated SPARQL query to improve
                 accuracy.</p>
-            @if (scenariosSchema[6]) {
-            <markdown mermaid [data]="scenariosSchema[6].graph_schema"> </markdown>
-            }
+            <markdown mermaid [data]="item.graph_schema"> </markdown>
         </div>
-
+        }
+        }
         }@else {
         <div class="loading-container">
             <mat-spinner></mat-spinner>

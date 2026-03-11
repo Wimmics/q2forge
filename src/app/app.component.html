@@ -6,7 +6,22 @@
       <h1 class="app-name">Q²Forge</h1>
     </div>
 
-    <div>
+    <div class="toolbar-right">
+      @if(userAuthenticated){
+      <button mat-raised-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Log out
+      </button>
+      }@else {
+      <a mat-raised-button routerLink="/login">
+        <mat-icon>login</mat-icon>
+        Log in
+      </a>
+      <a mat-raised-button routerLink="/sign-up">
+        <mat-icon>launch</mat-icon>
+        Sign Up
+      </a>
+      }
       <a href="https://github.com/Wimmics/q2forge" class="fa-icon-link" target="_blank">
         <fa-icon [icon]="faSquareGithub" size="2xl"> </fa-icon>
       </a>
@@ -14,12 +29,54 @@
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container" [style.marginTop.px]="isMobile() ? 56 : 0">
-    <mat-sidenav class="sidenav" [opened]="false" #snav [mode]="isMobile() ? 'over' : 'side'"
+    <mat-sidenav class="sidenav" [opened]="true" #snav [mode]="isMobile() ? 'over' : 'side'"
       [fixedInViewport]="isMobile()" fixedTopGap="56">
       <mat-nav-list>
-        @for (nav of navItem; track nav) {
-        <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}"> <mat-icon>{{nav.icon}}</mat-icon>
-          {{nav.name}}</a>
+        @for (nav of navItems; track nav) {
+        @if (!nav.requireUserAuthenticated || userAuthenticated) {
+
+        @if (nav.route === '/sparql-query-generator') {
+        <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}"
+          (click)="queryGeneratorExpanded = !queryGeneratorExpanded">
+          <mat-icon>{{nav.icon}}</mat-icon>
+          <span>
+            {{nav.name}}
+          </span>
+          <mat-icon [@indicatorRotate]="queryGeneratorExpanded ? 'expanded': 'collapsed'">
+            expand_more
+          </mat-icon>
+        </a>
+
+        @if (queryGeneratorExpanded) {
+        <div>
+          <button mat-raised-button class="sparql-generator-item" routerLink="/sparql-query-generator">
+            <mat-icon>add</mat-icon>
+            New chat
+          </button>
+          <mat-divider></mat-divider>
+
+          @for (chat of userData().sparql_chats; track chat) {
+          <div class="sparql-generator-item" routerLink="/sparql-query-generator" [queryParams]="{chat_id: chat._id}">
+            <a mat-list-item>
+              {{chat.messages[0].content}}
+            </a>
+            <button mat-mini-fab class="warn-mini-fab-button" (click)="removeChatItem(chat)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+          }
+        </div>
+        }}
+        @else {
+        <a class="sidenav-item" mat-list-item routerLink="{{nav.route}}">
+          <mat-icon>{{nav.icon}}</mat-icon>
+          <span>
+            {{nav.name}}
+          </span>
+        </a>
+        }
+
+        }
         }
       </mat-nav-list>
     </mat-sidenav>

@@ -7,7 +7,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CookieService } from 'ngx-cookie-service';
 import { ExportedFormat } from '../../models/exported-format';
 import { MatTableModule } from '@angular/material/table';
 import { CompetencyQuestion } from '../../models/competency-question';
@@ -22,7 +21,7 @@ import { isQuestionsCookie, QuestionsCookie } from '../../models/cookie-items';
 })
 export class AvailableQuestionsDialog implements OnInit {
 
-  constructor(private cookieService: CookieService) { }
+  constructor() { }
 
   availableFormats: ExportedFormat[] = [
     { name: 'CSV', extension: 'csv' },
@@ -38,20 +37,22 @@ export class AvailableQuestionsDialog implements OnInit {
     expirationDate: ""
   }
 
-  displayedColumns: string[] = ['question','complexity','tags', 'actions'];
+  displayedColumns: string[] = ['question', 'complexity', 'tags', 'actions'];
 
   ngOnInit() {
-    // Check if the cookie exists and is valid
-    if (this.cookieService.check('questions')) {
+
+    let questionsString = localStorage.getItem('questions');
+
+    if (questionsString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('questions'));
+        let cookie = JSON.parse(questionsString);
         if (isQuestionsCookie(cookie)) {
           this.questionsCookie = cookie;
         } else {
-          this.cookieService.delete('questions');
+          localStorage.removeItem('questions');
         }
       } catch (e) {
-        this.cookieService.delete('questions');
+        localStorage.removeItem('questions');
       }
     }
 
@@ -87,9 +88,11 @@ export class AvailableQuestionsDialog implements OnInit {
     window.URL.revokeObjectURL(url);
   }
 
-  removeQuestion(item: CompetencyQuestion) {
-    this.questionsCookie.questions.splice(this.questionsCookie.questions.indexOf(item), 1);
-    this.cookieService.set('questions', JSON.stringify(this.questionsCookie), new Date(this.questionsCookie.expirationDate));
-    this.questionsCookie = JSON.parse(this.cookieService.get('questions'));
+  removeQuestion(competencyQuestion: CompetencyQuestion) {
+    this.questionsCookie.questions = this.questionsCookie.questions.filter(
+      (item) => competencyQuestion.question !== item.question
+    );
+    localStorage.setItem('questions', JSON.stringify(this.questionsCookie));
+
   }
 }

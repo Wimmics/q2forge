@@ -1,0 +1,52 @@
+<div>
+    <div class="page-header">Sign Up</div>
+
+    <form class="form" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+        <mat-form-field class="full-width">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username">
+            @if (signUpForm.get('username')?.hasError('required')) {
+            <mat-error>This field is <strong>required</strong></mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" [type]="showPassword ? 'text' : 'password'">
+            <mat-icon matSuffix (click)="togglePasswordVisibility()">remove_red_eye</mat-icon>
+            @if (signUpForm.get('password')?.hasError('required')) {
+            <mat-error>This field is <strong>required</strong></mat-error>
+            }
+            @if (signUpForm.get('password')?.hasError('minlength')) {
+            <mat-error>The password must have at least
+                <strong>{{signUpForm.get('password')?.getError('minlength').requiredLength}}
+                    characters</strong></mat-error>
+            }
+            @if (signUpForm.get('password')?.hasError('mismatch')) {
+            <mat-error>The two passwords are not <strong>matching</strong></mat-error>
+            }
+        </mat-form-field>
+        <mat-form-field class="full-width">
+            <mat-label>Retype Password</mat-label>
+            <input matInput formControlName="retype-password" [type]="showPassword ? 'text' : 'password'">
+            <mat-icon matSuffix (click)="togglePasswordVisibility()">remove_red_eye</mat-icon>
+
+            @if (signUpForm.get('retype-password')?.hasError('required')) {
+            <mat-error>This field is <strong>required</strong></mat-error>
+            }
+            @if (signUpForm.get('retype-password')?.hasError('mismatch')) {
+            <mat-error>The two passwords are not <strong>matching</strong></mat-error>
+            }
+        </mat-form-field>
+        <div class="form-actions">
+            <button mat-raised-button type="submit">
+                <mat-icon>person_add</mat-icon>
+                Sign Up
+            </button>
+            <span>Or</span>
+            <a mat-raised-button routerLink="/login">
+                <mat-icon>login</mat-icon>
+                Go to Login
+            </a>
+        </div>
+    </form>
+</div>

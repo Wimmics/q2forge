@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ExportDatasetDialog } from '../dialogs/export-dataset-dialog/export-dataset-dialog';
 import { AvailableQuestionsDialog } from '../dialogs/available-questions-dialog/available-questions-dialog';
 import { AbstractControl, FormArray, FormGroup } from '@angular/forms';
+import { ActivateConfigDialog } from '../dialogs/activate-config-dialog/activate-config-dialog';
 
 
 @Injectable({
@@ -63,5 +64,13 @@ export class DialogService {
         }
 
         return errors;
+    }
+
+    activateConfig() {
+        const dialogRef = this.dialog.open(ActivateConfigDialog).afterClosed().subscribe((result) => {
+            if (result) {
+                window.location.reload();
+            }
+        });
     }
 }

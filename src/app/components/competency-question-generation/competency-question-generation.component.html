@@ -1,6 +1,22 @@
 <div>
     <div class="page-header">Competency Question Generator</div>
 
+    <div class="activate-config-container">
+        <button mat-raised-button (click)="showActivateConfigDialog()"
+            matTooltip="Select the configuration of a KG to use in this task from the preconfigured ones."
+            matTooltipPosition="above">
+            <mat-icon>edit</mat-icon>
+            Use an Existing Configuration
+        </button>
+
+        @if (!formGroup.get("kg_description")?.value) {
+            <fa-icon class="bulb-icon" [icon]="faLightbulb"
+            matTooltip="Choose the configuration of a KG to use in this task from the preconfigured ones."
+            matTooltipPosition="above"></fa-icon>
+        }
+    </div>
+
+
     <form class="form" [formGroup]="formGroup">
         <mat-form-field class="full-width" matTooltip="KG textual description (used in prompts)"
             matTooltipPosition="above">
@@ -68,18 +84,20 @@
             </mat-slide-toggle>
 
             <button mat-raised-button (click)="generateQuestionWithLLM()" matTooltip="Start the generation process"
-                matTooltipPosition="above">
+                matTooltipPosition="above"
+                [disabled]="!formGroup.valid"
+                >
                 <mat-icon>create</mat-icon>
                 Generate Questions
             </button>
             <button mat-raised-button (click)="extractKGSchema()"
-                matTooltip="Start the process of extracting the KG schema from the indicated endpoint URI. This will use the void.ttl file to extract the used ontologies and descriptions."
+                matTooltip="Extract the used vocabularies and KG description from the indicated endpoint URI"
                 matTooltipPosition="above"
                 [disabled]="!formGroup.get('endpoint')?.valid || !formGroup.get('endpoint')?.value">
                 <mat-icon>space_bar</mat-icon>
-                Extract KG Schema
+                Extract Used Vocabularies
             </button>
-            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset all the fields"
+            <button mat-raised-button class="warning" (click)="reset()" matTooltip="Reset all the fields. Set them to the current used configuration values. If there are no used configuration, set them to empty"
                 matTooltipPosition="above">
                 <mat-icon>restore</mat-icon>
                 Reset

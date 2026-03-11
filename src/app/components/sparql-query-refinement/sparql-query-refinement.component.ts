@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,15 +17,17 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MarkdownComponent } from 'ngx-markdown';
-import { DEFAULT_SPARQL_JUDGE_QUERY, SPARQL_ENDPOINT_URI, DEFAULT_JUDGE_QUESTION, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../../services/predefined-variables';
+import { SPARQL_ENDPOINT_URI } from '../../services/predefined-variables';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { ActivatedRoute } from '@angular/router';
-import { CookieService } from 'ngx-cookie-service';
 import { DataSetCookie, isDataSetCookie } from '../../models/cookie-items';
 import { DialogService } from '../../services/dialog.service';
 import Yasgui from "@triply/yasgui/";
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Seq2SeqModel } from '../../models/seq2seqmodel';
+import { DEFAULT_JUDGE_QUESTION, DEFAULT_SPARQL_JUDGE_QUERY, DEFAULT_COOKIE_EXPIRATION_DAYS } from '../../services/predefined-variables-commun';
+import { KGConfiguration } from '../../models/kg-configuration';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -38,16 +40,7 @@ import { Seq2SeqModel } from '../../models/seq2seqmodel';
   templateUrl: './sparql-query-refinement.component.html',
   styleUrl: './sparql-query-refinement.component.scss'
 })
-export class SPARQLQueryRefinementComponent implements AfterViewInit {
-
-  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
-    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
-    private llmJudgeService: LLMJudgeService,
-    private configManagerService: ConfigManagerService,
-    private route: ActivatedRoute,
-    private cookieService: CookieService,
-    private dialogService: DialogService) { }
-
+export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['uri', 'info'];
   dataSource: SPARQLPartInfo[] = [];
@@ -71,6 +64,14 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
 
   yasgui?: Yasgui;
 
+  currentActiveConfigurationSub?: Subscription;
+
+  constructor(private sparqlExtractorQNService: SPARQLQNExtractorService,
+    private additionalSPARQLInfoService: AdditionalSPARQLInfoService,
+    private llmJudgeService: LLMJudgeService,
+    private configManagerService: ConfigManagerService,
+    private route: ActivatedRoute,
+    private dialogService: DialogService) { }
 
   ngAfterViewInit(): void {
 
@@ -108,12 +109,25 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
       });
     });
 
-    this.configManagerService.getSeq2SeqModels().then((data) => {
-      this.availableSeq2SeqModels = data;
-      this.model_config_id = this.availableSeq2SeqModels[0].configName;
-    });
   }
 
+  ngOnInit(): void {
+    this.currentActiveConfigurationSub = this.configManagerService.getCurrentActiveConfigurationSub().subscribe({
+      next: (config: KGConfiguration) => {
+        if (config.seq2seq_models) {
+          this.availableSeq2SeqModels = this.configManagerService.transformSeq2SeqModels(config.seq2seq_models);
+          this.model_config_id = this.availableSeq2SeqModels[0].configName;
+        }
+      }
+    });
+    this.configManagerService.getActiveConfiguration();
+  }
+
+  ngOnDestroy(): void {
+    if (this.currentActiveConfigurationSub) {
+      this.currentActiveConfigurationSub.unsubscribe();
+    }
+  }
   getQNamesContext() {
     let query = this.currentQuery;
 
@@ -298,7 +312,16 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
       this.llmAnswer = '';
       this.errorLLMAnswer = '';
       this.llmJudgeService.getLLMAnswer(this.model_config_id, this.question.value, query, this.dataSource)
-        .then(response => {
+        .then(async response => {
+
+          if (response.status === 403) {
+            const errorBody = await response.json();
+            this.dialogService.notifyUser('403 Forbidden', errorBody.detail);
+          }
+          else if (!response.ok) {
+            this.dialogService.notifyUser('Error', "An error occurred while judging the answer: " + response.statusText);
+          }
+
           const reader = response.body?.getReader();
           const decoder = new TextDecoder();
           let buffer = ''; // Accumulate stream chunks
@@ -423,9 +446,10 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + DEFAULT_COOKIE_EXPIRATION_DAYS);
 
-    if (this.cookieService.check('dataset')) {
+    let datasetString = localStorage.getItem('dataset')
+    if (datasetString) {
       try {
-        let cookie = JSON.parse(this.cookieService.get('dataset'));
+        let cookie = JSON.parse(datasetString);
         if (isDataSetCookie(cookie)) {
           if (!cookie.dataset.some(item => item.query === datasetItem.query && item.question === datasetItem.question)) {
             cookie.dataset.push(datasetItem);
@@ -436,14 +460,14 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
             return;
           }
         } else {
-          this.cookieService.delete('dataset');
+          localStorage.removeItem('dataset');
           datasetCookie = {
             dataset: [datasetItem],
             expirationDate: expirationDate.toISOString()
           };
         }
       } catch (e) {
-        this.cookieService.delete('dataset');
+        localStorage.removeItem('dataset');
 
         datasetCookie = {
           dataset: [datasetItem],
@@ -457,7 +481,7 @@ export class SPARQLQueryRefinementComponent implements AfterViewInit {
       };
     }
 
-    this.cookieService.set('dataset', JSON.stringify(datasetCookie), { expires: 7 });
+    localStorage.setItem('dataset', JSON.stringify(datasetCookie));
     this.exportDataset();
   }
 }
