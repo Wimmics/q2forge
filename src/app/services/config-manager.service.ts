@@ -146,12 +146,12 @@ export class ConfigManagerService {
 
     let postObservable = this.http.post<KGConfiguration>(ACTIVATE_CONFIG_ENDPOINT, config)
 
-    postObservable.subscribe({
-      next: (config: KGConfiguration) => {
-        this.currentActiveConfiguration = config;
-        this.currentActiveConfigurationSub.next(config);
-      },
-    });
+    // postObservable.subscribe({
+    //   next: (config: KGConfiguration) => {
+    //     this.currentActiveConfiguration = config;
+    //     this.currentActiveConfigurationSub.next(config);
+    //   },
+    // });
 
     return postObservable;
 

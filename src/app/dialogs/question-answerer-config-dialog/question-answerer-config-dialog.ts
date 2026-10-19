@@ -45,7 +45,9 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   init_scenario_schemas() {
     this.configManagerService.getScenariosSchema().then(response => {
+      // Sort ascending by id
       this.graphSchemas = response;
+      this.graphSchemas.sort((a, b) => parseInt(a.scenario_id) - parseInt(b.scenario_id));
     });
   }
 
