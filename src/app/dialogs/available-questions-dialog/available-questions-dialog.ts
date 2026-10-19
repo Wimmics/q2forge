@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import { isQuestionsCookie, QuestionsCookie } from '../../models/cookie-items';
   selector: 'app-available-questions-dialog',
   imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './available-questions-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './available-questions-dialog.scss'
 })
 export class AvailableQuestionsDialog implements OnInit {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -16,6 +16,7 @@ import { MatTableModule } from '@angular/material/table';
   selector: 'app-export-dataset-dialog',
   imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent],
   templateUrl: './export-dataset-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './export-dataset-dialog.scss'
 })
 export class ExportDatasetDialog implements OnInit {

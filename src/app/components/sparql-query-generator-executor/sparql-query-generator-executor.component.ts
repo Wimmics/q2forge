@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -46,6 +46,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule, FontAwesomeModule
   ],
   templateUrl: './sparql-query-generator-executor.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sparql-query-generator-executor.component.scss'
 })
 export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewInit {

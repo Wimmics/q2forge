@@ -11,16 +11,16 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^21.2.25",
+    "@angular/animations": "^22.2.3",
     "@angular/cdk": "^21.2.14",
-    "@angular/common": "^21.2.25",
-    "@angular/compiler": "^21.2.25",
-    "@angular/core": "^21.2.25",
-    "@angular/forms": "^21.2.25",
+    "@angular/common": "^22.2.3",
+    "@angular/compiler": "^22.2.3",
+    "@angular/core": "^22.2.3",
+    "@angular/forms": "^22.2.3",
     "@angular/material": "^21.2.14",
-    "@angular/platform-browser": "^21.2.25",
-    "@angular/platform-browser-dynamic": "^21.2.25",
-    "@angular/router": "^21.2.25",
+    "@angular/platform-browser": "^22.2.3",
+    "@angular/platform-browser-dynamic": "^22.2.3",
+    "@angular/router": "^22.2.3",
     "@fortawesome/angular-fontawesome": "^3.0.0",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@ngx-dropzone/cdk": "^21.1.0",
@@ -38,9 +38,9 @@
   },
   "devDependencies": {
     "@angular-builders/custom-webpack": "^21.1.0",
-    "@angular/build": "^21.2.27",
+    "@angular/build": "^22.2.3",
     "@angular/cli": "^21.2.27",
-    "@angular/compiler-cli": "^21.2.25",
+    "@angular/compiler-cli": "^22.2.3",
     "@types/jasmine": "~5.1.0",
     "@types/sparqljs": "^3.1.12",
     "dotenv-webpack": "^8.1.0",
@@ -50,6 +50,6 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.3"
+    "typescript": "~6.0.3"
   }
 }

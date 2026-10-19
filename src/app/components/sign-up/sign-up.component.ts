@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { JsonPipe } from '@angular/common';
   selector: 'app-sign-up',
   imports: [ReactiveFormsModule, FormsModule, MatFormFieldModule, MatIconModule, MatButtonModule, MatInputModule, RouterModule],
   templateUrl: './sign-up.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sign-up.component.scss'
 })
 export class SignUpComponent {

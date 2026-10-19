@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,6 +38,7 @@ import { Subscription } from 'rxjs';
     MatTooltipModule
   ],
   templateUrl: './sparql-query-refinement.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sparql-query-refinement.component.scss'
 })
 export class SPARQLQueryRefinementComponent implements OnInit, AfterViewInit {
