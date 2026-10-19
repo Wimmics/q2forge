@@ -13,12 +13,11 @@ import { RouterModule } from '@angular/router';
 import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { MarkdownComponent } from 'ngx-markdown';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-generic-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent],
   templateUrl: './generic-dialog.html',
   styleUrl: './generic-dialog.scss'
 })

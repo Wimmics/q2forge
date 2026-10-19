@@ -7,15 +7,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { MarkdownComponent } from 'ngx-markdown';
-import { CommonModule } from '@angular/common';
+
 import { DataSetCookie, DataSetItem, isDataSetCookie } from '../../models/cookie-items';
 import { ExportedFormat } from '../../models/exported-format';
 import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-export-dataset-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent],
   templateUrl: './export-dataset-dialog.html',
   styleUrl: './export-dataset-dialog.scss'
 })

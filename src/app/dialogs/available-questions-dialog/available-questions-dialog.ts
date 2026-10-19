@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { ExportedFormat } from '../../models/exported-format';
 import { MatTableModule } from '@angular/material/table';
 import { CompetencyQuestion } from '../../models/competency-question';
@@ -14,8 +14,7 @@ import { isQuestionsCookie, QuestionsCookie } from '../../models/cookie-items';
 
 @Component({
   selector: 'app-available-questions-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './available-questions-dialog.html',
   styleUrl: './available-questions-dialog.scss'
 })
