@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -7,16 +7,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterModule } from '@angular/router';
 import { MarkdownComponent } from 'ngx-markdown';
-import { CommonModule } from '@angular/common';
+
 import { DataSetCookie, DataSetItem, isDataSetCookie } from '../../models/cookie-items';
 import { ExportedFormat } from '../../models/exported-format';
 import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-export-dataset-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTableModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent],
   templateUrl: './export-dataset-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './export-dataset-dialog.scss'
 })
 export class ExportDatasetDialog implements OnInit {

@@ -103,7 +103,7 @@
                                 }
                             </mat-form-field>
                             <button mat-mini-fab class="warn-mini-fab-button"
-                                (click)="deletePrefix(prefixCtrl.get('key')?.value, $index)">
+                                (click)="deletePrefix($safeNavigationMigration(prefixCtrl.get('key')?.value), $index)">
                                 <mat-icon>delete</mat-icon>
                             </button>
                         </div>
@@ -175,15 +175,15 @@
                             </mat-form-field>
                             <div class="query-example-actions">
                                 <div class="refine-query-container">
-                                    <a mat-fab extended target="_blank" routerLink="/sparql-query-refinement" [queryParams]="{query: queryExamplesArray.at($index).get('query')?.value,
-                                         question: queryExamplesArray.at($index).get('question')?.value}">
+                                    <a mat-fab extended target="_blank" routerLink="/sparql-query-refinement" [queryParams]="{query: $safeNavigationMigration(queryExamplesArray.at($index).get('query')?.value),
+                                         question: $safeNavigationMigration(queryExamplesArray.at($index).get('question')?.value)}">
                                         <mat-icon>edit</mat-icon>
                                         Refine Query
                                     </a>
                                 </div>
                                 <button mat-mini-fab class="warn-mini-fab-button"
-                                    (click)="deleteQueryExample(queryExamplesCtrl.get('question')?.value,
-                                        queryExamplesCtrl.get('query')?.value)">
+                                    (click)="deleteQueryExample($safeNavigationMigration(queryExamplesCtrl.get('question')?.value),
+                                        $safeNavigationMigration(queryExamplesCtrl.get('query')?.value))">
                                     <mat-icon>delete</mat-icon>
                                 </button>
 

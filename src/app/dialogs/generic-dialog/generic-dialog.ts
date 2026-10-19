@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -13,13 +13,13 @@ import { RouterModule } from '@angular/router';
 import { GraphSchema } from '../../models/graph-schema';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { MarkdownComponent } from 'ngx-markdown';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-generic-dialog',
-  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule,
-    MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
+  imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule, MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent],
   templateUrl: './generic-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './generic-dialog.scss'
 })
 export class GenericDialog{

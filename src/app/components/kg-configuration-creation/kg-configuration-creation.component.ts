@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, Component, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -48,6 +48,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     RouterModule,
   ],
   templateUrl: './kg-configuration-creation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './kg-configuration-creation.component.scss'
 })
 export class KGConfigurationCreationComponent implements AfterViewInit {

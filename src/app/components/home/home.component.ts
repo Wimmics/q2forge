@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GraphSchema } from '../../models/graph-schema';
@@ -11,6 +11,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   selector: 'app-home',
   imports: [MarkdownComponent, MatProgressSpinner, FlipCardComponent],
   templateUrl: './home.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit {

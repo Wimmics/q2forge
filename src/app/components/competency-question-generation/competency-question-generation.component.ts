@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -35,6 +35,7 @@ import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
     MatChipsModule, MatIconModule, MatSlideToggleModule, MatSelectModule, MatCardModule, MatListModule, MarkdownComponent,
     JsonPipe, MatTooltipModule, FontAwesomeModule
   ], templateUrl: './competency-question-generation.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './competency-question-generation.component.scss'
 })
 export class CompetencyQuestionGeneratorComponent {

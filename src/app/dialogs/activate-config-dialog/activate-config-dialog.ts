@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { ConfigManagerService } from '../../services/config-manager.service';
 import { DialogService } from '../../services/dialog.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -16,6 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatDialogModule, MatIconModule
   ],
   templateUrl: './activate-config-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './activate-config-dialog.scss'
 })
 export class ActivateConfigDialog implements OnInit {

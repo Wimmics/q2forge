@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject } from '@angular/core';
+import { AfterViewInit, Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -23,6 +23,7 @@ import { DialogService } from '../../services/dialog.service';
   imports: [MatDialogModule, MatButtonModule, MatInputModule, MatIconModule, MatTooltipModule,
     MatSelectModule, ReactiveFormsModule, FormsModule, RouterModule, MarkdownComponent, CommonModule],
   templateUrl: './question-answerer-config-dialog.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './question-answerer-config-dialog.scss'
 })
 export class QuestionAnswererConfigDialog implements AfterViewInit {
@@ -45,7 +46,9 @@ export class QuestionAnswererConfigDialog implements AfterViewInit {
 
   init_scenario_schemas() {
     this.configManagerService.getScenariosSchema().then(response => {
+      // Sort ascending by id
       this.graphSchemas = response;
+      this.graphSchemas.sort((a, b) => parseInt(a.scenario_id) - parseInt(b.scenario_id));
     });
   }
 

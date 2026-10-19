@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit, signal } from '@angular/core';
+import { AfterViewInit, Component, inject, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -46,6 +46,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     MatChipsModule, MatIconModule, FileInputDirective, MatProgressSpinnerModule, FontAwesomeModule
   ],
   templateUrl: './sparql-query-generator-executor.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './sparql-query-generator-executor.component.scss'
 })
 export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewInit {
@@ -309,7 +310,7 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
 
 
   csvToMarkdown(csv: string): string {
-    const rows = csv.trim().split("\r\n").map(row => row.split(","));
+    const rows = csv.trim().split("\n").map(row => row.split(","));
 
     if (rows.length < 2) {
       // throw new Error("CSV must have at least a header and one row of data.");
@@ -332,12 +333,12 @@ export class SPARQLQueryGeneratorExecutorComponent implements OnInit, AfterViewI
   currentConfig: QuestionAnswererConfig = {
     scenario_id: "1",
     text_embedding_model: "nomic-embed-text_faiss@local",
-    ask_question_model: "deepseek-chat@deepseek",
-    validate_question_model: "deepseek-chat@deepseek",
-    generate_query_model: "deepseek-chat@deepseek",
-    judge_query_model: "deepseek-chat@deepseek",
-    judge_regenerate_query_model: "deepseek-chat@deepseek",
-    interpret_results_model: "deepseek-chat@deepseek"
+    ask_question_model: "deepseek-v4.1@openrouter",
+    validate_question_model: "deepseek-v4.1@openrouter",
+    generate_query_model: "deepseek-v4.1@openrouter",
+    judge_query_model: "deepseek-v4.1@openrouter",
+    judge_regenerate_query_model: "deepseek-v4.1@openrouter",
+    interpret_results_model: "deepseek-v4.1@openrouter"
   };
 
   setConfiguration() {
