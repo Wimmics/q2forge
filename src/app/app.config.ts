@@ -3,7 +3,7 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpClient, provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
-import { CLIPBOARD_OPTIONS, ClipboardButtonComponent, MERMAID_OPTIONS, provideMarkdown } from 'ngx-markdown';
+import { CLIPBOARD_OPTIONS, ClipboardButtonComponent, KATEX_OPTIONS, MERMAID_OPTIONS, provideMarkdown, SANITIZE } from 'ngx-markdown';
 import { authInterceptor } from './utils/interceptors/auth-interceptor';
 
 
@@ -28,7 +28,18 @@ export const appConfig: ApplicationConfig = {
           look: 'handDrawn',
         },
       },
-      sanitize: SecurityContext.NONE,
+      sanitize: {
+        provide: SANITIZE,
+        useValue: SecurityContext.NONE
+      },
+      katexOptions: {
+        provide: KATEX_OPTIONS,
+        useValue: {
+          displayMode: false,
+          throwOnError: false,
+        },
+      },
+
     }),
   ]
 };
